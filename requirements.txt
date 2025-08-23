@@ -1,0 +1,26 @@
+# FastAPI and Web Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+websockets==12.0
+
+# Audio Processing
+openai-whisper==20231117
+faster-whisper==1.0.1
+librosa==0.10.1
+soundfile==0.12.1
+audioread==3.0.1
+
+# HTTP Requests
+requests==2.31.0
+
+# Data Processing
+numpy==1.24.3
+
+# File Handling
+python-multipart==0.0.6
+
+# Audio Format Support
+pydub==0.25.1
+
+# Utility
+python-dotenv==1.0.0

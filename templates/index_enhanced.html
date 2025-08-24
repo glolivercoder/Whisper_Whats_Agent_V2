@@ -330,6 +330,52 @@
             color: #333;
             border: 1px solid #dee2e6;
         }
+        
+        .message.transcribing {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .message.system {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+            font-style: italic;
+            text-align: center;
+        }
+        
+        .transcription-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .temporary-message {
+            opacity: 0.9;
+            font-style: italic;
+        }
 
         .message-meta {
             font-size: 10px;
@@ -1407,6 +1453,13 @@
 
         async function sendAudioToSTT(audioBlob) {
             try {
+                // Show transcription progress immediately
+                updateStatus('🎤 Enviando áudio para transcrição...');
+                
+                // Add a temporary message showing transcription is in progress
+                const tempMessageId = 'temp-transcription-' + Date.now();
+                addTemporaryMessage(tempMessageId, '🔄 Transcrevendo áudio...', 'transcribing');
+                
                 const formData = new FormData();
                 formData.append('audio', audioBlob, 'audio.webm');
                 
@@ -1417,22 +1470,67 @@
                 
                 const result = await response.json();
                 
+                // Remove temporary message
+                removeTemporaryMessage(tempMessageId);
+                
                 if (result.success && result.text) {
+                    // Show transcribed text clearly in chat
+                    addMessage('user', `🎤 Transcrição: "${result.text}"`, 'STT');
+                    
                     const messageInput = document.getElementById('message-input');
                     messageInput.value = result.text;
-                    updateStatus('Áudio transcrito com sucesso!');
+                    updateStatus('✅ Áudio transcrito com sucesso!');
                     
-                    // Auto-send the transcribed message
+                    // Visual confirmation with border highlight
+                    messageInput.style.border = '2px solid #4CAF50';
+                    messageInput.style.backgroundColor = '#f0f8f0';
+                    
+                    setTimeout(() => {
+                        messageInput.style.border = '';
+                        messageInput.style.backgroundColor = '';
+                    }, 2000);
+                    
+                    // Auto-send the transcribed message after a short delay
                     setTimeout(() => {
                         sendMessage();
-                    }, 500);
+                    }, 1000);
                 } else {
-                    updateStatus('Erro na transcrição do áudio');
+                    addMessage('system', `❌ Erro na transcrição: ${result.error || 'Falha no processamento do áudio'}`, 'STT Error');
+                    updateStatus('❌ Erro na transcrição do áudio');
                 }
                 
             } catch (error) {
                 console.error('Error sending audio to STT:', error);
-                updateStatus('Erro ao enviar áudio para transcrição');
+                removeTemporaryMessage('temp-transcription-' + Date.now());
+                addMessage('system', `❌ Erro de conexão STT: ${error.message}`, 'STT Error');
+                updateStatus('❌ Erro ao enviar áudio para transcrição');
+            }
+        }
+        
+        function addTemporaryMessage(id, content, type) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.id = id;
+            messageDiv.className = `message ${type} temporary-message`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            
+            messageDiv.innerHTML = `
+                <div class="transcription-progress">
+                    <div class="spinner"></div>
+                    ${content}
+                </div>
+                <div class="message-meta">${timestamp}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function removeTemporaryMessage(id) {
+            const tempMessage = document.getElementById(id);
+            if (tempMessage) {
+                tempMessage.remove();
             }
         }
 

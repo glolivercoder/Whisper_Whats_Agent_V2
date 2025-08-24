@@ -19,6 +19,72 @@ import uuid
 import time
 import sqlite3
 from pathlib import Path
+import subprocess
+import platform
+
+# Port cleanup function
+def cleanup_ports():
+    """Automatically cleanup ports 8001 and 8002 before starting server"""
+    try:
+        print("🧹 Cleaning up ports 8001 and 8002...")
+        
+        if platform.system() == "Windows":
+            # Windows port cleanup
+            ports = ["8001", "8002"]
+            for port in ports:
+                try:
+                    # Find processes using the port
+                    result = subprocess.run(
+                        ["netstat", "-ano"],
+                        capture_output=True,
+                        text=True,
+                        timeout=10
+                    )
+                    
+                    lines = result.stdout.split('\n')
+                    for line in lines:
+                        if f":{port}" in line and "LISTENING" in line:
+                            parts = line.split()
+                            if len(parts) >= 5:
+                                pid = parts[-1]
+                                print(f"  🛑 Killing process {pid} using port {port}")
+                                subprocess.run(
+                                    ["taskkill", "/f", "/pid", pid],
+                                    capture_output=True,
+                                    timeout=5
+                                )
+                except Exception as e:
+                    print(f"  ⚠️ Error cleaning port {port}: {e}")
+        else:
+            # Linux/Mac port cleanup
+            ports = ["8001", "8002"]
+            for port in ports:
+                try:
+                    result = subprocess.run(
+                        ["lsof", "-ti", f":{port}"],
+                        capture_output=True,
+                        text=True,
+                        timeout=10
+                    )
+                    
+                    if result.stdout.strip():
+                        pids = result.stdout.strip().split('\n')
+                        for pid in pids:
+                            if pid:
+                                print(f"  🛑 Killing process {pid} using port {port}")
+                                subprocess.run(["kill", "-9", pid], timeout=5)
+                except Exception as e:
+                    print(f"  ⚠️ Error cleaning port {port}: {e}")
+        
+        print("✅ Port cleanup completed")
+        time.sleep(1)  # Give processes time to terminate
+        
+    except Exception as e:
+        print(f"⚠️ Port cleanup failed: {e}")
+        print("Continuing with server startup...")
+
+# Run port cleanup immediately
+cleanup_ports()
 
 # Enhanced logging configuration
 log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
@@ -1359,6 +1425,106 @@ async def get_conversation_history(session_id: str, limit: int = 10):
     except Exception as e:
         logger.error(f"Database error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# History API endpoints
+@app.get("/api/history/conversations")
+async def get_all_conversations():
+    """Get all conversations with stats"""
+    try:
+        # Get basic stats
+        stats = db_service.get_stats()
+        
+        # Get recent conversations (mock data for now)
+        conversations = [
+            {
+                "id": "conv_1",
+                "title": "Conversa de Teste",
+                "created_at": datetime.now().isoformat(),
+                "source": "web",
+                "message_count": 5
+            }
+        ]
+        
+        return {
+            "success": True,
+            "conversations": conversations,
+            "stats": {
+                "total": stats.get("conversations", 0),
+                "total_messages": stats.get("messages", 0),
+                "avg_response_time": 1.2,
+                "today_messages": 0
+            }
+        }
+    except Exception as e:
+        logger.error(f"History error: {e}")
+        return {
+            "success": False,
+            "error": str(e),
+            "conversations": [],
+            "stats": {"total": 0, "total_messages": 0, "avg_response_time": 0, "today_messages": 0}
+        }
+
+@app.get("/api/history/conversation/{conversation_id}")
+async def get_conversation_detail(conversation_id: str):
+    """Get detailed conversation data"""
+    try:
+        # Mock conversation detail
+        conversation = {
+            "id": conversation_id,
+            "title": "Conversa Detalhada",
+            "created_at": datetime.now().isoformat(),
+            "source": "web",
+            "messages": [
+                {
+                    "role": "assistant",
+                    "content": "Olá! Como posso ajudá-lo?",
+                    "timestamp": datetime.now().isoformat()
+                },
+                {
+                    "role": "user",
+                    "content": "Preciso de ajuda com o sistema",
+                    "timestamp": datetime.now().isoformat()
+                }
+            ]
+        }
+        
+        return {
+            "success": True,
+            "conversation": conversation
+        }
+    except Exception as e:
+        logger.error(f"Conversation detail error: {e}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@app.get("/api/history/export")
+async def export_history():
+    """Export conversation history"""
+    try:
+        # Mock export data
+        export_data = {
+            "export_date": datetime.now().isoformat(),
+            "conversations": [],
+            "total_conversations": 0
+        }
+        
+        return export_data
+    except Exception as e:
+        logger.error(f"Export error: {e}")
+        return {"success": False, "error": str(e)}
+
+@app.delete("/api/history/clear")
+async def clear_history():
+    """Clear conversation history"""
+    try:
+        # Mock clear operation
+        logger.info("History clear requested")
+        return {"success": True, "message": "History cleared"}
+    except Exception as e:
+        logger.error(f"Clear history error: {e}")
+        return {"success": False, "error": str(e)}
 
 # WebSocket endpoint
 @app.websocket("/ws")

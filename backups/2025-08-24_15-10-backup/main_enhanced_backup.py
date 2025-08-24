@@ -119,8 +119,8 @@ class Config:
         self.WHATSAPP_BUSINESS_TOKEN = os.getenv("WHATSAPP_BUSINESS_TOKEN", "")
         self.WHATSAPP_VERIFY_TOKEN = os.getenv("WHATSAPP_VERIFY_TOKEN", "whatsapp_agent_v2")
         
-        # LLM Configuration - Google Flash as default
-        self.DEFAULT_LLM_PROVIDER = os.getenv("DEFAULT_LLM_PROVIDER", "gemini")
+        # LLM Configuration
+        self.DEFAULT_LLM_PROVIDER = os.getenv("DEFAULT_LLM_PROVIDER", "openrouter")
         self.OPENROUTER_DEFAULT_MODEL = os.getenv("OPENROUTER_DEFAULT_MODEL", "deepseek/deepseek-chat")
         self.GEMINI_DEFAULT_MODEL = os.getenv("GEMINI_DEFAULT_MODEL", "gemini-1.5-flash")
         
@@ -146,7 +146,7 @@ class TTSRequest(BaseModel):
     voice: Optional[str] = None
     speed: Optional[float] = 1.0
     language: Optional[str] = "pt-BR"
-    engine: Optional[str] = "gtts"  # gtts (default), coqui, pyttsx3
+    engine: Optional[str] = "coqui"  # coqui, gtts, pyttsx3
 
 class ChatMessage(BaseModel):
     message: str
@@ -382,7 +382,7 @@ class TTSService:
             
             voice = voice or config.TTS_VOICE
             language = language or config.TTS_LANGUAGE
-            engine = engine or "gtts"  # Default to Google TTS (Flash)
+            engine = engine or "coqui"  # Default to Coqui TTS
             
             # Check if this is a cloned voice request
             is_cloned_voice = voice and voice.startswith('cloned_')
@@ -1165,7 +1165,7 @@ async def text_to_speech(request: TTSRequest):
 # TTS Models endpoint
 @app.get("/api/tts/models")
 async def get_tts_models():
-    """Get available TTS models and voices including cloned voices"""
+    """Get available TTS models and voices"""
     try:
         # Enhanced Coqui TTS models (Portuguese)
         coqui_models = [
@@ -1225,50 +1225,6 @@ async def get_tts_models():
             }
         ]
         
-        # Add cloned voices to the models list
-        try:
-            voices_dir = os.path.join(os.getcwd(), "cloned_voices")
-            if os.path.exists(voices_dir):
-                for filename in os.listdir(voices_dir):
-                    if filename.endswith('_config.json'):
-                        voice_name = filename.replace('_config.json', '')
-                        config_path = os.path.join(voices_dir, filename)
-                        
-                        try:
-                            with open(config_path, 'r', encoding='utf-8') as f:
-                                voice_config = json.load(f)
-                            
-                            # Add cloned voice to models list
-                            cloned_voice_model = {
-                                "name": f"cloned_{voice_name}",
-                                "display_name": f"🎭 {voice_config.get('display_name', voice_name)} (Clonada)",
-                                "language": voice_config.get('language', 'pt-BR'),
-                                "type": "cloned",
-                                "quality": "high",
-                                "description": f"Voz clonada personalizada - {voice_config.get('description', 'Sem descrição')}",
-                                "gender": voice_config.get('gender', 'unknown'),
-                                "date_created": voice_config.get('date_created', 'Unknown'),
-                                "is_cloned": True
-                            }
-                            coqui_models.append(cloned_voice_model)
-                            
-                        except Exception as e:
-                            logger.warning(f"Could not read cloned voice config {voice_name}: {e}")
-                            # Add basic cloned voice info even if config is corrupted
-                            coqui_models.append({
-                                "name": f"cloned_{voice_name}",
-                                "display_name": f"🎭 {voice_name} (Clonada)",
-                                "language": "pt-BR",
-                                "type": "cloned",
-                                "quality": "high",
-                                "description": "Voz clonada personalizada",
-                                "gender": "unknown",
-                                "is_cloned": True
-                            })
-                            
-        except Exception as e:
-            logger.warning(f"Error loading cloned voices: {e}")
-        
         return {
             "success": True,
             "models": coqui_models,
@@ -1287,29 +1243,7 @@ async def get_tts_models():
                 "min_duration": "10s",
                 "recommended_duration": "30-60s",
                 "max_file_size": "25MB"
-            },
-            "engines": {
-                "coqui": {
-                    "name": "Coqui TTS",
-                    "description": "Engine principal com modelos neurais avançados",
-                    "features": ["voice_cloning", "emotion_control", "speed_control"],
-                    "quality": "high"
-                },
-                "gtts": {
-                    "name": "Google TTS (Flash)",
-                    "description": "Engine rápido online do Google - Padrão",
-                    "features": ["fast_response", "online_only"],
-                    "quality": "medium",
-                    "is_default": True
-                },
-                "pyttsx3": {
-                    "name": "pyttsx3 (Offline)",
-                    "description": "Engine offline local para uso sem internet",
-                    "features": ["offline", "low_latency"],
-                    "quality": "medium"
-                }
-            },
-            "default_engine": "gtts"
+            }
         }
         
     except Exception as e:
@@ -1540,7 +1474,7 @@ async def llm_chat(request: LLMRequest):
             "success": True,
             "response": response,
             "provider": request.provider or config.DEFAULT_LLM_PROVIDER,
-            "model": request.model or config.GEMINI_DEFAULT_MODEL,
+            "model": request.model or config.OPENROUTER_DEFAULT_MODEL,
             "processing_time": processing_time,
             "timestamp": datetime.now().isoformat()
         }

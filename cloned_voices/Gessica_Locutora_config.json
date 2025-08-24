@@ -1,0 +1,6 @@
+{
+  "name": "Gessica_Locutora",
+  "created_at": "2025-08-24T17:11:50.372344",
+  "status": "trained",
+  "model_path": "models/cloned_voices/Gessica_Locutora.pth"
+}

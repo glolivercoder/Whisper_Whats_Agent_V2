@@ -649,14 +649,6 @@
                                 <input type="radio" name="response-mode" value="text"> 💬 Apenas Texto
                             </label>
                         </div>
-                        <div class="tts-default-selector" style="display: flex; gap: 10px; align-items: center;">
-                            <label style="font-weight: bold; color: #495057;">🎛️ TTS Padrão:</label>
-                            <select id="default-tts-engine" onchange="updateDefaultTTS()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; background: white; font-size: 14px;">
-                                <option value="gtts" selected>🌐 Google TTS (Flash) - Padrão</option>
-                                <option value="coqui">🎭 Coqui TTS + Vozes Clonadas</option>
-                                <option value="pyttsx3">💻 pyttsx3 (Offline)</option>
-                            </select>
-                        </div>
                     </div>
                 </div>
 
@@ -854,7 +846,7 @@
 
         <!-- TTS & Voice Configuration Tab -->
         <div id="tts-tab" class="tab-content">
-            <h2>🔊 Configuração de Voz Coqui TTS</h2>
+            <h2>🔊 TTS & Configuração de Voz</h2>
             <div class="config-grid">
                 <div class="config-section">
                     <h3>Configurações Básicas</h3>
@@ -872,23 +864,25 @@
                         </select>
                     </div>
                     <div class="control-group">
-                        <label style="color: #666; font-style: italic;">Nota: Engine TTS padrão agora gerenciado na aba Chat</label>
+                        <label for="tts-engine">Engine TTS:</label>
+                        <select id="tts-engine">
+                            <option value="coqui">Coqui TTS (Recomendado)</option>
+                            <option value="gtts">Google TTS</option>
+                            <option value="pyttsx3">pyttsx3 (Offline)</option>
+                        </select>
                     </div>
                 </div>
                 
                 <div class="config-section">
-                    <h3>🎭 Coqui TTS - Modelos + Vozes Clonadas</h3>
+                    <h3>🎯 Coqui TTS - Modelos Portugueses Enhanced</h3>
                     <div class="control-group">
-                        <label for="coqui-model">Modelo Português BR + Vozes Clonadas:</label>
+                        <label for="coqui-model">Modelo Português BR:</label>
                         <select id="coqui-model" onchange="onModelChange()">
-                            <option value="">🔄 Carregando modelos e vozes clonadas...</option>
+                            <option value="">🔄 Carregando modelos...</option>
                         </select>
                         <div id="model-status" class="status-message" style="margin-top: 5px; font-size: 11px; min-height: 20px;">
-                            🔄 Verificando modelos TTS e vozes clonadas...
+                            🔄 Verificando disponibilidade de modelos TTS...
                         </div>
-                        <small style="color: #666; display: block; margin-top: 5px;">
-                            🎆 Inclui modelos Coqui TTS + suas vozes clonadas personalizadas
-                        </small>
                     </div>
                     <div class="control-group">
                         <label>📊 Informações do Modelo:</label>
@@ -2003,7 +1997,7 @@
                         text: text,
                         language: document.getElementById('tts-language').value,
                         voice: document.getElementById('coqui-model').value,
-                        engine: window.defaultTTSEngine || 'gtts', // Use default TTS engine
+                        engine: document.getElementById('tts-engine').value,
                         speed: parseFloat(document.getElementById('voice-speed').value)
                     })
                 });
@@ -2050,7 +2044,7 @@
                         text: text,
                         language: document.getElementById('tts-language').value,
                         voice: document.getElementById('coqui-model').value,
-                        engine: window.defaultTTSEngine || 'gtts', // Use default TTS engine
+                        engine: document.getElementById('tts-engine').value,
                         speed: parseFloat(document.getElementById('voice-speed').value)
                     })
                 });
@@ -2128,54 +2122,26 @@
             const statusDiv = document.getElementById('model-status');
             
             try {
-                statusDiv.innerHTML = '🔄 Carregando modelos TTS e vozes clonadas...';
+                statusDiv.innerHTML = '🔄 Carregando modelos TTS...';
+                const response = await fetch('/api/tts/models');
+                const result = await response.json();
                 
-                // Carregar modelos Coqui TTS
-                const modelsResponse = await fetch('/api/tts/models');
-                const modelsResult = await modelsResponse.json();
-                
-                // Carregar vozes clonadas
-                const voicesResponse = await fetch('/api/tts/list-cloned-voices');
-                const voicesResult = await voicesResponse.json();
-                
-                if (modelsResult.success) {
+                if (result.success && result.models) {
                     modelSelect.innerHTML = '';
                     
-                    // Adicionar modelos Coqui padrão
-                    const defaultGroup = document.createElement('optgroup');
-                    defaultGroup.label = '🎭 Modelos Coqui TTS Padrão';
-                    
-                    modelsResult.models.forEach(model => {
+                    result.models.forEach(model => {
                         const option = document.createElement('option');
                         option.value = model.name;
                         option.textContent = model.display_name;
                         option.dataset.quality = model.quality;
                         option.dataset.gender = model.gender;
                         option.dataset.description = model.description;
-                        defaultGroup.appendChild(option);
+                        modelSelect.appendChild(option);
                     });
-                    modelSelect.appendChild(defaultGroup);
                     
-                    // Adicionar vozes clonadas se disponíveis
-                    if (voicesResult.success && voicesResult.voices && voicesResult.voices.length > 0) {
-                        const clonedGroup = document.createElement('optgroup');
-                        clonedGroup.label = '🎤 Suas Vozes Clonadas';
-                        
-                        voicesResult.voices.forEach(voice => {
-                            const option = document.createElement('option');
-                            option.value = `cloned:${voice.name}`;
-                            option.textContent = `🎆 ${voice.name} (Clonada)`;
-                            option.dataset.type = 'cloned';
-                            option.dataset.description = `Voz clonada criada em ${voice.created_at || 'data desconhecida'}`;
-                            clonedGroup.appendChild(option);
-                        });
-                        modelSelect.appendChild(clonedGroup);
-                    }
-                    
-                    const totalModels = modelsResult.models.length + (voicesResult.voices?.length || 0);
-                    statusDiv.innerHTML = `✅ ${modelsResult.models.length} modelos + ${voicesResult.voices?.length || 0} vozes clonadas carregadas`;
+                    statusDiv.innerHTML = `✅ ${result.models.length} modelos carregados | Padrão: ${result.default_model}`;
                 } else {
-                    statusDiv.innerHTML = '❌ Erro ao carregar modelos: ' + (modelsResult.error || 'Resposta inválida');
+                    statusDiv.innerHTML = '❌ Erro ao carregar modelos: ' + (result.error || 'Resposta inválida');
                 }
             } catch (error) {
                 statusDiv.innerHTML = '❌ Falha na conexão: ' + error.message;
@@ -2209,41 +2175,8 @@
             document.getElementById('pitch-value').textContent = value;
         }
         
-        function updateDefaultTTS() {
-            const ttsEngine = document.getElementById('default-tts-engine').value;
-            
-            // Salvar preferência no localStorage
-            localStorage.setItem('defaultTTSEngine', ttsEngine);
-            
-            // Atualizar variável global
-            window.defaultTTSEngine = ttsEngine;
-            
-            // Feedback visual
-            const statusText = document.getElementById('status-text');
-            const engineNames = {
-                'gtts': 'Google TTS (Flash)',
-                'coqui': 'Coqui TTS',
-                'pyttsx3': 'pyttsx3 (Offline)'
-            };
-            
-            if (statusText) {
-                statusText.textContent = `TTS padrão: ${engineNames[ttsEngine]}`;
-                setTimeout(() => {
-                    statusText.textContent = 'Sistema pronto!';
-                }, 3000);
-            }
-            
-            console.log(`🎛️ TTS padrão atualizado para: ${engineNames[ttsEngine]}`);
-        }
-        
-        function loadDefaultTTSPreference() {
-            const savedEngine = localStorage.getItem('defaultTTSEngine') || 'gtts'; // Google TTS como padrão
-            const engineSelect = document.getElementById('default-tts-engine');
-            
-            if (engineSelect) {
-                engineSelect.value = savedEngine;
-                window.defaultTTSEngine = savedEngine;
-            }
+        function updateEmotionValue(value) {
+            document.getElementById('emotion-value').textContent = value;
         }
         
         function validateVoiceName(name) {
@@ -2545,9 +2478,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Initializing Enhanced TTS System...');
             
-            // Carregar preferência TTS padrão (Google Flash como padrão)
-            loadDefaultTTSPreference();
-            
             // Load TTS models when page loads
             loadTTSModels();
             
@@ -2562,7 +2492,7 @@
                 console.warn('Could not load conversation history:', error);
             }
             
-            console.log('✅ Enhanced TTS System initialized with Google Flash as default');
+            console.log('✅ Enhanced TTS System initialized successfully');
         });
     </script>
 </body>

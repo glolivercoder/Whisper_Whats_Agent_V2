@@ -549,6 +549,7 @@
         <!-- Tab Navigation -->
         <div class="tab-navigation">
             <button class="tab-button active" onclick="switchTab('chat')">💬 Chat</button>
+            <button class="tab-button" onclick="switchTab('history')">📜 Histórico</button>
             <button class="tab-button" onclick="switchTab('llm')">🧠 LLM Config</button>
             <button class="tab-button" onclick="switchTab('tts')">🔊 TTS & Voice</button>
             <button class="tab-button" onclick="switchTab('database')">💾 Database</button>
@@ -581,61 +582,176 @@
                         <div class="status-dot" id="ws-status"></div>
                         <span>WebSocket</span>
                     </div>
+                    <div id="status-text" style="margin-left: 20px; color: #666; font-size: 14px;">Sistema pronto!</div>
                 </div>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 280px; gap: 20px; height: 500px;">
-
-                <!-- Chat Area -->
-                <div class="chat-area">
-                    <div class="chat-messages" id="chat-messages">
-                        <div class="message assistant">
-                            <div>🤖 Olá! Sou o assistente de voz enhanced com:</div>
-                            <div>• 🎤 STT avançado (Whisper)</div>
-                            <div>• 🧠 Multi-LLM (OpenRouter, Gemini)</div>
-                            <div>• 🔊 Síntese de voz com Coqui TTS</div>
-                            <div>• 💾 Banco de dados integrado</div>
-                            <div>• 📱 API WhatsApp completa</div>
-                            <div class="message-meta">Sistema inicializado</div>
-                        </div>
-                    </div>
-                    
-                    <div class="chat-input-area">
-                        <div class="response-mode-switch">
-                            <label>
-                                <input type="radio" name="response-mode" value="tts" checked> 🔊 TTS Response
+            <!-- Chat Interface -->
+            <div class="chat-interface" style="display: flex; flex-direction: column; height: 600px; gap: 15px;">
+                
+                <!-- Voice Control Panel -->
+                <div class="voice-controls" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border: 2px solid #e9ecef;">
+                    <h3>🎤 Controles de Voz</h3>
+                    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <button class="record-button" id="record-btn" onclick="toggleRecording()" style="font-size: 24px; padding: 15px 20px; background: #28a745; color: white; border: none; border-radius: 10px; cursor: pointer;">🎤 Gravar</button>
+                        <button class="stop-button" id="stop-btn" onclick="stopRecording()" style="font-size: 24px; padding: 15px 20px; background: #dc3545; color: white; border: none; border-radius: 10px; cursor: pointer; display: none;">⏹️ Parar</button>
+                        <div class="response-mode-switch" style="display: flex; gap: 10px; align-items: center;">
+                            <label style="display: flex; align-items: center; gap: 5px; padding: 8px 12px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">
+                                <input type="radio" name="response-mode" value="tts" checked> 🔊 Resposta TTS
                             </label>
-                            <label>
-                                <input type="radio" name="response-mode" value="text"> 💬 Text Only
+                            <label style="display: flex; align-items: center; gap: 5px; padding: 8px 12px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">
+                                <input type="radio" name="response-mode" value="text"> 💬 Apenas Texto
                             </label>
-                        </div>
-                        <div class="input-controls">
-                            <button class="record-button" id="record-btn" onclick="toggleRecording()">🎤</button>
-                            <button class="stop-button" id="stop-btn" onclick="stopRecording()" style="display:none;">⏹️</button>
-                            <textarea id="message-input" class="message-input" placeholder="Digite sua mensagem ou use o microfone..." rows="1"></textarea>
-                            <button class="send-button" onclick="sendMessage()">Enviar</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quick Status Panel -->
-                <div class="quick-status">
-                    <h3>📊 Status Rápido</h3>
-                    <div class="info-item">
-                        <div class="info-label">Sessão:</div>
-                        <div class="info-value" id="session-id">-</div>
+                <!-- Chat Area -->
+                <div class="chat-container" style="display: flex; gap: 20px; flex: 1;">
+                    <div class="chat-area" style="flex: 1; display: flex; flex-direction: column; background: white; border: 1px solid #ddd; border-radius: 10px;">
+                        <div class="chat-header" style="background: #007bff; color: white; padding: 15px; border-radius: 10px 10px 0 0;">
+                            <h4>🤖 Conversa com o Agente</h4>
+                        </div>
+                        <div class="chat-messages" id="chat-messages" style="flex: 1; overflow-y: auto; padding: 20px; min-height: 300px; max-height: 400px;">
+                            <div class="message assistant">
+                                <div>🤖 Olá! Sou o assistente de voz enhanced com:</div>
+                                <div>• 🎤 STT avançado (Whisper)</div>
+                                <div>• 🧠 Multi-LLM (OpenRouter, Gemini)</div>
+                                <div>• 🔊 Síntese de voz com Coqui TTS</div>
+                                <div>• 💾 Banco de dados integrado</div>
+                                <div>• 📱 API WhatsApp completa</div>
+                                <div class="message-meta">Sistema inicializado</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Input Area -->
+                        <div class="chat-input-area" style="padding: 15px; border-top: 1px solid #eee; background: #f8f9fa;">
+                            <div class="input-controls" style="display: flex; gap: 10px; align-items: flex-end;">
+                                <textarea id="message-input" class="message-input" placeholder="Digite sua mensagem ou use o microfone..." rows="2" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; resize: vertical;"></textarea>
+                                <button class="send-button" onclick="sendMessage()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; height: fit-content;">Enviar</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">Mensagens:</div>
-                        <div class="info-value" id="message-count">0</div>
+
+                    <!-- Quick Status Panel -->
+                    <div class="quick-status" style="width: 280px; background: #f8f9fa; padding: 20px; border-radius: 10px; border: 1px solid #ddd;">
+                        <h3>📊 Status Rápido</h3>
+                        <div class="info-item" style="margin: 10px 0; padding: 8px; background: white; border-radius: 5px;">
+                            <div class="info-label" style="font-weight: bold; color: #666;">Sessão:</div>
+                            <div class="info-value" id="session-id">-</div>
+                        </div>
+                        <div class="info-item" style="margin: 10px 0; padding: 8px; background: white; border-radius: 5px;">
+                            <div class="info-label" style="font-weight: bold; color: #666;">Mensagens:</div>
+                            <div class="info-value" id="message-count">0</div>
+                        </div>
+                        <div class="info-item" style="margin: 10px 0; padding: 8px; background: white; border-radius: 5px;">
+                            <div class="info-label" style="font-weight: bold; color: #666;">Último LLM:</div>
+                            <div class="info-value" id="last-provider">-</div>
+                        </div>
+                        <div class="info-item" style="margin: 10px 0; padding: 8px; background: white; border-radius: 5px;">
+                            <div class="info-label" style="font-weight: bold; color: #666;">Tempo Resposta:</div>
+                            <div class="info-value" id="response-time">-</div>
+                        </div>
+                        <div class="btn-group" style="margin-top: 15px; display: flex; gap: 10px;">
+                            <button class="btn-small" onclick="testServices()" style="flex: 1; padding: 8px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">Testar</button>
+                            <button class="btn-small" onclick="clearChat()" style="flex: 1; padding: 8px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Limpar</button>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">Último LLM:</div>
-                        <div class="info-value" id="last-provider">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history-tab" class="tab-content">
+            <div class="header">
+                <h1>📜 Histórico de Conversas</h1>
+                <div class="status-bar">
+                    <div class="service-status">
+                        <div class="status-dot healthy"></div>
+                        <span>Histórico carregado</span>
                     </div>
-                    <div class="btn-group">
-                        <button class="btn-small" onclick="testServices()">Testar</button>
-                        <button class="btn-small" onclick="clearChat()">Limpar</button>
+                    <div id="history-stats" style="margin-left: 20px; color: #666; font-size: 14px;">0 conversas encontradas</div>
+                </div>
+            </div>
+            
+            <!-- History Interface -->
+            <div class="history-interface" style="display: flex; flex-direction: column; height: 600px; gap: 15px;">
+                
+                <!-- History Controls -->
+                <div class="history-controls" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border: 2px solid #e9ecef;">
+                    <h3>🔍 Filtros e Controles</h3>
+                    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <div class="filter-group" style="display: flex; gap: 10px; align-items: center;">
+                            <label>Data:</label>
+                            <input type="date" id="date-filter" style="padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                            <label>até:</label>
+                            <input type="date" id="date-filter-end" style="padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                        </div>
+                        <div class="filter-group" style="display: flex; gap: 10px; align-items: center;">
+                            <label>Origem:</label>
+                            <select id="source-filter" style="padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                                <option value="">Todas</option>
+                                <option value="whatsapp">WhatsApp</option>
+                                <option value="web">Interface Web</option>
+                                <option value="api">API</option>
+                            </select>
+                        </div>
+                        <button class="btn-small" onclick="filterHistory()" style="padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">🔍 Filtrar</button>
+                        <button class="btn-small" onclick="exportHistory()" style="padding: 8px 15px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">📥 Exportar</button>
+                        <button class="btn-small" onclick="clearHistory()" style="padding: 8px 15px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">🗑️ Limpar</button>
+                    </div>
+                </div>
+
+                <!-- History List -->
+                <div class="history-container" style="display: flex; gap: 20px; flex: 1;">
+                    <div class="conversations-list" style="width: 300px; background: white; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
+                        <div class="conversations-header" style="background: #007bff; color: white; padding: 15px;">
+                            <h4>📋 Lista de Conversas</h4>
+                        </div>
+                        <div class="conversations-items" id="conversations-list" style="max-height: 400px; overflow-y: auto; padding: 10px;">
+                            <div class="conversation-item empty" style="text-align: center; padding: 40px 20px; color: #666;">
+                                <div style="font-size: 48px; margin-bottom: 10px;">💬</div>
+                                <div>Nenhuma conversa encontrada</div>
+                                <div style="font-size: 12px; margin-top: 5px;">Inicie uma conversa para ver o histórico aqui</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation Detail -->
+                    <div class="conversation-detail" style="flex: 1; background: white; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
+                        <div class="detail-header" style="background: #28a745; color: white; padding: 15px;">
+                            <h4 id="conversation-title">📝 Detalhes da Conversa</h4>
+                        </div>
+                        <div class="detail-content" id="conversation-detail" style="padding: 20px; max-height: 400px; overflow-y: auto;">
+                            <div class="no-selection" style="text-align: center; padding: 60px 20px; color: #666;">
+                                <div style="font-size: 48px; margin-bottom: 10px;">👈</div>
+                                <div>Selecione uma conversa para ver os detalhes</div>
+                                <div style="font-size: 12px; margin-top: 5px;">Clique em uma conversa da lista ao lado</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Stats -->
+                <div class="history-stats" style="background: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px solid #ddd;">
+                    <h4>📊 Estatísticas do Histórico</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 10px;">
+                        <div class="stat-box" style="text-align: center; padding: 10px; background: white; border-radius: 5px;">
+                            <div class="stat-number" id="total-conversations-stat" style="font-size: 24px; font-weight: bold; color: #007bff;">0</div>
+                            <div class="stat-label" style="font-size: 12px; color: #666;">Total Conversas</div>
+                        </div>
+                        <div class="stat-box" style="text-align: center; padding: 10px; background: white; border-radius: 5px;">
+                            <div class="stat-number" id="total-messages-stat" style="font-size: 24px; font-weight: bold; color: #28a745;">0</div>
+                            <div class="stat-label" style="font-size: 12px; color: #666;">Total Mensagens</div>
+                        </div>
+                        <div class="stat-box" style="text-align: center; padding: 10px; background: white; border-radius: 5px;">
+                            <div class="stat-number" id="avg-response-time" style="font-size: 24px; font-weight: bold; color: #ffc107;">0s</div>
+                            <div class="stat-label" style="font-size: 12px; color: #666;">Tempo Médio</div>
+                        </div>
+                        <div class="stat-box" style="text-align: center; padding: 10px; background: white; border-radius: 5px;">
+                            <div class="stat-number" id="today-messages" style="font-size: 24px; font-weight: bold; color: #dc3545;">0</div>
+                            <div class="stat-label" style="font-size: 12px; color: #666;">Hoje</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -979,6 +1095,9 @@
                 case 'tts':
                     checkCoquiModels();
                     break;
+                case 'history':
+                    loadConversationHistory();
+                    break;
             }
         }
 
@@ -1259,8 +1378,9 @@
                 isRecording = true;
                 
                 const recordBtn = document.getElementById('record-btn');
-                recordBtn.classList.add('recording');
-                recordBtn.innerHTML = '⏹️';
+                const stopBtn = document.getElementById('stop-btn');
+                recordBtn.style.display = 'none';
+                stopBtn.style.display = 'inline-block';
                 
                 updateStatus('Gravando áudio...');
                 
@@ -1277,8 +1397,9 @@
                 isRecording = false;
                 
                 const recordBtn = document.getElementById('record-btn');
-                recordBtn.classList.remove('recording');
-                recordBtn.innerHTML = '🎤';
+                const stopBtn = document.getElementById('stop-btn');
+                recordBtn.style.display = 'inline-block';
+                stopBtn.style.display = 'none';
                 
                 updateStatus('Processando áudio...');
             }
@@ -1775,6 +1896,207 @@
                 alert(result.success ? '✅ Conexão WhatsApp OK!' : '❌ Falha na conexão: ' + result.error);
             } catch (error) {
                 alert('❌ Erro de teste: ' + error.message);
+            }
+        }
+
+        // History Tab Functions
+        async function loadConversationHistory() {
+            try {
+                const response = await fetch('/api/history/conversations');
+                const result = await response.json();
+                
+                if (result.success) {
+                    updateHistoryStats(result.stats);
+                    displayConversationsList(result.conversations);
+                } else {
+                    console.error('Error loading conversation history:', result.error);
+                }
+            } catch (error) {
+                console.error('Error loading conversation history:', error);
+            }
+        }
+
+        function updateHistoryStats(stats) {
+            document.getElementById('history-stats').textContent = `${stats.total || 0} conversas encontradas`;
+            document.getElementById('total-conversations-stat').textContent = stats.total || 0;
+            document.getElementById('total-messages-stat').textContent = stats.total_messages || 0;
+            document.getElementById('avg-response-time').textContent = (stats.avg_response_time || 0) + 's';
+            document.getElementById('today-messages').textContent = stats.today_messages || 0;
+        }
+
+        function displayConversationsList(conversations) {
+            const listContainer = document.getElementById('conversations-list');
+            
+            if (!conversations || conversations.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="conversation-item empty" style="text-align: center; padding: 40px 20px; color: #666;">
+                        <div style="font-size: 48px; margin-bottom: 10px;">💬</div>
+                        <div>Nenhuma conversa encontrada</div>
+                        <div style="font-size: 12px; margin-top: 5px;">Inicie uma conversa para ver o histórico aqui</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            conversations.forEach(conv => {
+                html += `
+                    <div class="conversation-item" onclick="showConversationDetail('${conv.id}')" style="
+                        padding: 10px; margin: 5px 0; background: white; border: 1px solid #ddd; 
+                        border-radius: 5px; cursor: pointer; transition: all 0.3s ease;
+                    " onmouseover="this.style.backgroundColor='#f0f8ff'" onmouseout="this.style.backgroundColor='white'">
+                        <div style="font-weight: bold; font-size: 14px; color: #333;">
+                            ${conv.source === 'whatsapp' ? '📱' : '💻'} ${conv.title || 'Conversa sem título'}
+                        </div>
+                        <div style="font-size: 12px; color: #666; margin-top: 2px;">
+                            📅 ${new Date(conv.created_at).toLocaleString('pt-BR')}
+                        </div>
+                        <div style="font-size: 11px; color: #999; margin-top: 2px;">
+                            💬 ${conv.message_count} mensagens | ⏱️ ${conv.source}
+                        </div>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+        }
+
+        async function showConversationDetail(conversationId) {
+            try {
+                const response = await fetch(`/api/history/conversation/${conversationId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayConversationDetail(result.conversation);
+                } else {
+                    document.getElementById('conversation-detail').innerHTML = '❌ Erro ao carregar detalhes da conversa';
+                }
+            } catch (error) {
+                document.getElementById('conversation-detail').innerHTML = '❌ Erro de conexão: ' + error.message;
+            }
+        }
+
+        function displayConversationDetail(conversation) {
+            const titleEl = document.getElementById('conversation-title');
+            const contentEl = document.getElementById('conversation-detail');
+            
+            titleEl.textContent = `📝 ${conversation.title || 'Conversa'} - ${new Date(conversation.created_at).toLocaleString('pt-BR')}`;
+            
+            let html = `
+                <div class="conversation-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <h4>ℹ️ Informações da Conversa</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                        <div><strong>ID:</strong> ${conversation.id}</div>
+                        <div><strong>Origem:</strong> ${conversation.source === 'whatsapp' ? '📱 WhatsApp' : '💻 Web Interface'}</div>
+                        <div><strong>Criada em:</strong> ${new Date(conversation.created_at).toLocaleString('pt-BR')}</div>
+                        <div><strong>Mensagens:</strong> ${conversation.messages.length}</div>
+                    </div>
+                </div>
+                
+                <div class="messages-container">
+                    <h4>💬 Mensagens</h4>
+            `;
+            
+            conversation.messages.forEach(msg => {
+                const isUser = msg.role === 'user';
+                html += `
+                    <div class="message ${isUser ? 'user' : 'assistant'}" style="
+                        margin: 10px 0; padding: 12px; border-radius: 10px; max-width: 85%;
+                        ${isUser ? 'margin-left: auto; background: #007bff; color: white;' : 'background: white; border: 1px solid #ddd;'}
+                    ">
+                        <div style="font-weight: bold; font-size: 12px; margin-bottom: 5px;">
+                            ${isUser ? '👤 Usuário' : '🤖 Assistente'}
+                        </div>
+                        <div style="line-height: 1.4;">${msg.content}</div>
+                        <div style="font-size: 10px; opacity: 0.7; margin-top: 5px;">
+                            📅 ${new Date(msg.timestamp).toLocaleString('pt-BR')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            contentEl.innerHTML = html;
+        }
+
+        async function filterHistory() {
+            const dateStart = document.getElementById('date-filter').value;
+            const dateEnd = document.getElementById('date-filter-end').value;
+            const source = document.getElementById('source-filter').value;
+            
+            try {
+                const params = new URLSearchParams();
+                if (dateStart) params.append('date_start', dateStart);
+                if (dateEnd) params.append('date_end', dateEnd);
+                if (source) params.append('source', source);
+                
+                const response = await fetch(`/api/history/conversations?${params}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    updateHistoryStats(result.stats);
+                    displayConversationsList(result.conversations);
+                } else {
+                    alert('❌ Erro ao filtrar histórico: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Erro de filtro: ' + error.message);
+            }
+        }
+
+        async function exportHistory() {
+            const dateStart = document.getElementById('date-filter').value;
+            const dateEnd = document.getElementById('date-filter-end').value;
+            const source = document.getElementById('source-filter').value;
+            
+            try {
+                const params = new URLSearchParams();
+                params.append('format', 'json');
+                if (dateStart) params.append('date_start', dateStart);
+                if (dateEnd) params.append('date_end', dateEnd);
+                if (source) params.append('source', source);
+                
+                const response = await fetch(`/api/history/export?${params}`);
+                const blob = await response.blob();
+                
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `conversation_history_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                alert('✅ Histórico exportado com sucesso!');
+            } catch (error) {
+                alert('❌ Erro na exportação: ' + error.message);
+            }
+        }
+
+        async function clearHistory() {
+            if (!confirm('⚠️ Tem certeza que deseja limpar todo o histórico? Esta ação não pode ser desfeita!')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/history/clear', {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadConversationHistory();
+                    document.getElementById('conversation-detail').innerHTML = `
+                        <div class="no-selection" style="text-align: center; padding: 60px 20px; color: #666;">
+                            <div style="font-size: 48px; margin-bottom: 10px;">🗑️</div>
+                            <div>Histórico limpo com sucesso</div>
+                            <div style="font-size: 12px; margin-top: 5px;">Todas as conversas foram removidas</div>
+                        </div>
+                    `;
+                    alert('✅ Histórico limpo com sucesso!');
+                } else {
+                    alert('❌ Erro ao limpar histórico: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Erro de limpeza: ' + error.message);
             }
         }
     </script>

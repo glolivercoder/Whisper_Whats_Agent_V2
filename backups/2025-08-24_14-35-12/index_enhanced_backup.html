@@ -874,37 +874,22 @@
                 </div>
                 
                 <div class="config-section">
-                    <h3>🎯 Coqui TTS - Modelos Portugueses Enhanced</h3>
+                    <h3>Coqui TTS - Modelos Portugueses</h3>
                     <div class="control-group">
                         <label for="coqui-model">Modelo Português BR:</label>
-                        <select id="coqui-model" onchange="onModelChange()">
-                            <option value="">🔄 Carregando modelos...</option>
+                        <select id="coqui-model">
+                            <option value="tts_models/pt/cv/vits">VITS - Portuguese (CV) 🇵🇹</option>
+                            <option value="tts_models/multilingual/multi-dataset/your_tts">YourTTS - Multilingual 🌍</option>
+                            <option value="tts_models/pt/cv/tacotron2-DDC">Tacotron2 - Portuguese 🔊</option>
+                            <option value="tts_models/pt/custom/female">Modelo Feminino BR 👩</option>
+                            <option value="tts_models/pt/custom/male">Modelo Masculino BR 👨</option>
+                            <option value="tts_models/multilingual/multi-dataset/bark">Bark - Multilingual 🐕</option>
                         </select>
-                        <div id="model-status" class="status-message" style="margin-top: 5px; font-size: 11px; min-height: 20px;">
-                            🔄 Verificando disponibilidade de modelos TTS...
-                        </div>
                     </div>
                     <div class="control-group">
-                        <label>📊 Informações do Modelo:</label>
-                        <div id="model-info" style="background: #f8f9fa; padding: 10px; border-radius: 5px; border-left: 4px solid #007bff; font-size: 12px; min-height: 40px;">
-                            <div id="model-description">Selecione um modelo para ver as informações</div>
-                            <div id="model-details" style="margin-top: 5px; color: #666;"></div>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label for="voice-speed">🎛️ Velocidade da Voz:</label>
-                        <input type="range" id="voice-speed" min="0.5" max="2" step="0.1" value="1" oninput="updateSpeedValue(this.value)">
-                        <span id="speed-value" style="font-weight: bold; color: #007bff;">1.0x</span>
-                    </div>
-                    <div class="control-group">
-                        <label for="voice-pitch">🎵 Tom da Voz:</label>
-                        <input type="range" id="voice-pitch" min="0.5" max="2" step="0.1" value="1" oninput="updatePitchValue(this.value)">
-                        <span id="pitch-value" style="font-weight: bold; color: #28a745;">1.0</span>
-                    </div>
-                    <div class="control-group">
-                        <label for="voice-emotion">😊 Intensidade Emocional:</label>
-                        <input type="range" id="voice-emotion" min="0" max="1" step="0.1" value="0.5" oninput="updateEmotionValue(this.value)">
-                        <span id="emotion-value" style="font-weight: bold; color: #dc3545;">0.5</span>
+                        <label for="voice-speed">Velocidade da Voz:</label>
+                        <input type="range" id="voice-speed" min="0.5" max="2" step="0.1" value="1">
+                        <span id="speed-value">1.0x</span>
                     </div>
                     <div class="control-group">
                         <label>
@@ -914,70 +899,38 @@
                 </div>
                 
                 <div class="config-section">
-                    <h3>🎭 Clonagem de Voz Avançada Enhanced</h3>
-                    <div class="voice-cloning-info" style="background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%); padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #007bff; box-shadow: 0 2px 4px rgba(0,123,255,0.1);">
-                        <h4>📝 Instruções para Clonagem Enhanced:</h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; font-size: 12px;">
-                            <ul style="margin: 0; padding-left: 20px;">
-                                <li><strong>Formato:</strong> WAV, MP3 ou FLAC (recomendado: WAV 44.1kHz)</li>
-                                <li><strong>Duração:</strong> Mínimo 15s, ideal 30-90s</li>
-                                <li><strong>Qualidade:</strong> Áudio limpo, sem ruído de fundo</li>
-                            </ul>
-                            <ul style="margin: 0; padding-left: 20px;">
-                                <li><strong>Conteúdo:</strong> Fala clara em português brasileiro</li>
-                                <li><strong>Tamanho:</strong> Máximo 50MB para melhor qualidade</li>
-                                <li><strong>Ambiente:</strong> Ambiente silencioso, sem eco</li>
-                            </ul>
-                        </div>
-                        <div style="background: #fff; padding: 8px; border-radius: 4px; margin-top: 10px; border: 1px solid #dee2e6;">
-                            📊 <strong>Dica Pro:</strong> Para melhor qualidade, grave em ambiente fechado, fale devagar e com boa articulação
-                        </div>
+                    <h3>🎭 Clonagem de Voz Avançada</h3>
+                    <div class="voice-cloning-info" style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #007bff;">
+                        <h4>📝 Instruções para Clonagem:</h4>
+                        <ul style="margin: 10px 0; padding-left: 20px; font-size: 12px;">
+                            <li><strong>Formato:</strong> WAV, MP3 ou FLAC (recomendado: WAV)</li>
+                            <li><strong>Duração:</strong> Mínimo 10s, ideal 30-60s</li>
+                            <li><strong>Qualidade:</strong> Áudio limpo, sem ruído de fundo</li>
+                            <li><strong>Conteúdo:</strong> Fala clara em português brasileiro</li>
+                            <li><strong>Tamanho:</strong> Máximo 25MB</li>
+                        </ul>
                     </div>
                     <div class="control-group">
-                        <label for="reference-audio">📁 Áudio de Referência Enhanced (.wav/.mp3/.flac):</label>
-                        <div style="position: relative;">
-                            <input type="file" id="reference-audio" accept=".wav,.mp3,.flac" onchange="uploadReferenceAudio(this)" style="margin-bottom: 5px;">
-                            <div id="file-validation" style="font-size: 11px; color: #666; margin-top: 5px; min-height: 15px;">
-                                Nenhum arquivo selecionado
-                            </div>
-                        </div>
+                        <label for="reference-audio">📁 Áudio de Referência (.wav):</label>
+                        <input type="file" id="reference-audio" accept=".wav,.mp3,.flac" onchange="uploadReferenceAudio(this)">
                         <small style="color: #666; display: block; margin-top: 5px;">
-                            📊 Upload de amostra de voz em alta qualidade | Suporte aprimorado para validação automática
+                            Upload de amostra de voz em alta qualidade
                         </small>
                     </div>
                     <div class="control-group">
-                        <label for="cloned-voice-name">🏷️ Nome da Voz Clonada Enhanced:</label>
-                        <input type="text" id="cloned-voice-name" placeholder="Ex: Voz_Maria_BR_2024" maxlength="50" oninput="validateVoiceName(this.value)">
-                        <div id="name-validation" style="font-size: 11px; margin-top: 5px; min-height: 15px;">
-                            <span style="color: #666;">Use apenas letras, números e sublinhados (mín: 3, máx: 50 caracteres)</span>
-                        </div>
+                        <label for="cloned-voice-name">🏷️ Nome da Voz Clonada:</label>
+                        <input type="text" id="cloned-voice-name" placeholder="Ex: Voz_Maria_BR" maxlength="50">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Use apenas letras, números e sublinhados
+                        </small>
                     </div>
-                    <div class="btn-group" style="margin-bottom: 10px;">
-                        <button class="btn-small" onclick="trainVoiceClone()" style="background: #28a745; color: white; position: relative;" id="train-btn">
-                            🎯 Treinar Modelo Enhanced
-                        </button>
-                        <button class="btn-small" onclick="testClonedVoice()" style="background: #17a2b8; color: white;" id="test-btn">
-                            🎤 Testar Voz
-                        </button>
-                        <button class="btn-small" onclick="listClonedVoices()" style="background: #6c757d; color: white;">
-                            📄 Listar Vozes
-                        </button>
-                        <button class="btn-small" onclick="previewVoiceSample()" style="background: #fd7e14; color: white;" id="preview-btn">
-                            🔊 Preview Amostra
-                        </button>
+                    <div class="btn-group">
+                        <button class="btn-small" onclick="trainVoiceClone()" style="background: #28a745; color: white;">🎯 Treinar Modelo</button>
+                        <button class="btn-small" onclick="testClonedVoice()" style="background: #17a2b8; color: white;">🎙️ Testar Voz</button>
+                        <button class="btn-small" onclick="listClonedVoices()" style="background: #6c757d; color: white;">📄 Listar Vozes</button>
                     </div>
-                    <div id="training-progress" style="display: none; margin: 10px 0;">
-                        <div style="background: #f8f9fa; border-radius: 4px; overflow: hidden; border: 1px solid #dee2e6;">
-                            <div id="progress-bar" style="background: linear-gradient(90deg, #28a745, #20c997); height: 20px; width: 0%; transition: width 0.3s ease;"></div>
-                        </div>
-                        <div id="progress-text" style="text-align: center; font-size: 11px; margin-top: 5px; color: #666;">Aguardando início do treinamento...</div>
-                    </div>
-                    <div id="cloning-status" class="status-message" style="min-height: 40px; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; font-size: 11px; line-height: 1.4; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #dee2e6; border-radius: 6px; padding: 10px;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 14px;">🔄</span>
-                            <span>Aguardando upload de áudio de referência... | Sistema Enhanced Pronto</span>
-                        </div>
-                        <div id="detailed-status" style="margin-top: 5px; color: #666; font-size: 10px;">Sistema de clonagem de voz Enhanced carregado com validação avançada</div>
+                    <div id="cloning-status" class="status-message" style="min-height: 30px; font-family: monospace; font-size: 11px;">
+                        🔄 Aguardando upload de áudio de referência...
                     </div>
                 </div>
                 
@@ -1725,19 +1678,18 @@
             const voiceName = document.getElementById('cloned-voice-name').value.trim();
             const statusDiv = document.getElementById('cloning-status');
             
-            if (!validateVoiceName(voiceName)) {
-                statusDiv.innerHTML = '⚠️ Por favor, insira um nome válido para a voz';
+            if (!voiceName) {
+                statusDiv.innerHTML = '⚠️ Por favor, insira um nome para a voz';
                 return;
             }
             
-            const fileInput = document.getElementById('reference-audio');
-            if (!fileInput.files[0]) {
-                statusDiv.innerHTML = '⚠️ Por favor, faça upload de um áudio de referência primeiro';
+            // Validate voice name
+            if (!/^[a-zA-Z0-9_]+$/.test(voiceName)) {
+                statusDiv.innerHTML = '❌ Nome inválido! Use apenas letras, números e sublinhados';
                 return;
             }
             
-            statusDiv.innerHTML = '🎯 Iniciando treinamento Enhanced do modelo de voz...';
-            showTrainingProgress();
+            statusDiv.innerHTML = '🎯 Iniciando treinamento do modelo de voz...';
             
             try {
                 const response = await fetch('/api/tts/train-clone', {
@@ -1748,10 +1700,7 @@
                 
                 const result = await response.json();
                 if (result.success) {
-                    statusDiv.innerHTML = `✅ Modelo '${voiceName}' treinado com sucesso! | ⏱️ Tempo: ${result.training_time || 'N/A'} | 🎤 Pronto para uso`;
-                    
-                    // Enable test button
-                    document.getElementById('test-btn').disabled = false;
+                    statusDiv.innerHTML = `✅ Modelo '${voiceName}' treinado com sucesso! Tempo: ${result.training_time || 'N/A'}`;
                 } else {
                     statusDiv.innerHTML = '❌ Treinamento falhou: ' + result.error;
                 }
@@ -2116,163 +2065,6 @@
             }
         }
 
-        // Enhanced TTS Functions
-        async function loadTTSModels() {
-            const modelSelect = document.getElementById('coqui-model');
-            const statusDiv = document.getElementById('model-status');
-            
-            try {
-                statusDiv.innerHTML = '🔄 Carregando modelos TTS...';
-                const response = await fetch('/api/tts/models');
-                const result = await response.json();
-                
-                if (result.success && result.models) {
-                    modelSelect.innerHTML = '';
-                    
-                    result.models.forEach(model => {
-                        const option = document.createElement('option');
-                        option.value = model.name;
-                        option.textContent = model.display_name;
-                        option.dataset.quality = model.quality;
-                        option.dataset.gender = model.gender;
-                        option.dataset.description = model.description;
-                        modelSelect.appendChild(option);
-                    });
-                    
-                    statusDiv.innerHTML = `✅ ${result.models.length} modelos carregados | Padrão: ${result.default_model}`;
-                } else {
-                    statusDiv.innerHTML = '❌ Erro ao carregar modelos: ' + (result.error || 'Resposta inválida');
-                }
-            } catch (error) {
-                statusDiv.innerHTML = '❌ Falha na conexão: ' + error.message;
-            }
-        }
-        
-        function onModelChange() {
-            const modelSelect = document.getElementById('coqui-model');
-            const selectedOption = modelSelect.selectedOptions[0];
-            const descDiv = document.getElementById('model-description');
-            const detailsDiv = document.getElementById('model-details');
-            
-            if (selectedOption && selectedOption.dataset.description) {
-                descDiv.textContent = selectedOption.dataset.description;
-                detailsDiv.innerHTML = `
-                    📊 <strong>Qualidade:</strong> ${selectedOption.dataset.quality} | 
-                    👤 <strong>Gênero:</strong> ${selectedOption.dataset.gender} |
-                    🎯 <strong>Tipo:</strong> Neural TTS
-                `;
-            } else {
-                descDiv.textContent = 'Selecione um modelo para ver as informações';
-                detailsDiv.textContent = '';
-            }
-        }
-        
-        function updateSpeedValue(value) {
-            document.getElementById('speed-value').textContent = value + 'x';
-        }
-        
-        function updatePitchValue(value) {
-            document.getElementById('pitch-value').textContent = value;
-        }
-        
-        function updateEmotionValue(value) {
-            document.getElementById('emotion-value').textContent = value;
-        }
-        
-        function validateVoiceName(name) {
-            const validationDiv = document.getElementById('name-validation');
-            
-            if (!name) {
-                validationDiv.innerHTML = '<span style="color: #666;">Use apenas letras, números e sublinhados (mín: 3, máx: 50 caracteres)</span>';
-                return false;
-            }
-            
-            if (name.length < 3) {
-                validationDiv.innerHTML = '<span style="color: #dc3545;">❌ Nome muito curto (mínimo 3 caracteres)</span>';
-                return false;
-            }
-            
-            if (!/^[a-zA-Z0-9_]+$/.test(name)) {
-                validationDiv.innerHTML = '<span style="color: #dc3545;">❌ Use apenas letras, números e sublinhados</span>';
-                return false;
-            }
-            
-            validationDiv.innerHTML = '<span style="color: #28a745;">✅ Nome válido</span>';
-            return true;
-        }
-        
-        async function previewVoiceSample() {
-            const fileInput = document.getElementById('reference-audio');
-            const statusDiv = document.getElementById('cloning-status');
-            
-            if (!fileInput.files[0]) {
-                statusDiv.innerHTML = '⚠️ Selecione um arquivo de áudio primeiro';
-                return;
-            }
-            
-            const file = fileInput.files[0];
-            statusDiv.innerHTML = '🔊 Reproduzindo amostra de referência...';
-            
-            try {
-                const url = URL.createObjectURL(file);
-                const audio = new Audio(url);
-                
-                audio.onloadedmetadata = () => {
-                    const duration = audio.duration;
-                    const fileSize = (file.size / 1024 / 1024).toFixed(2);
-                    statusDiv.innerHTML = `🎵 Reproduzindo: ${file.name} | ⏱️ ${duration.toFixed(1)}s | 📊 ${fileSize}MB`;
-                };
-                
-                audio.onended = () => {
-                    statusDiv.innerHTML = '✅ Preview concluído. Arquivo pronto para treinamento.';
-                    URL.revokeObjectURL(url);
-                };
-                
-                audio.onerror = () => {
-                    statusDiv.innerHTML = '❌ Erro ao reproduzir arquivo de áudio';
-                    URL.revokeObjectURL(url);
-                };
-                
-                audio.play();
-            } catch (error) {
-                statusDiv.innerHTML = '❌ Erro no preview: ' + error.message;
-            }
-        }
-        
-        // Enhanced Training Progress
-        function showTrainingProgress() {
-            const progressDiv = document.getElementById('training-progress');
-            const progressBar = document.getElementById('progress-bar');
-            const progressText = document.getElementById('progress-text');
-            
-            progressDiv.style.display = 'block';
-            
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 10;
-                if (progress > 100) progress = 100;
-                
-                progressBar.style.width = progress + '%';
-                
-                if (progress < 20) {
-                    progressText.textContent = '🔄 Processando áudio de referência...';
-                } else if (progress < 50) {
-                    progressText.textContent = '🧠 Extraindo características de voz...';
-                } else if (progress < 80) {
-                    progressText.textContent = '🎯 Treinando modelo neural...';
-                } else if (progress < 100) {
-                    progressText.textContent = '✅ Finalizando e salvando modelo...';
-                } else {
-                    progressText.textContent = '🎉 Treinamento concluído com sucesso!';
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        progressDiv.style.display = 'none';
-                        progressBar.style.width = '0%';
-                    }, 2000);
-                }
-            }, 200);
-        }
-
         // History Tab Functions
         async function loadConversationHistory() {
             try {
@@ -2473,27 +2265,6 @@
                 alert('❌ Erro de limpeza: ' + error.message);
             }
         }
-        
-        // Initialize Enhanced TTS System
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Initializing Enhanced TTS System...');
-            
-            // Load TTS models when page loads
-            loadTTSModels();
-            
-            // Initialize monitoring
-            updateMonitoringStatus();
-            setInterval(updateMonitoringStatus, 10000); // Update every 10 seconds
-            
-            // Initialize other components
-            try {
-                loadConversationHistory();
-            } catch (error) {
-                console.warn('Could not load conversation history:', error);
-            }
-            
-            console.log('✅ Enhanced TTS System initialized successfully');
-        });
     </script>
 </body>
 </html>

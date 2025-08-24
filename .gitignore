@@ -1,0 +1,259 @@
+# ========================================
+# WhatsApp Voice Agent V2 - .gitignore
+# ========================================
+
+# ====================
+# WHISPER MODEL FILES (LARGE)
+# ====================
+# OpenAI Whisper models (100MB+)
+*.pt
+*.pth
+*.bin
+*.safetensors
+models/
+whisper_models/
+~/.cache/whisper/
+
+# Faster-whisper models cache
+~/.cache/huggingface/
+.cache/
+huggingface/
+
+# ====================
+# AUDIO FILES (LARGE)
+# ====================
+# Temporary audio files
+temp_audio/
+audio_temp/
+recordings/
+*.wav
+*.mp3
+*.m4a
+*.ogg
+*.webm
+*.aac
+*.flac
+
+# Audio processing temp files
+temp_*.*
+tmp*.*
+
+# ====================
+# PYTHON ENVIRONMENT
+# ====================
+# Virtual environment
+venv/
+env/
+.env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ====================
+# FASTAPI & LOGS
+# ====================
+# Log files
+logs/
+*.log
+*.log.*
+log_*
+*.out
+
+# FastAPI temp files
+.uvicorn/
+fastapi_temp/
+
+# ====================
+# NODE.JS (if frontend)
+# ====================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# ====================
+# ENVIRONMENT VARIABLES
+# ====================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# ====================
+# DATABASE FILES
+# ====================
+*.db
+*.sqlite
+*.sqlite3
+database/
+db/
+
+# ====================
+# IDE & EDITOR FILES
+# ====================
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Spyder
+.spyderproject
+.spyproject
+
+# ====================
+# SYSTEM FILES
+# ====================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Linux
+*~
+.fuse_hidden*
+.Trash-*
+.nfs*
+
+# ====================
+# TESTING & COVERAGE
+# ====================
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# ====================
+# DOCUMENTATION BUILD
+# ====================
+docs/_build/
+site/
+
+# ====================
+# LARGE BINARY FILES
+# ====================
+# Any file larger than 50MB
+*.zip
+*.tar.gz
+*.tar.bz2
+*.rar
+*.7z
+*.dmg
+*.pkg
+*.deb
+*.rpm
+
+# ====================
+# PROJECT SPECIFIC
+# ====================
+# WhatsApp credentials (if any)
+whatsapp_credentials.json
+credentials/
+secrets/
+
+# Backup files
+*.bak
+*.backup
+*_backup.*
+*_old.*
+
+# Test outputs
+test_outputs/
+test_results/
+screenshots/
+
+# Deployment files
+deploy/
+deployment/
+.deploy/
+
+# ====================
+# TEMPORARY FILES
+# ====================
+*.tmp
+*.temp
+temp/
+tmp/
+.tmp/
+
+# ====================
+# KEEP SOME IMPORTANT FILES
+# ====================
+# Force include important small files even if they match patterns above
+!requirements.txt
+!.gitignore
+!README.md
+!*.py
+!*.html
+!*.css
+!*.js
+!*.json
+!*.yaml
+!*.yml
+!*.md
+!*.txt
+!*.sh
+!*.bat
+
+# But still ignore large test audio files
+test_audio_large/
+sample_audio_large/

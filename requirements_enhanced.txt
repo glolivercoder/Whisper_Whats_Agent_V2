@@ -1,0 +1,36 @@
+# Enhanced WhatsApp Voice Agent V2 Dependencies - Simplified
+# Core Framework
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
+websockets>=11.0
+python-multipart>=0.0.5
+
+# STT (Speech-to-Text) - Core from original requirements
+openai-whisper
+faster-whisper
+librosa
+soundfile
+numpy
+scipy
+
+# LLM Integrations
+requests>=2.25.0
+httpx>=0.24.0
+
+# TTS (Text-to-Speech) - Python 3.11 Compatible  
+pyttsx3>=2.90
+gTTS>=2.3.0
+
+# Database - Simple SQLite support
+sqlalchemy>=1.4.0
+aiosqlite>=0.17.0
+
+# Environment & Configuration
+python-dotenv>=0.19.0
+pydantic>=1.8.0
+
+# WhatsApp Integration
+twilio>=8.0.0
+
+# Basic utilities
+python-dateutil>=2.8.0

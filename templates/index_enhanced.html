@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Voice Agent V2 Enhanced</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            min-height: 600px;
+            display: grid;
+            grid-template-areas: 
+                "header header header"
+                "controls chat status"
+                "footer footer footer";
+            grid-template-columns: 250px 1fr 250px;
+            grid-template-rows: auto 1fr auto;
+            gap: 20px;
+        }
+
+        .header {
+            grid-area: header;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            color: #25D366;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .service-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #dc3545;
+        }
+        .status-dot.healthy { background: #28a745; }
+        .status-dot.loading { background: #ffc107; animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .controls-panel {
+            grid-area: controls;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+            overflow-y: auto;
+        }
+
+        .controls-panel h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 14px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 5px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .control-group select,
+        .control-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .chat-area {
+            grid-area: chat;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            min-height: 300px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .message.user {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.assistant {
+            background: white;
+            color: #333;
+            border: 1px solid #dee2e6;
+        }
+
+        .message-meta {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid #dee2e6;
+            background: white;
+        }
+
+        .input-controls {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .record-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .record-button:hover { transform: scale(1.05); }
+        .record-button.recording {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            animation: recording-pulse 1s infinite;
+        }
+
+        @keyframes recording-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 25px;
+            font-size: 14px;
+            resize: none;
+            min-height: 50px;
+            max-height: 100px;
+        }
+
+        .send-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .status-panel {
+            grid-area: status;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+            overflow-y: auto;
+        }
+
+        .status-panel h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 14px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 5px;
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 12px;
+            color: #333;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .btn-small {
+            flex: 1;
+            padding: 5px 8px;
+            border: 1px solid #ced4da;
+            background: white;
+            border-radius: 5px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .btn-small:hover { background: #e9ecef; }
+
+        .footer {
+            grid-area: footer;
+            text-align: center;
+            font-size: 12px;
+            color: #6c757d;
+            padding-top: 10px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-areas: 
+                    "header"
+                    "chat"
+                    "controls"
+                    "status"
+                    "footer";
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 WhatsApp Voice Agent V2 Enhanced</h1>
+            <div class="status-bar">
+                <div class="service-status">
+                    <div class="status-dot" id="stt-status"></div>
+                    <span>STT</span>
+                </div>
+                <div class="service-status">
+                    <div class="status-dot" id="llm-status"></div>
+                    <span>LLM</span>
+                </div>
+                <div class="service-status">
+                    <div class="status-dot" id="tts-status"></div>
+                    <span>TTS</span>
+                </div>
+                <div class="service-status">
+                    <div class="status-dot" id="db-status"></div>
+                    <span>DB</span>
+                </div>
+                <div class="service-status">
+                    <div class="status-dot" id="ws-status"></div>
+                    <span>WebSocket</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-panel">
+            <h3>⚙️ Configurações</h3>
+            
+            <div class="control-group">
+                <label for="llm-provider">Provedor LLM:</label>
+                <select id="llm-provider">
+                    <option value="openrouter">OpenRouter</option>
+                    <option value="gemini">Google Gemini</option>
+                    <option value="local">Local (Fallback)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="llm-model">Modelo:</label>
+                <select id="llm-model">
+                    <option value="">Carregando...</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="system-prompt">Prompt do Sistema:</label>
+                <textarea id="system-prompt" rows="3" placeholder="Você é um assistente útil...">Você é um assistente útil que responde em português brasileiro. Seja conciso e amigável.</textarea>
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="tts-enabled" checked> Ativar TTS
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label for="tts-language">Idioma TTS:</label>
+                <select id="tts-language">
+                    <option value="pt-BR">🇧🇷 Português (BR)</option>
+                    <option value="en-US">🇺🇸 English (US)</option>
+                    <option value="es-ES">🇪🇸 Español (ES)</option>
+                </select>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-small" onclick="testServices()">Testar Serviços</button>
+                <button class="btn-small" onclick="clearChat()">Limpar Chat</button>
+            </div>
+        </div>
+
+        <div class="chat-area">
+            <div class="chat-messages" id="chat-messages">
+                <div class="message assistant">
+                    <div>🤖 Olá! Sou o assistente de voz enhanced com:</div>
+                    <div>• 🎤 STT avançado (Whisper)</div>
+                    <div>• 🧠 Multi-LLM (OpenRouter, Gemini)</div>
+                    <div>• 🔊 Síntese de voz (TTS)</div>
+                    <div>• 💾 Banco de dados integrado</div>
+                    <div>• 📱 API WhatsApp completa</div>
+                    <div class="message-meta">Sistema inicializado</div>
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <div class="input-controls">
+                    <button class="record-button" id="record-btn" onclick="toggleRecording()">🎤</button>
+                    <textarea id="message-input" class="message-input" placeholder="Digite sua mensagem ou use o microfone..." rows="1"></textarea>
+                    <button class="send-button" onclick="sendMessage()">Enviar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-panel">
+            <h3>📊 Status do Sistema</h3>
+            
+            <div class="info-item">
+                <div class="info-label">Sessão Ativa:</div>
+                <div class="info-value" id="session-id">-</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Conexões WebSocket:</div>
+                <div class="info-value" id="ws-connections">0</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Mensagens Processadas:</div>
+                <div class="info-value" id="message-count">0</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Último Provedor LLM:</div>
+                <div class="info-value" id="last-provider">-</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Tempo de Resposta:</div>
+                <div class="info-value" id="response-time">-</div>
+            </div>
+
+            <h3 style="margin-top: 15px;">🔗 Links Úteis</h3>
+            <div class="btn-group">
+                <button class="btn-small" onclick="window.open('/health', '_blank')">Health</button>
+                <button class="btn-small" onclick="window.open('/docs', '_blank')">API Docs</button>
+            </div>
+            <div class="btn-group">
+                <button class="btn-small" onclick="window.open('/api/status', '_blank')">Status</button>
+                <button class="btn-small" onclick="window.open('/api/models', '_blank')">Modelos</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            Enhanced WhatsApp Voice Agent V2 | Versão 2.1.0 | 
+            <span id="status-text">Inicializando...</span>
+        </div>
+    </div>
+
+    <script>
+        let websocket = null;
+        let isRecording = false;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let sessionId = null;
+        let messageCount = 0;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeApp();
+        });
+
+        async function initializeApp() {
+            updateStatus('Conectando aos serviços...');
+            
+            // Check system health
+            await checkSystemHealth();
+            
+            // Load available models
+            await loadAvailableModels();
+            
+            // Initialize WebSocket
+            initializeWebSocket();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            updateStatus('Sistema pronto!');
+        }
+
+        async function checkSystemHealth() {
+            try {
+                const response = await fetch('/health');
+                const health = await response.json();
+                
+                // Update service status indicators
+                updateServiceStatus('stt-status', health.services.whisper_stt.status);
+                updateServiceStatus('llm-status', health.services.llm_service.status);
+                updateServiceStatus('tts-status', health.services.tts_service.status);
+                updateServiceStatus('db-status', health.services.database.status);
+                
+                console.log('System health:', health);
+            } catch (error) {
+                console.error('Health check failed:', error);
+                updateStatus('Erro ao verificar saúde do sistema');
+            }
+        }
+
+        function updateServiceStatus(elementId, status) {
+            const element = document.getElementById(elementId);
+            element.className = 'status-dot';
+            if (status === 'healthy' || status === 'ready') {
+                element.classList.add('healthy');
+            } else if (status === 'starting' || status === 'loading') {
+                element.classList.add('loading');
+            }
+        }
+
+        async function loadAvailableModels() {
+            try {
+                const response = await fetch('/api/models');
+                const models = await response.json();
+                
+                const providerSelect = document.getElementById('llm-provider');
+                const modelSelect = document.getElementById('llm-model');
+                
+                providerSelect.addEventListener('change', () => {
+                    updateModelOptions(models);
+                });
+                
+                // Set default provider
+                providerSelect.value = models.default_provider || 'openrouter';
+                updateModelOptions(models);
+                
+            } catch (error) {
+                console.error('Failed to load models:', error);
+            }
+        }
+
+        function updateModelOptions(models) {
+            const provider = document.getElementById('llm-provider').value;
+            const modelSelect = document.getElementById('llm-model');
+            
+            modelSelect.innerHTML = '';
+            
+            if (models.providers[provider]) {
+                models.providers[provider].models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model;
+                    option.textContent = model;
+                    if (model === models.providers[provider].default_model) {
+                        option.selected = true;
+                    }
+                    modelSelect.appendChild(option);
+                });
+            }
+        }
+
+        function initializeWebSocket() {
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${wsProtocol}//${window.location.host}/ws`;
+            
+            websocket = new WebSocket(wsUrl);
+            
+            websocket.onopen = (event) => {
+                console.log('WebSocket connected');
+                updateServiceStatus('ws-status', 'healthy');
+                updateStatus('WebSocket conectado');
+            };
+            
+            websocket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(data);
+            };
+            
+            websocket.onclose = (event) => {
+                console.log('WebSocket disconnected');
+                updateServiceStatus('ws-status', 'error');
+                updateStatus('WebSocket desconectado');
+                
+                // Attempt to reconnect
+                setTimeout(() => {
+                    updateStatus('Tentando reconectar...');
+                    initializeWebSocket();
+                }, 3000);
+            };
+            
+            websocket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateServiceStatus('ws-status', 'error');
+            };
+        }
+
+        function handleWebSocketMessage(data) {
+            if (data.type === 'connection') {
+                sessionId = data.session_id;
+                document.getElementById('session-id').textContent = sessionId.substring(0, 8);
+                addMessage('assistant', data.message, 'WebSocket');
+            } else if (data.type === 'response') {
+                addMessage('assistant', data.message, data.provider);
+                document.getElementById('last-provider').textContent = data.provider;
+                messageCount++;
+                document.getElementById('message-count').textContent = messageCount;
+            }
+        }
+
+        function setupEventListeners() {
+            const messageInput = document.getElementById('message-input');
+            
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            messageInput.addEventListener('input', () => {
+                messageInput.style.height = 'auto';
+                messageInput.style.height = Math.min(messageInput.scrollHeight, 100) + 'px';
+            });
+        }
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessage('user', message);
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            
+            // Send via WebSocket
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                const data = {
+                    type: 'chat',
+                    message: message,
+                    provider: document.getElementById('llm-provider').value,
+                    model: document.getElementById('llm-model').value,
+                    system_prompt: document.getElementById('system-prompt').value
+                };
+                
+                websocket.send(JSON.stringify(data));
+            } else {
+                // Fallback to HTTP API
+                await sendMessageHTTP(message);
+            }
+        }
+
+        async function sendMessageHTTP(message) {
+            try {
+                const startTime = Date.now();
+                updateStatus('Processando mensagem...');
+                
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId,
+                        llm_provider: document.getElementById('llm-provider').value,
+                        llm_model: document.getElementById('llm-model').value,
+                        use_tts: document.getElementById('tts-enabled').checked
+                    })
+                });
+                
+                const result = await response.json();
+                const responseTime = Date.now() - startTime;
+                
+                if (result.success) {
+                    addMessage('assistant', result.bot_response, result.llm_provider || 'API');
+                    document.getElementById('response-time').textContent = `${responseTime}ms`;
+                    document.getElementById('last-provider').textContent = result.llm_provider || 'API';
+                    messageCount++;
+                    document.getElementById('message-count').textContent = messageCount;
+                    
+                    if (result.has_audio && result.tts_info) {
+                        // Handle TTS audio if available
+                        console.log('TTS audio available:', result.tts_info);
+                    }
+                } else {
+                    addMessage('assistant', 'Erro ao processar mensagem.', 'Error');
+                }
+                
+                updateStatus('Sistema pronto!');
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                addMessage('assistant', 'Erro de conexão. Tente novamente.', 'Error');
+                updateStatus('Erro de conexão');
+            }
+        }
+
+        async function toggleRecording() {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                await startRecording();
+            }
+        }
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+                
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    await sendAudioToSTT(audioBlob);
+                };
+                
+                mediaRecorder.start();
+                isRecording = true;
+                
+                const recordBtn = document.getElementById('record-btn');
+                recordBtn.classList.add('recording');
+                recordBtn.innerHTML = '⏹️';
+                
+                updateStatus('Gravando áudio...');
+                
+            } catch (error) {
+                console.error('Error starting recording:', error);
+                updateStatus('Erro ao acessar microfone');
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                isRecording = false;
+                
+                const recordBtn = document.getElementById('record-btn');
+                recordBtn.classList.remove('recording');
+                recordBtn.innerHTML = '🎤';
+                
+                updateStatus('Processando áudio...');
+            }
+        }
+
+        async function sendAudioToSTT(audioBlob) {
+            try {
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'audio.webm');
+                
+                const response = await fetch('/api/stt', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.text) {
+                    const messageInput = document.getElementById('message-input');
+                    messageInput.value = result.text;
+                    updateStatus('Áudio transcrito com sucesso!');
+                    
+                    // Auto-send the transcribed message
+                    setTimeout(() => {
+                        sendMessage();
+                    }, 500);
+                } else {
+                    updateStatus('Erro na transcrição do áudio');
+                }
+                
+            } catch (error) {
+                console.error('Error sending audio to STT:', error);
+                updateStatus('Erro ao enviar áudio para transcrição');
+            }
+        }
+
+        function addMessage(type, content, provider = '') {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const meta = provider ? `${provider} • ${timestamp}` : timestamp;
+            
+            messageDiv.innerHTML = `
+                <div>${content}</div>
+                <div class="message-meta">${meta}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function testServices() {
+            updateStatus('Testando serviços...');
+            
+            try {
+                // Test health endpoint
+                const healthResponse = await fetch('/health');
+                const health = await healthResponse.json();
+                
+                // Test LLM
+                const llmResponse = await fetch('/api/llm', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: 'Hello test',
+                        provider: 'local'
+                    })
+                });
+                const llmResult = await llmResponse.json();
+                
+                addMessage('assistant', `✅ Teste de serviços concluído:
+• STT: ${health.services.whisper_stt.status}
+• LLM: ${llmResult.success ? 'OK' : 'Error'}
+• TTS: ${health.services.tts_service.status}
+• Database: ${health.services.database.status}`, 'Test');
+                
+                updateStatus('Testes concluídos!');
+                
+            } catch (error) {
+                console.error('Service test failed:', error);
+                addMessage('assistant', '❌ Erro nos testes de serviços.', 'Test');
+                updateStatus('Erro nos testes');
+            }
+        }
+
+        function clearChat() {
+            const messagesContainer = document.getElementById('chat-messages');
+            messagesContainer.innerHTML = '';
+            messageCount = 0;
+            document.getElementById('message-count').textContent = '0';
+            updateStatus('Chat limpo');
+        }
+
+        function updateStatus(message) {
+            document.getElementById('status-text').textContent = message;
+        }
+    </script>
+</body>
+</html>

@@ -90,8 +90,12 @@ cleanup_ports()
 log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
 os.makedirs(log_dir, exist_ok=True)
 
+# Determine log level based on environment
+production_mode = os.getenv("PRODUCTION_MODE", "true").lower() == "true"
+log_level = logging.ERROR if production_mode else logging.INFO
+
 logging.basicConfig(
-    level=logging.INFO,
+    level=log_level,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),
@@ -136,6 +140,10 @@ class Config:
         self.MAX_AUDIO_SIZE_MB = int(os.getenv("MAX_AUDIO_SIZE_MB", "25"))
         self.MAX_AUDIO_DURATION = int(os.getenv("MAX_AUDIO_DURATION", "300"))
         self.RATE_LIMIT_PER_MINUTE = int(os.getenv("RATE_LIMIT_PER_MINUTE", "100"))
+        
+        # Performance Configuration
+        self.PRODUCTION_MODE = os.getenv("PRODUCTION_MODE", "true").lower() == "true"
+        self.ENABLE_FILE_MONITORING = os.getenv("ENABLE_FILE_MONITORING", "false").lower() == "true"
 
 # Global configuration
 config = Config()
@@ -152,6 +160,7 @@ class ChatMessage(BaseModel):
     message: str
     session_id: Optional[str] = None
     use_tts: Optional[bool] = True
+    tts_engine: Optional[str] = "gtts"  # Default to Google TTS
     llm_provider: Optional[str] = None
     llm_model: Optional[str] = None
 
@@ -292,6 +301,7 @@ class TTSService:
         self.enabled = config.TTS_ENABLED
         self.coqui_tts = None
         self.current_model = None  # Track which model is loaded
+        self.cloned_voice_simulation = False  # Enable simulation when Coqui fails
         self.load_coqui_models()
         
     def load_coqui_models(self):
@@ -369,9 +379,28 @@ class TTSService:
             if "MeCab" in error_msg:
                 logger.warning(f"⚠️ Coqui TTS failed due to MeCab issues on Windows - using fallback TTS")
                 logger.info("💡 Tip: This is a known Windows issue with Coqui TTS. The system will use pyttsx3/gTTS instead.")
+                logger.info("🎭 Note: Cloned voices will be simulated using gTTS with voice identification.")
             else:
                 logger.warning(f"⚠️ Failed to load Coqui TTS: {error_msg[:200]}... - using fallback TTS")
             self.coqui_tts = None
+            self.current_model = None
+            self.cloned_voice_simulation = True  # Enable simulation mode
+        
+    def _get_cloned_voice_info(self, voice_name: str) -> dict:
+        """Get information about a cloned voice for simulation"""
+        try:
+            config_path = os.path.join(os.getcwd(), "cloned_voices", f"{voice_name}_config.json")
+            if os.path.exists(config_path):
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except Exception as e:
+            logger.debug(f"Could not load cloned voice info for {voice_name}: {e}")
+        
+        return {
+            "name": voice_name,
+            "description": f"voz clonada {voice_name}",
+            "language": "pt-BR"
+        }
         
     async def synthesize_speech(self, text: str, voice: str = None, 
                                speed: float = 1.0, language: str = None, engine: str = None):
@@ -516,7 +545,7 @@ class TTSService:
             
             # Try gTTS as final fallback or if specifically requested
             if engine in ["gtts", "coqui", "pyttsx3"]:
-                # Method 3: gTTS (online)
+                # Method 3: gTTS (online) - Enhanced with cloned voice simulation
                 try:
                     from gtts import gTTS
                     import tempfile
@@ -524,8 +553,14 @@ class TTSService:
                     
                     lang_code = 'pt' if language.startswith('pt') else 'en'
                     
-                    # For cloned voices, modify the text to indicate it's a simulation
-                    if is_cloned_voice:
+                    # Enhanced cloned voice simulation
+                    if is_cloned_voice and hasattr(self, 'cloned_voice_simulation') and self.cloned_voice_simulation:
+                        # Get cloned voice info for better simulation
+                        cloned_voice_info = self._get_cloned_voice_info(cloned_voice_name)
+                        voice_description = cloned_voice_info.get('description', f'voz clonada {cloned_voice_name}')
+                        synthesis_text = f"Usando {voice_description}. {text}"
+                        logger.info(f"🎭 Simulating cloned voice '{cloned_voice_name}' with gTTS")
+                    elif is_cloned_voice:
                         synthesis_text = f"Simulando voz clonada {cloned_voice_name}. {text}"
                     else:
                         synthesis_text = text
@@ -699,12 +734,25 @@ class TTSService:
 
 # Database Service Integration
 class DatabaseService:
-    def __init__(self):
+    def __init__(self, lazy_load=True):
         self.db_path = "agent_database.db"
-        self.init_database()
+        self.initialized = False
+        self.lazy_load = lazy_load
+        
+        # Only initialize immediately if not using lazy loading
+        if not lazy_load:
+            self.init_database()
+    
+    def ensure_initialized(self):
+        """Ensure database is initialized before use (lazy loading)"""
+        if not self.initialized:
+            self.init_database()
     
     def init_database(self):
         """Initialize SQLite database with required tables"""
+        if self.initialized:
+            return  # Already initialized
+            
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
@@ -750,6 +798,7 @@ class DatabaseService:
             conn.commit()
             conn.close()
             
+            self.initialized = True
             logger.info("✅ Database initialized successfully")
             
         except Exception as e:
@@ -759,6 +808,7 @@ class DatabaseService:
                          assistant_response: str, llm_provider: str = None, 
                          llm_model: str = None, processing_time: float = None):
         """Save conversation to database"""
+        self.ensure_initialized()  # Lazy initialization
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
@@ -778,6 +828,7 @@ class DatabaseService:
     def save_whatsapp_message(self, from_number: str, message_text: str, 
                              response_text: str = None, message_type: str = "text"):
         """Save WhatsApp message to database"""
+        self.ensure_initialized()  # Lazy initialization
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
@@ -795,6 +846,7 @@ class DatabaseService:
     
     def get_conversation_history(self, session_id: str, limit: int = 10):
         """Get conversation history for a session"""
+        self.ensure_initialized()  # Lazy initialization
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
@@ -818,6 +870,7 @@ class DatabaseService:
     
     def get_stats(self):
         """Get database statistics"""
+        self.ensure_initialized()  # Lazy initialization
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
@@ -858,7 +911,7 @@ class DatabaseService:
 # Initialize services
 llm_service = LLMService()
 tts_service = TTSService()
-db_service = DatabaseService()
+db_service = DatabaseService(lazy_load=True)  # Enable lazy loading to reduce startup overhead
 
 # Create FastAPI app
 app = FastAPI(
@@ -876,20 +929,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.middleware("http")
-async def log_requests(request, call_next):
-    start_time = time.time()
-    logger.info(f"🔍 {request.method} {request.url}")
-    
-    try:
-        response = await call_next(request)
-        process_time = time.time() - start_time
-        logger.info(f"✅ {response.status_code} in {process_time:.2f}s")
-        return response
-    except Exception as e:
-        process_time = time.time() - start_time
-        logger.error(f"💥 Request failed after {process_time:.2f}s: {str(e)}")
-        raise
+# Removed excessive request logging middleware to reduce system overhead
+# Only log important events, not every request
 
 @app.on_event("startup")
 async def startup_event():
@@ -1316,6 +1357,53 @@ async def get_tts_models():
         logger.error(f"Error getting TTS models: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# TTS Engine Status endpoint
+@app.get("/api/tts/engine-status")
+async def get_tts_engine_status():
+    """Get current TTS engine status and capabilities"""
+    try:
+        return {
+            "success": True,
+            "engines": {
+                "gtts": {
+                    "available": True,
+                    "status": "ready",
+                    "description": "Google Text-to-Speech (online)",
+                    "supports_cloned_voices": True,  # Via simulation
+                    "quality": "medium",
+                    "latency": "low"
+                },
+                "coqui": {
+                    "available": tts_service.coqui_tts is not None,
+                    "status": "ready" if tts_service.coqui_tts else "failed",
+                    "description": "Coqui TTS (offline neural)",
+                    "supports_cloned_voices": tts_service.coqui_tts is not None,
+                    "quality": "high",
+                    "latency": "medium",
+                    "error_reason": "MeCab issues on Windows" if not tts_service.coqui_tts else None
+                },
+                "pyttsx3": {
+                    "available": True,
+                    "status": "ready",
+                    "description": "pyttsx3 (offline system)",
+                    "supports_cloned_voices": False,
+                    "quality": "low",
+                    "latency": "medium"
+                }
+            },
+            "current_default": "gtts",
+            "cloned_voice_simulation": getattr(tts_service, 'cloned_voice_simulation', False),
+            "total_cloned_voices": len([f for f in os.listdir(os.path.join(os.getcwd(), "cloned_voices")) if f.endswith('_config.json')]) if os.path.exists(os.path.join(os.getcwd(), "cloned_voices")) else 0
+        }
+    except Exception as e:
+        logger.error(f"Error getting TTS engine status: {e}")
+        return {
+            "success": False,
+            "error": str(e),
+            "engines": {},
+            "current_default": "gtts"
+        }
+
 # Database Stats endpoint
 @app.get("/api/database/stats")
 async def get_database_stats():
@@ -1590,11 +1678,20 @@ async def chat(request: ChatMessage):
         
         # Add TTS if requested
         if request.use_tts:
-            tts_result = await tts_service.synthesize_speech(response_text)
+            # Use the selected TTS engine from frontend
+            selected_engine = request.tts_engine or "gtts"
+            tts_result = await tts_service.synthesize_speech(
+                text=response_text,
+                engine=selected_engine,  # Use user-selected engine
+                language="pt-BR"
+            )
             if tts_result["success"]:
                 result["has_audio"] = True
                 result["audio_size"] = tts_result.get("audio_size", 0)
                 result["tts_info"] = tts_result
+                result["audio_data"] = tts_result.get("audio_data")
+            else:
+                logger.warning(f"TTS failed: {tts_result.get('error', 'Unknown error')}")
         
         logger.info(f"💬 Chat completed for session {session_id}")
         return result
@@ -1674,16 +1771,41 @@ async def get_all_conversations():
         # Get basic stats
         stats = db_service.get_stats()
         
-        # Get recent conversations (mock data for now)
-        conversations = [
-            {
-                "id": "conv_1",
-                "title": "Conversa de Teste",
-                "created_at": datetime.now().isoformat(),
+        # Get real conversations from database
+        conn = sqlite3.connect(db_service.db_path)
+        cursor = conn.cursor()
+        
+        # Get unique sessions with conversation info
+        cursor.execute("""
+            SELECT 
+                session_id,
+                MIN(user_message) as first_message,
+                COUNT(*) as message_count,
+                MIN(created_at) as created_at,
+                MAX(created_at) as last_activity
+            FROM conversation_logs 
+            GROUP BY session_id 
+            ORDER BY last_activity DESC
+            LIMIT 50
+        """)
+        
+        rows = cursor.fetchall()
+        conn.close()
+        
+        conversations = []
+        for row in rows:
+            session_id, first_message, msg_count, created_at, last_activity = row
+            # Create a meaningful title from the first message
+            title = (first_message[:30] + "...") if len(first_message) > 30 else first_message
+            
+            conversations.append({
+                "id": session_id,
+                "title": title or "Conversa sem título",
+                "created_at": created_at,
+                "last_activity": last_activity,
                 "source": "web",
-                "message_count": 5
-            }
-        ]
+                "message_count": msg_count
+            })
         
         return {
             "success": True,
@@ -1708,24 +1830,57 @@ async def get_all_conversations():
 async def get_conversation_detail(conversation_id: str):
     """Get detailed conversation data"""
     try:
-        # Mock conversation detail
+        # Get real conversation from database
+        conn = sqlite3.connect(db_service.db_path)
+        cursor = conn.cursor()
+        
+        # Get conversation messages
+        cursor.execute("""
+            SELECT user_message, assistant_response, created_at, llm_provider, llm_model
+            FROM conversation_logs 
+            WHERE session_id = ?
+            ORDER BY created_at ASC
+        """, (conversation_id,))
+        
+        rows = cursor.fetchall()
+        conn.close()
+        
+        if not rows:
+            raise HTTPException(status_code=404, detail="Conversation not found")
+        
+        # Build conversation messages
+        messages = []
+        title = "Conversa"
+        
+        for i, (user_msg, assistant_msg, created_at, provider, model) in enumerate(rows):
+            if i == 0 and user_msg:
+                # Use first user message as title
+                title = (user_msg[:30] + "...") if len(user_msg) > 30 else user_msg
+            
+            # Add user message
+            if user_msg:
+                messages.append({
+                    "role": "user",
+                    "content": user_msg,
+                    "timestamp": created_at
+                })
+            
+            # Add assistant response
+            if assistant_msg:
+                messages.append({
+                    "role": "assistant",
+                    "content": assistant_msg,
+                    "timestamp": created_at,
+                    "provider": provider,
+                    "model": model
+                })
+        
         conversation = {
             "id": conversation_id,
-            "title": "Conversa Detalhada",
-            "created_at": datetime.now().isoformat(),
+            "title": title,
+            "created_at": rows[0][2] if rows else datetime.now().isoformat(),
             "source": "web",
-            "messages": [
-                {
-                    "role": "assistant",
-                    "content": "Olá! Como posso ajudá-lo?",
-                    "timestamp": datetime.now().isoformat()
-                },
-                {
-                    "role": "user",
-                    "content": "Preciso de ajuda com o sistema",
-                    "timestamp": datetime.now().isoformat()
-                }
-            ]
+            "messages": messages
         }
         
         return {
@@ -1794,6 +1949,8 @@ async def websocket_endpoint(websocket: WebSocket):
             if message_data["type"] == "chat":
                 user_message = message_data["message"]
                 provider = message_data.get("provider", config.DEFAULT_LLM_PROVIDER)
+                use_tts = message_data.get("use_tts", False)
+                tts_engine = message_data.get("tts_engine", "gtts")
                 
                 response = await llm_service.generate_response(
                     message=user_message,
@@ -1808,12 +1965,30 @@ async def websocket_endpoint(websocket: WebSocket):
                     llm_provider=provider
                 )
                 
-                await websocket.send_text(json.dumps({
+                # Prepare response data
+                response_data = {
                     "type": "response",
                     "message": response,
                     "provider": provider,
                     "timestamp": datetime.now().isoformat()
-                }))
+                }
+                
+                # Add TTS if requested
+                if use_tts:
+                    tts_result = await tts_service.synthesize_speech(
+                        text=response,
+                        engine=tts_engine,
+                        language="pt-BR"
+                    )
+                    if tts_result["success"]:
+                        response_data["has_audio"] = True
+                        response_data["audio_size"] = tts_result.get("audio_size", 0)
+                        response_data["tts_info"] = tts_result
+                        response_data["audio_data"] = tts_result.get("audio_data")
+                    else:
+                        logger.warning(f"TTS failed: {tts_result.get('error', 'Unknown error')}")
+                
+                await websocket.send_text(json.dumps(response_data))
                 
                 logger.info(f"🔌 WebSocket chat processed: {user_message[:30]}...")
                 
@@ -1889,10 +2064,18 @@ if __name__ == "__main__":
     print("📊 Status: http://localhost:8001/api/status")
     print("🔌 WebSocket: ws://localhost:8001/ws")
     
+    # Use production settings to reduce file monitoring overhead
+    reload_enabled = config.ENABLE_FILE_MONITORING and not config.PRODUCTION_MODE
+    log_level = "error" if config.PRODUCTION_MODE else "info"
+    
+    print(f"⚙️ Production Mode: {config.PRODUCTION_MODE}")
+    print(f"📊 File Monitoring: {reload_enabled}")
+    print(f"📝 Log Level: {log_level}")
+    
     uvicorn.run(
         "main_enhanced:app",
         host="0.0.0.0",
         port=8001,
-        reload=True,
-        log_level="info"
+        reload=reload_enabled,  # Disable in production
+        log_level=log_level     # Reduce logging in production
     )

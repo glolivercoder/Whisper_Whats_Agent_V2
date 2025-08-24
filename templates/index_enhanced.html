@@ -1415,7 +1415,9 @@
                     message: message,
                     provider: document.getElementById('llm-provider').value,
                     model: document.getElementById('llm-model').value,
-                    system_prompt: document.getElementById('system-prompt').value
+                    system_prompt: document.getElementById('system-prompt').value,
+                    use_tts: document.getElementById('tts-enabled').checked,
+                    tts_engine: document.getElementById('default-tts-engine').value
                 };
                 
                 websocket.send(JSON.stringify(data));
@@ -1440,7 +1442,8 @@
                         session_id: sessionId,
                         llm_provider: document.getElementById('llm-provider').value,
                         llm_model: document.getElementById('llm-model').value,
-                        use_tts: document.getElementById('tts-enabled').checked
+                        use_tts: document.getElementById('tts-enabled').checked,
+                        tts_engine: document.getElementById('default-tts-engine').value
                     })
                 });
                 

@@ -36,46 +36,18 @@ echo.
 echo 🛑 Checking and stopping any existing servers...
 echo.
 
-:: Check port 8001
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8001" 2^>nul') do (
-    echo ⚠️  Found process using port 8001 (PID: %%a) - Terminating...
-    taskkill /f /pid %%a >nul 2>&1
-    if not errorlevel 1 echo ✅ Process %%a terminated successfully
-)
+:: Simple port cleanup using taskkill
+echo 🧹 Cleaning up ports 8001 and 8002...
+taskkill /f /im python.exe >nul 2>&1
+taskkill /f /im uvicorn.exe >nul 2>&1
 
-:: Check port 8002
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8002" 2^>nul') do (
-    echo ⚠️  Found process using port 8002 (PID: %%a) - Terminating...
-    taskkill /f /pid %%a >nul 2>&1
-    if not errorlevel 1 echo ✅ Process %%a terminated successfully
-)
-
-:: Additional cleanup - Kill any Python processes that might be running servers
-echo 🧹 Cleaning up any remaining Python server processes...
-for /f "tokens=2" %%a in ('tasklist /fi "imagename eq python.exe" /fo csv 2^>nul ^| find "python.exe"') do (
-    for /f "tokens=1" %%b in ('netstat -ano ^| findstr ":800" ^| findstr %%a 2^>nul') do (
-        echo ⚠️  Terminating Python process %%a using port 800x...
-        taskkill /f /pid %%a >nul 2>&1
-    )
-)
+:: Kill processes by port (Windows 10/11 method)
+for /f "tokens=5" %%i in ('netstat -ano ^| findstr ":8001 "') do taskkill /f /pid %%i >nul 2>&1
+for /f "tokens=5" %%i in ('netstat -ano ^| findstr ":8002 "') do taskkill /f /pid %%i >nul 2>&1
 
 :: Wait a moment for processes to fully terminate
 echo ⏳ Waiting for processes to terminate...
-timeout /t 2 /nobreak >nul
-
-:: Verify ports are free
-echo 🔍 Verifying ports are free...
-netstat -ano | findstr ":8001" >nul 2>&1
-if not errorlevel 1 (
-    echo ❌ Port 8001 still in use! Forcing cleanup...
-    for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8001"') do taskkill /f /pid %%a >nul 2>&1
-)
-
-netstat -ano | findstr ":8002" >nul 2>&1
-if not errorlevel 1 (
-    echo ❌ Port 8002 still in use! Forcing cleanup...
-    for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8002"') do taskkill /f /pid %%a >nul 2>&1
-)
+timeout /t 3 /nobreak >nul
 
 echo ✅ Port cleanup completed
 

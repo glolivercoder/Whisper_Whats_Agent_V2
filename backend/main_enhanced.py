@@ -80,6 +80,7 @@ class TTSRequest(BaseModel):
     voice: Optional[str] = None
     speed: Optional[float] = 1.0
     language: Optional[str] = "pt-BR"
+    engine: Optional[str] = "coqui"  # coqui, gtts, pyttsx3
 
 class ChatMessage(BaseModel):
     message: str
@@ -244,7 +245,7 @@ class TTSService:
             self.coqui_tts = None
         
     async def synthesize_speech(self, text: str, voice: str = None, 
-                               speed: float = 1.0, language: str = None):
+                               speed: float = 1.0, language: str = None, engine: str = None):
         """Synthesize speech from text with Coqui TTS support"""
         try:
             if not self.enabled:
@@ -252,6 +253,7 @@ class TTSService:
             
             voice = voice or config.TTS_VOICE
             language = language or config.TTS_LANGUAGE
+            engine = engine or "coqui"  # Default to Coqui TTS
             
             # Check if this is a cloned voice request
             is_cloned_voice = voice and voice.startswith('cloned_')
@@ -259,10 +261,11 @@ class TTSService:
                 cloned_voice_name = voice.replace('cloned_', '')
                 logger.info(f"🎭 TTS: Using cloned voice '{cloned_voice_name}' for '{text[:50]}...'")
             else:
-                logger.info(f"🔊 TTS: Synthesizing '{text[:50]}...' with voice {voice}")
+                logger.info(f"🔊 TTS: Synthesizing '{text[:50]}...' with {engine} engine and voice {voice}")
             
-            # Method 1: Try Coqui TTS (highest quality)
-            if self.coqui_tts:
+            # Engine selection logic - Force specific engine based on user choice
+            if engine == "coqui" and self.coqui_tts:
+                # Method 1: Coqui TTS (highest quality)
                 try:
                     import tempfile
                     import base64
@@ -299,6 +302,7 @@ class TTSService:
                         "text": text,
                         "voice": voice,
                         "language": language,
+                        "engine": engine,
                         "audio_size": len(audio_data),
                         "duration": len(text) / 10,
                         "audio_data": audio_base64,
@@ -307,6 +311,120 @@ class TTSService:
                     
                 except Exception as coqui_error:
                     logger.warning(f"Coqui TTS failed: {coqui_error}")
+                    # If Coqui fails, fall back to next method
+            
+            elif engine == "pyttsx3":
+                # Method 2: pyttsx3 (offline)
+                try:
+                    import pyttsx3
+                    import base64
+                    import tempfile
+                    
+                    engine_obj = pyttsx3.init()
+                    
+                    # Configure for Portuguese if available
+                    voices = engine_obj.getProperty('voices')
+                    if voices:
+                        for v in voices:
+                            if 'pt' in v.id.lower() or 'portuguese' in v.name.lower():
+                                engine_obj.setProperty('voice', v.id)
+                                break
+                    
+                    engine_obj.setProperty('rate', int(150 * speed))
+                    engine_obj.setProperty('volume', 0.9)
+                    
+                    # For cloned voices, modify the text to indicate it's a simulation
+                    if is_cloned_voice:
+                        synthesis_text = f"Simulando voz clonada {cloned_voice_name}. {text}"
+                    else:
+                        synthesis_text = text
+                    
+                    # Generate speech to temp file
+                    temp_file = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+                    temp_path = temp_file.name
+                    temp_file.close()
+                    
+                    engine_obj.save_to_file(synthesis_text, temp_path)
+                    engine_obj.runAndWait()
+                    
+                    # Read audio data
+                    with open(temp_path, 'rb') as f:
+                        audio_data = f.read()
+                    
+                    os.unlink(temp_path)  # Cleanup
+                    
+                    # Encode to base64
+                    audio_base64 = base64.b64encode(audio_data).decode('utf-8')
+                    
+                    method_name = f"pyttsx3_cloned_{cloned_voice_name}" if is_cloned_voice else "pyttsx3"
+                    
+                    return {
+                        "success": True,
+                        "message": f"TTS generated with {'cloned voice simulation' if is_cloned_voice else 'pyttsx3'}",
+                        "text": text,
+                        "voice": voice,
+                        "language": language,
+                        "engine": engine,
+                        "audio_size": len(audio_data),
+                        "duration": len(text) / 10,
+                        "audio_data": audio_base64,
+                        "method": method_name
+                    }
+                    
+                except Exception as pyttsx3_error:
+                    logger.warning(f"pyttsx3 failed: {pyttsx3_error}")
+            
+            elif engine == "gtts":
+                # Method 3: gTTS (online)
+                try:
+                    from gtts import gTTS
+                    import tempfile
+                    import base64
+                    
+                    lang_code = 'pt' if language.startswith('pt') else 'en'
+                    
+                    # For cloned voices, modify the text to indicate it's a simulation
+                    if is_cloned_voice:
+                        synthesis_text = f"Simulando voz clonada {cloned_voice_name}. {text}"
+                    else:
+                        synthesis_text = text
+                        
+                    tts = gTTS(text=synthesis_text, lang=lang_code, slow=(speed < 1.0))
+                    
+                    temp_file = tempfile.NamedTemporaryFile(suffix=".mp3", delete=False)
+                    temp_path = temp_file.name
+                    temp_file.close()
+                    
+                    tts.save(temp_path)
+                    
+                    with open(temp_path, 'rb') as f:
+                        audio_data = f.read()
+                    
+                    os.unlink(temp_path)  # Cleanup
+                    
+                    # Encode to base64
+                    audio_base64 = base64.b64encode(audio_data).decode('utf-8')
+                    
+                    method_name = f"gTTS_cloned_{cloned_voice_name}" if is_cloned_voice else "gTTS"
+                    
+                    return {
+                        "success": True,
+                        "message": f"TTS generated with {'cloned voice simulation' if is_cloned_voice else 'Google TTS'}",
+                        "text": text,
+                        "voice": voice,
+                        "language": language,
+                        "engine": engine,
+                        "audio_size": len(audio_data),
+                        "duration": len(text) / 10,
+                        "audio_data": audio_base64,
+                        "method": method_name
+                    }
+                    
+                except Exception as gtts_error:
+                    logger.warning(f"gTTS failed: {gtts_error}")
+            
+            # If specified engine fails or is not available, try fallbacks
+            logger.warning(f"Specified engine '{engine}' not available or failed, trying fallbacks...")
             
             # Method 2: Try pyttsx3 (offline) or gTTS (online) for fallback TTS
             try:
@@ -889,7 +1007,8 @@ async def text_to_speech(request: TTSRequest):
             text=request.text,
             voice=request.voice,
             speed=request.speed,
-            language=request.language
+            language=request.language,
+            engine=request.engine
         )
         
         logger.info(f"🔊 TTS processed: '{request.text[:30]}...'")

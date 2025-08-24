@@ -1,0 +1,6 @@
+{
+  "name": "ggg",
+  "created_at": "2025-08-24T04:32:24.661061",
+  "status": "trained",
+  "model_path": "models/cloned_voices/ggg.pth"
+}

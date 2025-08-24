@@ -1649,7 +1649,9 @@
                     body: JSON.stringify({
                         text: text,
                         language: document.getElementById('tts-language').value,
-                        voice: document.getElementById('coqui-model').value
+                        voice: document.getElementById('coqui-model').value,
+                        engine: document.getElementById('tts-engine').value,
+                        speed: parseFloat(document.getElementById('voice-speed').value)
                     })
                 });
                 
@@ -1694,7 +1696,9 @@
                     body: JSON.stringify({
                         text: text,
                         language: document.getElementById('tts-language').value,
-                        voice: document.getElementById('coqui-model').value
+                        voice: document.getElementById('coqui-model').value,
+                        engine: document.getElementById('tts-engine').value,
+                        speed: parseFloat(document.getElementById('voice-speed').value)
                     })
                 });
                 

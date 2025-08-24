@@ -11,9 +11,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
         }
 
@@ -21,29 +18,73 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 30px;
-            max-width: 900px;
+            padding: 0;
+            max-width: 1200px;
             width: 100%;
-            min-height: 600px;
-            display: grid;
-            grid-template-areas: 
-                "header header header"
-                "controls chat status"
-                "footer footer footer";
-            grid-template-columns: 250px 1fr 250px;
-            grid-template-rows: auto 1fr auto;
-            gap: 20px;
+            min-height: 700px;
+            margin: 0 auto;
+            overflow: hidden;
         }
 
+        /* Tab Navigation */
+        .tab-navigation {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            display: flex;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #25D366;
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #25D366;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 30px;
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Header and Status */
         .header {
-            grid-area: header;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .header h1 {
             color: #25D366;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-size: 24px;
         }
 
@@ -52,7 +93,6 @@
             align-items: center;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 15px;
             padding: 10px;
             background: #f8f9fa;
             border-radius: 10px;
@@ -77,6 +117,144 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
+        }
+
+        /* Configuration Grids */
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .config-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #25D366;
+        }
+
+        .config-section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 8px;
+        }
+
+        /* Monitoring Styles */
+        .monitoring-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .monitor-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .service-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .service-details {
+            margin-left: auto;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .link-btn {
+            padding: 10px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .link-btn:hover {
+            background: #128C7E;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #25D366;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        /* Voice Cloning Styles */
+        .status-message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f0f8f0;
+            border-left: 3px solid #25D366;
+            font-size: 12px;
+        }
+
+        .query-result {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Quick Status Panel */
+        .quick-status {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #25D366;
+        }
+
+        .quick-status h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 14px;
         }
 
         .controls-panel {
@@ -277,6 +455,81 @@
             border-top: 1px solid #dee2e6;
         }
 
+        /* CSS for new interface elements */
+        .response-mode-switch {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .response-mode-switch label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .stop-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stop-button:hover {
+            transform: scale(1.05);
+        }
+
+        .audio-test-area {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            margin-top: 15px;
+        }
+
+        .qr-code-container {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border: 2px dashed #25D366;
+            margin-top: 15px;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-small:hover {
+            background: #128C7E;
+            transform: translateY(-1px);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
         @media (max-width: 768px) {
             .container {
                 grid-template-areas: 
@@ -293,135 +546,379 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🤖 WhatsApp Voice Agent V2 Enhanced</h1>
-            <div class="status-bar">
-                <div class="service-status">
-                    <div class="status-dot" id="stt-status"></div>
-                    <span>STT</span>
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button active" onclick="switchTab('chat')">💬 Chat</button>
+            <button class="tab-button" onclick="switchTab('llm')">🧠 LLM Config</button>
+            <button class="tab-button" onclick="switchTab('tts')">🔊 TTS & Voice</button>
+            <button class="tab-button" onclick="switchTab('database')">💾 Database</button>
+            <button class="tab-button" onclick="switchTab('whatsapp')">📱 WhatsApp</button>
+            <button class="tab-button" onclick="switchTab('monitoring')">📊 Monitoring</button>
+        </div>
+
+        <!-- Chat Tab -->
+        <div id="chat-tab" class="tab-content active">
+            <div class="header">
+                <h1>🤖 WhatsApp Voice Agent V2 Enhanced</h1>
+                <div class="status-bar">
+                    <div class="service-status">
+                        <div class="status-dot" id="stt-status"></div>
+                        <span>STT</span>
+                    </div>
+                    <div class="service-status">
+                        <div class="status-dot" id="llm-status"></div>
+                        <span>LLM</span>
+                    </div>
+                    <div class="service-status">
+                        <div class="status-dot" id="tts-status"></div>
+                        <span>TTS</span>
+                    </div>
+                    <div class="service-status">
+                        <div class="status-dot" id="db-status"></div>
+                        <span>DB</span>
+                    </div>
+                    <div class="service-status">
+                        <div class="status-dot" id="ws-status"></div>
+                        <span>WebSocket</span>
+                    </div>
                 </div>
-                <div class="service-status">
-                    <div class="status-dot" id="llm-status"></div>
-                    <span>LLM</span>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 280px; gap: 20px; height: 500px;">
+
+                <!-- Chat Area -->
+                <div class="chat-area">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message assistant">
+                            <div>🤖 Olá! Sou o assistente de voz enhanced com:</div>
+                            <div>• 🎤 STT avançado (Whisper)</div>
+                            <div>• 🧠 Multi-LLM (OpenRouter, Gemini)</div>
+                            <div>• 🔊 Síntese de voz com Coqui TTS</div>
+                            <div>• 💾 Banco de dados integrado</div>
+                            <div>• 📱 API WhatsApp completa</div>
+                            <div class="message-meta">Sistema inicializado</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-area">
+                        <div class="response-mode-switch">
+                            <label>
+                                <input type="radio" name="response-mode" value="tts" checked> 🔊 TTS Response
+                            </label>
+                            <label>
+                                <input type="radio" name="response-mode" value="text"> 💬 Text Only
+                            </label>
+                        </div>
+                        <div class="input-controls">
+                            <button class="record-button" id="record-btn" onclick="toggleRecording()">🎤</button>
+                            <button class="stop-button" id="stop-btn" onclick="stopRecording()" style="display:none;">⏹️</button>
+                            <textarea id="message-input" class="message-input" placeholder="Digite sua mensagem ou use o microfone..." rows="1"></textarea>
+                            <button class="send-button" onclick="sendMessage()">Enviar</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="service-status">
-                    <div class="status-dot" id="tts-status"></div>
-                    <span>TTS</span>
-                </div>
-                <div class="service-status">
-                    <div class="status-dot" id="db-status"></div>
-                    <span>DB</span>
-                </div>
-                <div class="service-status">
-                    <div class="status-dot" id="ws-status"></div>
-                    <span>WebSocket</span>
+
+                <!-- Quick Status Panel -->
+                <div class="quick-status">
+                    <h3>📊 Status Rápido</h3>
+                    <div class="info-item">
+                        <div class="info-label">Sessão:</div>
+                        <div class="info-value" id="session-id">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Mensagens:</div>
+                        <div class="info-value" id="message-count">0</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Último LLM:</div>
+                        <div class="info-value" id="last-provider">-</div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-small" onclick="testServices()">Testar</button>
+                        <button class="btn-small" onclick="clearChat()">Limpar</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="controls-panel">
-            <h3>⚙️ Configurações</h3>
-            
-            <div class="control-group">
-                <label for="llm-provider">Provedor LLM:</label>
-                <select id="llm-provider">
-                    <option value="openrouter">OpenRouter</option>
-                    <option value="gemini">Google Gemini</option>
-                    <option value="local">Local (Fallback)</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <label for="llm-model">Modelo:</label>
-                <select id="llm-model">
-                    <option value="">Carregando...</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <label for="system-prompt">Prompt do Sistema:</label>
-                <textarea id="system-prompt" rows="3" placeholder="Você é um assistente útil...">Você é um assistente útil que responde em português brasileiro. Seja conciso e amigável.</textarea>
-            </div>
-
-            <div class="control-group">
-                <label>
-                    <input type="checkbox" id="tts-enabled" checked> Ativar TTS
-                </label>
-            </div>
-
-            <div class="control-group">
-                <label for="tts-language">Idioma TTS:</label>
-                <select id="tts-language">
-                    <option value="pt-BR">🇧🇷 Português (BR)</option>
-                    <option value="en-US">🇺🇸 English (US)</option>
-                    <option value="es-ES">🇪🇸 Español (ES)</option>
-                </select>
-            </div>
-
-            <div class="btn-group">
-                <button class="btn-small" onclick="testServices()">Testar Serviços</button>
-                <button class="btn-small" onclick="clearChat()">Limpar Chat</button>
-            </div>
-        </div>
-
-        <div class="chat-area">
-            <div class="chat-messages" id="chat-messages">
-                <div class="message assistant">
-                    <div>🤖 Olá! Sou o assistente de voz enhanced com:</div>
-                    <div>• 🎤 STT avançado (Whisper)</div>
-                    <div>• 🧠 Multi-LLM (OpenRouter, Gemini)</div>
-                    <div>• 🔊 Síntese de voz (TTS)</div>
-                    <div>• 💾 Banco de dados integrado</div>
-                    <div>• 📱 API WhatsApp completa</div>
-                    <div class="message-meta">Sistema inicializado</div>
+        <!-- LLM Configuration Tab -->
+        <div id="llm-tab" class="tab-content">
+            <h2>🧠 Configuração LLM</h2>
+            <div class="config-grid">
+                <div class="config-section">
+                    <h3>Provedor e Modelo</h3>
+                    <div class="control-group">
+                        <label for="llm-provider">Provedor LLM:</label>
+                        <select id="llm-provider">
+                            <option value="openrouter">OpenRouter</option>
+                            <option value="gemini">Google Gemini</option>
+                            <option value="local">Local (Fallback)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="llm-model">Modelo:</label>
+                        <select id="llm-model">
+                            <option value="">Carregando...</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="max-tokens">Máximo de Tokens:</label>
+                        <input type="number" id="max-tokens" value="500" min="50" max="2000">
+                    </div>
                 </div>
-            </div>
-            
-            <div class="chat-input-area">
-                <div class="input-controls">
-                    <button class="record-button" id="record-btn" onclick="toggleRecording()">🎤</button>
-                    <textarea id="message-input" class="message-input" placeholder="Digite sua mensagem ou use o microfone..." rows="1"></textarea>
-                    <button class="send-button" onclick="sendMessage()">Enviar</button>
+                
+                <div class="config-section">
+                    <h3>Sistema de Prompt</h3>
+                    <div class="control-group">
+                        <label for="system-prompt">Prompt do Sistema:</label>
+                        <textarea id="system-prompt" rows="5" placeholder="Você é um assistente útil...">Você é um assistente útil que responde em português brasileiro. Seja conciso e amigável.</textarea>
+                    </div>
+                    <div class="control-group">
+                        <label for="temperature">Criatividade (Temperature):</label>
+                        <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7">
+                        <span id="temperature-value">0.7</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="status-panel">
-            <h3>📊 Status do Sistema</h3>
-            
-            <div class="info-item">
-                <div class="info-label">Sessão Ativa:</div>
-                <div class="info-value" id="session-id">-</div>
+        <!-- TTS & Voice Configuration Tab -->
+        <div id="tts-tab" class="tab-content">
+            <h2>🔊 TTS & Configuração de Voz</h2>
+            <div class="config-grid">
+                <div class="config-section">
+                    <h3>Configurações Básicas</h3>
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="tts-enabled" checked> Ativar TTS
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label for="tts-language">Idioma:</label>
+                        <select id="tts-language">
+                            <option value="pt-BR">🇧🇷 Português (BR)</option>
+                            <option value="en-US">🇺🇸 English (US)</option>
+                            <option value="es-ES">🇪🇸 Español (ES)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="tts-engine">Engine TTS:</label>
+                        <select id="tts-engine">
+                            <option value="coqui">Coqui TTS (Recomendado)</option>
+                            <option value="gtts">Google TTS</option>
+                            <option value="pyttsx3">pyttsx3 (Offline)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h3>Coqui TTS - Modelos Portugueses</h3>
+                    <div class="control-group">
+                        <label for="coqui-model">Modelo Português BR:</label>
+                        <select id="coqui-model">
+                            <option value="tts_models/pt/cv/vits">VITS - Portuguese (CV)</option>
+                            <option value="tts_models/multilingual/multi-dataset/your_tts">YourTTS - Multilingual</option>
+                            <option value="tts_models/pt/custom/female">Modelo Feminino BR</option>
+                            <option value="tts_models/pt/custom/male">Modelo Masculino BR</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="voice-speed">Velocidade da Voz:</label>
+                        <input type="range" id="voice-speed" min="0.5" max="2" step="0.1" value="1">
+                        <span id="speed-value">1.0x</span>
+                    </div>
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="voice-cloning-enabled"> 🎭 Ativar Clonagem de Voz
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h3>🎭 Clonagem de Voz</h3>
+                    <div class="control-group">
+                        <label for="reference-audio">Áudio de Referência (.wav):</label>
+                        <input type="file" id="reference-audio" accept=".wav,.mp3" onchange="uploadReferenceAudio(this)">
+                    </div>
+                    <div class="control-group">
+                        <label for="cloned-voice-name">Nome da Voz Clonada:</label>
+                        <input type="text" id="cloned-voice-name" placeholder="Ex: Minha Voz">
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-small" onclick="trainVoiceClone()">🎯 Treinar Modelo</button>
+                        <button class="btn-small" onclick="testClonedVoice()">🔊 Testar Voz</button>
+                    </div>
+                    <div id="cloning-status" class="status-message"></div>
+                </div>
+                
+                <!-- Add voice testing section to TTS tab -->
+                <div class="config-section">
+                    <h3>🎧 Teste de Voz</h3>
+                    <div class="control-group">
+                        <label for="test-text">Texto para Teste:</label>
+                        <textarea id="test-text" rows="3" placeholder="Digite o texto para testar a síntese de voz...">Olá, este é um teste da síntese de voz em português brasileiro.</textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-small" onclick="playTestVoice()">🔊 Reproduzir Voz</button>
+                        <button class="btn-small" onclick="downloadTestAudio()">💾 Baixar Áudio</button>
+                    </div>
+                    <div id="audio-player" style="margin-top: 10px;"></div>
+                    <div id="test-status" class="status-message" style="display: none;"></div>
+                </div>
             </div>
+        </div>
 
-            <div class="info-item">
-                <div class="info-label">Conexões WebSocket:</div>
-                <div class="info-value" id="ws-connections">0</div>
+        <!-- Database Configuration Tab -->
+        <div id="database-tab" class="tab-content">
+            <h2>💾 Configuração do Banco de Dados</h2>
+            <div class="config-grid">
+                <div class="config-section">
+                    <h3>Conexão do Banco</h3>
+                    <div class="control-group">
+                        <label for="db-type">Tipo de Banco:</label>
+                        <select id="db-type" onchange="updateDbConfig()">
+                            <option value="sqlite">SQLite (Local)</option>
+                            <option value="postgresql">PostgreSQL</option>
+                            <option value="mysql">MySQL</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="db-url">URL de Conexão:</label>
+                        <input type="text" id="db-url" value="sqlite:///./agent_database.db" placeholder="URL do banco de dados">
+                    </div>
+                    <div class="control-group" id="db-credentials" style="display: none;">
+                        <label for="db-host">Host:</label>
+                        <input type="text" id="db-host" placeholder="localhost">
+                        <label for="db-port">Porta:</label>
+                        <input type="number" id="db-port" placeholder="5432">
+                        <label for="db-name">Nome do Banco:</label>
+                        <input type="text" id="db-name" placeholder="whatsapp_agent">
+                        <label for="db-user">Usuário:</label>
+                        <input type="text" id="db-user" placeholder="username">
+                        <label for="db-password">Senha:</label>
+                        <input type="password" id="db-password" placeholder="password">
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-small" onclick="testDbConnection()">🔍 Testar Conexão</button>
+                        <button class="btn-small" onclick="saveDbConfig()">💾 Salvar Config</button>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h3>🤖 IA para Banco de Dados</h3>
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="ai-queries-enabled" checked> Ativar Consultas com IA
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label for="ai-query-prompt">Prompt para Consultas IA:</label>
+                        <textarea id="ai-query-prompt" rows="3">Você é um assistente SQL. Converta perguntas em português para consultas SQL seguras.</textarea>
+                    </div>
+                    <div class="control-group">
+                        <label for="natural-query">Consulta em Linguagem Natural:</label>
+                        <input type="text" id="natural-query" placeholder="Ex: Quantas mensagens foram enviadas hoje?">
+                        <button class="btn-small" onclick="executeNaturalQuery()">🚀 Executar</button>
+                    </div>
+                    <div id="query-result" class="query-result"></div>
+                </div>
+                
+                <div class="config-section">
+                    <h3>📊 Estatísticas do Banco</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="total-conversations">0</div>
+                            <div class="stat-label">Conversas</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="total-messages">0</div>
+                            <div class="stat-label">Mensagens</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="total-whatsapp">0</div>
+                            <div class="stat-label">WhatsApp</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="db-size">0 MB</div>
+                            <div class="stat-label">Tamanho DB</div>
+                        </div>
+                    </div>
+                    <button class="btn-small" onclick="refreshStats()">🔄 Atualizar</button>
+                </div>
             </div>
+        </div>
 
-            <div class="info-item">
-                <div class="info-label">Mensagens Processadas:</div>
-                <div class="info-value" id="message-count">0</div>
+        <!-- WhatsApp Configuration Tab -->
+        <div id="whatsapp-tab" class="tab-content">
+            <h2>📱 Configuração WhatsApp Business</h2>
+            <div class="config-grid">
+                <div class="config-section">
+                    <h3>📱 WhatsApp Business API</h3>
+                    <div class="control-group">
+                        <label for="whatsapp-token">Business Token:</label>
+                        <input type="password" id="whatsapp-token" placeholder="Seu WhatsApp Business Token">
+                    </div>
+                    <div class="control-group">
+                        <label for="phone-number-id">Phone Number ID:</label>
+                        <input type="text" id="phone-number-id" placeholder="ID do número de telefone">
+                        <small>Obtido através do QR Code de configuração do WhatsApp Business</small>
+                    </div>
+                    <div class="control-group">
+                        <label for="verify-token">Verify Token:</label>
+                        <input type="text" id="verify-token" value="whatsapp_agent_v2">
+                    </div>
+                    <div class="control-group">
+                        <label for="webhook-url">Webhook URL:</label>
+                        <input type="text" id="webhook-url" value="http://localhost:8001/api/whatsapp/webhook" readonly>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-small" onclick="generateQRCode()">📱 Gerar QR Code</button>
+                        <button class="btn-small" onclick="testWhatsAppConnection()">🔍 Testar Conexão</button>
+                    </div>
+                    <div id="qr-code-area" style="margin-top: 15px; text-align: center;"></div>
+                </div>
             </div>
+        </div>
 
-            <div class="info-item">
-                <div class="info-label">Último Provedor LLM:</div>
-                <div class="info-value" id="last-provider">-</div>
-            </div>
-
-            <div class="info-item">
-                <div class="info-label">Tempo de Resposta:</div>
-                <div class="info-value" id="response-time">-</div>
-            </div>
-
-            <h3 style="margin-top: 15px;">🔗 Links Úteis</h3>
-            <div class="btn-group">
-                <button class="btn-small" onclick="window.open('/health', '_blank')">Health</button>
-                <button class="btn-small" onclick="window.open('/docs', '_blank')">API Docs</button>
-            </div>
-            <div class="btn-group">
-                <button class="btn-small" onclick="window.open('/api/status', '_blank')">Status</button>
-                <button class="btn-small" onclick="window.open('/api/models', '_blank')">Modelos</button>
+        <!-- Monitoring Tab -->
+        <div id="monitoring-tab" class="tab-content">
+            <h2>📊 Monitoramento do Sistema</h2>
+            <div class="monitoring-grid">
+                <div class="monitor-section">
+                    <h3>Status dos Serviços</h3>
+                    <div class="service-list">
+                        <div class="service-item">
+                            <div class="status-dot" id="monitor-stt"></div>
+                            <span>Speech-to-Text (Whisper)</span>
+                            <div class="service-details" id="stt-details">-</div>
+                        </div>
+                        <div class="service-item">
+                            <div class="status-dot" id="monitor-llm"></div>
+                            <span>LLM Service</span>
+                            <div class="service-details" id="llm-details">-</div>
+                        </div>
+                        <div class="service-item">
+                            <div class="status-dot" id="monitor-tts"></div>
+                            <span>Text-to-Speech</span>
+                            <div class="service-details" id="tts-details">-</div>
+                        </div>
+                        <div class="service-item">
+                            <div class="status-dot" id="monitor-db"></div>
+                            <span>Database</span>
+                            <div class="service-details" id="db-details">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="monitor-section">
+                    <h3>Links Úteis</h3>
+                    <div class="links-grid">
+                        <button class="link-btn" onclick="window.open('/health', '_blank')">🏥 Health Check</button>
+                        <button class="link-btn" onclick="window.open('/docs', '_blank')">📖 API Docs</button>
+                        <button class="link-btn" onclick="window.open('/api/status', '_blank')">📊 Status API</button>
+                        <button class="link-btn" onclick="window.open('/api/models', '_blank')">🧠 Modelos</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -442,7 +939,74 @@
         // Initialize the application
         document.addEventListener('DOMContentLoaded', async () => {
             await initializeApp();
+            setupTabEventListeners();
         });
+
+        // Tab Management
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab content
+            const selectedTab = document.getElementById(tabName + '-tab');
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            
+            // Add active class to clicked button
+            const activeButton = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+            
+            // Load tab-specific data
+            loadTabData(tabName);
+        }
+
+        function loadTabData(tabName) {
+            switch(tabName) {
+                case 'database':
+                    refreshStats();
+                    break;
+                case 'monitoring':
+                    updateMonitoringStatus();
+                    break;
+                case 'tts':
+                    checkCoquiModels();
+                    break;
+            }
+        }
+
+        function setupTabEventListeners() {
+            // Temperature slider
+            const tempSlider = document.getElementById('temperature');
+            const tempValue = document.getElementById('temperature-value');
+            if (tempSlider && tempValue) {
+                tempSlider.addEventListener('input', (e) => {
+                    tempValue.textContent = e.target.value;
+                });
+            }
+
+            // Voice speed slider
+            const speedSlider = document.getElementById('voice-speed');
+            const speedValue = document.getElementById('speed-value');
+            if (speedSlider && speedValue) {
+                speedSlider.addEventListener('input', (e) => {
+                    speedValue.textContent = e.target.value + 'x';
+                });
+            }
+
+            // Database type change
+            const dbType = document.getElementById('db-type');
+            if (dbType) {
+                dbType.addEventListener('change', updateDbConfig);
+            }
+        }
 
         async function initializeApp() {
             updateStatus('Conectando aos serviços...');
@@ -811,7 +1375,403 @@
         }
 
         function updateStatus(message) {
-            document.getElementById('status-text').textContent = message;
+            const statusText = document.getElementById('status-text');
+            if (statusText) {
+                statusText.textContent = message;
+            }
+        }
+
+        // TTS and Voice Cloning Functions
+        async function uploadReferenceAudio(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const statusDiv = document.getElementById('cloning-status');
+            statusDiv.innerHTML = '📤 Uploading reference audio...';
+            
+            const formData = new FormData();
+            formData.append('audio', file);
+            
+            try {
+                const response = await fetch('/api/tts/upload-reference', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    statusDiv.innerHTML = '✅ Audio uploaded successfully!';
+                } else {
+                    statusDiv.innerHTML = '❌ Upload failed: ' + result.error;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Upload error: ' + error.message;
+            }
+        }
+
+        async function trainVoiceClone() {
+            const voiceName = document.getElementById('cloned-voice-name').value;
+            const statusDiv = document.getElementById('cloning-status');
+            
+            if (!voiceName) {
+                statusDiv.innerHTML = '⚠️ Please enter a voice name';
+                return;
+            }
+            
+            statusDiv.innerHTML = '🎯 Training voice model...';
+            
+            try {
+                const response = await fetch('/api/tts/train-clone', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ voice_name: voiceName })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    statusDiv.innerHTML = '✅ Voice model trained successfully!';
+                } else {
+                    statusDiv.innerHTML = '❌ Training failed: ' + result.error;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Training error: ' + error.message;
+            }
+        }
+
+        async function testClonedVoice() {
+            const voiceName = document.getElementById('cloned-voice-name').value;
+            const statusDiv = document.getElementById('cloning-status');
+            
+            if (!voiceName) {
+                statusDiv.innerHTML = '⚠️ Please enter a voice name';
+                return;
+            }
+            
+            statusDiv.innerHTML = '🔊 Testing cloned voice...';
+            
+            try {
+                const response = await fetch('/api/tts/test-clone', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        voice_name: voiceName,
+                        text: 'Olá, esta é a sua voz clonada falando em português brasileiro.'
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success && result.audio_data) {
+                    // Play the generated audio
+                    const audio = new Audio('data:audio/wav;base64,' + result.audio_data);
+                    audio.play();
+                    statusDiv.innerHTML = '✅ Voice test completed!';
+                } else {
+                    statusDiv.innerHTML = '❌ Test failed: ' + (result.error || 'No audio generated');
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Test error: ' + error.message;
+            }
+        }
+
+        async function checkCoquiModels() {
+            try {
+                const response = await fetch('/api/tts/models');
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('Available Coqui models:', result.models);
+                    // Update model selector with available models
+                    const modelSelect = document.getElementById('coqui-model');
+                    if (modelSelect && result.models) {
+                        modelSelect.innerHTML = '';
+                        result.models.forEach(model => {
+                            const option = document.createElement('option');
+                            option.value = model.name;
+                            option.textContent = model.display_name || model.name;
+                            modelSelect.appendChild(option);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking Coqui models:', error);
+            }
+        }
+
+        // Database Functions
+        function updateDbConfig() {
+            const dbType = document.getElementById('db-type').value;
+            const credentialsDiv = document.getElementById('db-credentials');
+            const dbUrl = document.getElementById('db-url');
+            
+            if (dbType === 'sqlite') {
+                credentialsDiv.style.display = 'none';
+                dbUrl.value = 'sqlite:///./agent_database.db';
+            } else {
+                credentialsDiv.style.display = 'block';
+                if (dbType === 'postgresql') {
+                    dbUrl.value = 'postgresql://user:password@localhost:5432/whatsapp_agent';
+                } else if (dbType === 'mysql') {
+                    dbUrl.value = 'mysql://user:password@localhost:3306/whatsapp_agent';
+                }
+            }
+        }
+
+        async function testDbConnection() {
+            const dbUrl = document.getElementById('db-url').value;
+            
+            try {
+                const response = await fetch('/api/database/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ database_url: dbUrl })
+                });
+                
+                const result = await response.json();
+                alert(result.success ? '✅ Connection successful!' : '❌ Connection failed: ' + result.error);
+            } catch (error) {
+                alert('❌ Connection error: ' + error.message);
+            }
+        }
+
+        async function saveDbConfig() {
+            const config = {
+                db_type: document.getElementById('db-type').value,
+                db_url: document.getElementById('db-url').value,
+                ai_queries_enabled: document.getElementById('ai-queries-enabled').checked
+            };
+            
+            try {
+                const response = await fetch('/api/database/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+                
+                const result = await response.json();
+                alert(result.success ? '✅ Configuration saved!' : '❌ Save failed: ' + result.error);
+            } catch (error) {
+                alert('❌ Save error: ' + error.message);
+            }
+        }
+
+        async function executeNaturalQuery() {
+            const query = document.getElementById('natural-query').value;
+            const resultDiv = document.getElementById('query-result');
+            
+            if (!query.trim()) {
+                resultDiv.innerHTML = '⚠️ Please enter a query';
+                return;
+            }
+            
+            resultDiv.innerHTML = '🔍 Processing query...';
+            
+            try {
+                const response = await fetch('/api/database/natural-query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        query: query,
+                        ai_prompt: document.getElementById('ai-query-prompt').value
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <strong>SQL Generated:</strong><br>
+                        <code>${result.sql}</code><br><br>
+                        <strong>Results:</strong><br>
+                        <pre>${JSON.stringify(result.data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '❌ Query failed: ' + result.error;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Query error: ' + error.message;
+            }
+        }
+
+        async function refreshStats() {
+            try {
+                const response = await fetch('/api/database/stats');
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('total-conversations').textContent = result.stats.conversations || 0;
+                    document.getElementById('total-messages').textContent = result.stats.messages || 0;
+                    document.getElementById('total-whatsapp').textContent = result.stats.whatsapp || 0;
+                    document.getElementById('db-size').textContent = (result.stats.db_size || 0) + ' MB';
+                }
+            } catch (error) {
+                console.error('Error refreshing stats:', error);
+            }
+        }
+
+        async function updateMonitoringStatus() {
+            try {
+                const response = await fetch('/health');
+                const health = await response.json();
+                
+                // Update monitoring status dots and details
+                updateServiceStatus('monitor-stt', health.services?.whisper_stt?.status || 'unknown');
+                updateServiceStatus('monitor-llm', health.services?.llm_service?.status || 'unknown');
+                updateServiceStatus('monitor-tts', health.services?.tts_service?.status || 'unknown');
+                updateServiceStatus('monitor-db', health.services?.database?.status || 'unknown');
+                
+                document.getElementById('stt-details').textContent = health.services?.whisper_stt?.details || '-';
+                document.getElementById('llm-details').textContent = health.services?.llm_service?.details || '-';
+                document.getElementById('tts-details').textContent = health.services?.tts_service?.details || '-';
+                document.getElementById('db-details').textContent = health.services?.database?.details || '-';
+                
+            } catch (error) {
+                console.error('Error updating monitoring status:', error);
+            }
+        }
+
+        // Add JavaScript functions for new features
+        async function playTestVoice() {
+            const text = document.getElementById('test-text').value;
+            const statusDiv = document.getElementById('test-status');
+            
+            if (!text.trim()) {
+                statusDiv.innerHTML = '⚠️ Digite um texto para testar';
+                statusDiv.style.display = 'block';
+                return;
+            }
+            
+            statusDiv.innerHTML = '🔄 Gerando áudio...';
+            statusDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/tts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: text,
+                        language: document.getElementById('tts-language').value,
+                        voice: document.getElementById('coqui-model').value
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success && result.audio_data) {
+                    const audio = new Audio('data:audio/wav;base64,' + result.audio_data);
+                    audio.play();
+                    
+                    // Add audio player to page
+                    document.getElementById('audio-player').innerHTML = `
+                        <audio controls style="width: 100%;">
+                            <source src="data:audio/wav;base64,${result.audio_data}" type="audio/wav">
+                        </audio>
+                    `;
+                    
+                    statusDiv.innerHTML = '✅ Áudio reproduzido com sucesso!';
+                } else {
+                    statusDiv.innerHTML = '❌ Erro ao gerar áudio: ' + (result.error || 'Falha desconhecida');
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Erro de conexão: ' + error.message;
+            }
+        }
+
+        async function downloadTestAudio() {
+            const text = document.getElementById('test-text').value;
+            const statusDiv = document.getElementById('test-status');
+            
+            if (!text.trim()) {
+                statusDiv.innerHTML = '⚠️ Digite um texto para gerar áudio';
+                statusDiv.style.display = 'block';
+                return;
+            }
+            
+            statusDiv.innerHTML = '💾 Preparando download...';
+            statusDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/tts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: text,
+                        language: document.getElementById('tts-language').value,
+                        voice: document.getElementById('coqui-model').value
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success && result.audio_data) {
+                    // Create download link
+                    const blob = new Blob([Uint8Array.from(atob(result.audio_data), c => c.charCodeAt(0))], {type: 'audio/wav'});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'coqui_tts_test.wav';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    
+                    statusDiv.innerHTML = '✅ Download iniciado!';
+                } else {
+                    statusDiv.innerHTML = '❌ Erro ao gerar áudio para download';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Erro no download: ' + error.message;
+            }
+        }
+
+        function stopRecording() {
+            if (isRecording && mediaRecorder) {
+                mediaRecorder.stop();
+                document.getElementById('record-btn').style.display = 'inline-block';
+                document.getElementById('stop-btn').style.display = 'none';
+                updateStatus('Processando áudio...');
+            }
+        }
+
+        function generateQRCode() {
+            const phoneId = document.getElementById('phone-number-id').value;
+            const qrArea = document.getElementById('qr-code-area');
+            
+            if (!phoneId) {
+                qrArea.innerHTML = '⚠️ Configure o Phone Number ID primeiro';
+                return;
+            }
+            
+            // Generate QR code for WhatsApp Business setup
+            qrArea.innerHTML = `
+                <div style="border: 2px solid #25D366; padding: 20px; border-radius: 10px; background: white;">
+                    <h4>📱 QR Code para WhatsApp Business</h4>
+                    <div style="margin: 15px 0;">
+                        [QR CODE PLACEHOLDER - Phone ID: ${phoneId}]
+                    </div>
+                    <p style="font-size: 12px;">Escaneie com WhatsApp Business para configurar webhook</p>
+                </div>
+            `;
+        }
+
+        async function testWhatsAppConnection() {
+            const token = document.getElementById('whatsapp-token').value;
+            const phoneId = document.getElementById('phone-number-id').value;
+            
+            if (!token || !phoneId) {
+                alert('⚠️ Configure o Business Token e Phone ID primeiro');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/whatsapp/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token: token,
+                        phone_id: phoneId
+                    })
+                });
+                
+                const result = await response.json();
+                alert(result.success ? '✅ Conexão WhatsApp OK!' : '❌ Falha na conexão: ' + result.error);
+            } catch (error) {
+                alert('❌ Erro de teste: ' + error.message);
+            }
         }
     </script>
 </body>

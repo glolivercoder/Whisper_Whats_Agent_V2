@@ -20,6 +20,12 @@ httpx>=0.24.0
 # TTS (Text-to-Speech) - Python 3.11 Compatible  
 pyttsx3>=2.90
 gTTS>=2.3.0
+TTS>=0.13.0  # Coqui TTS for Portuguese
+torch>=1.11.0  # Required for Coqui TTS
+torchaudio>=0.11.0
+inflect>=5.6.0
+numba>=0.56.0
+mecab-python3>=1.0.4  # For multilingual support
 
 # Database - Simple SQLite support
 sqlalchemy>=1.4.0

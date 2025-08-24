@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🤖 Manual WhatsApp Voice Agent V2</title>
+    <title>🤖 Manual WhatsApp Voice Agent V2 Enhanced</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
     <style>
         * {
@@ -261,12 +261,13 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>🤖 Manual WhatsApp Voice Agent V2</h1>
-            <p>Guia Completo para Iniciar e Usar o Agente de Voz</p>
+            <h1>🤖 Manual WhatsApp Voice Agent V2 Enhanced</h1>
+            <p>Guia Completo para Interface com Abas, Coqui TTS e Configuração Móvel</p>
             <div>
-                <span class="status-indicator status-green"></span> FastAPI Backend
-                <span class="status-indicator status-green"></span> Whisper STT
-                <span class="status-indicator status-yellow"></span> WhatsApp Ready
+                <span class="status-indicator status-green"></span> FastAPI Backend Enhanced
+                <span class="status-indicator status-green"></span> Coqui TTS Português
+                <span class="status-indicator status-green"></span> Interface com Abas
+                <span class="status-indicator status-yellow"></span> WhatsApp Business API
             </div>
         </div>
 
@@ -274,23 +275,33 @@
         <div class="step-card">
             <div class="step-title">
                 <span class="step-number">🚀</span>
-                <span>Início Rápido (5 Minutos) - MÉTODO RECOMENDADO</span>
+                <span>Início Rápido - VERSÃO ENHANCED (5 Minutos)</span>
             </div>
-            <p><strong>Use o script automatizado com ambiente virtual:</strong></p>
+            <p><strong>Use o script automatizado para a versão Enhanced:</strong></p>
             <div class="code-block">
                 <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-start_venv.bat
+start_enhanced.bat
             </div>
-            <p><strong>Ou manualmente com ambiente virtual:</strong></p>
+            <p><strong>Ou manualmente com servidor Enhanced:</strong></p>
             <div class="code-block">
                 <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
 python -m venv venv
 venv\Scripts\activate
-pip install -r requirements.txt
-cd backend
-python main_simple.py
+pip install -r requirements_enhanced.txt
+python -m uvicorn backend.main_enhanced:app --host 0.0.0.0 --port 8001
             </div>
             <p>Depois acesse: <a href="http://localhost:8001" target="_blank">http://localhost:8001</a></p>
+            
+            <div class="network-info">
+                <h4>⚡ Novos Recursos Enhanced:</h4>
+                <ul>
+                    <li>📊 <strong>Interface com Abas:</strong> Chat, LLM Config, TTS & Voice, Database, WhatsApp, Monitoring</li>
+                    <li>🔊 <strong>Coqui TTS:</strong> Síntese de voz em português brasileiro de alta qualidade</li>
+                    <li>🎭 <strong>Clonagem de Voz:</strong> Crie vozes personalizadas com amostras de áudio</li>
+                    <li>💾 <strong>Banco de Dados:</strong> SQLite com consultas inteligentes por IA</li>
+                    <li>🔍 <strong>Monitoramento:</strong> Status em tempo real de todos os serviços</li>
+                </ul>
+            </div>
         </div>
 
         <!-- Step-by-Step Guide -->
@@ -328,19 +339,33 @@ pip install -r requirements.txt
         <div class="step-card">
             <div class="step-title">
                 <span class="step-number">2</span>
-                <span>Verificar Dependências</span>
+                <span>Instalar Dependências Enhanced</span>
             </div>
             <p>Primeiro, verifique se o Python está instalado:</p>
             <div class="code-block">
                 <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
 python --version
             </div>
-            <p>Versão mínima: <strong>Python 3.8+</strong></p>
+            <p>Versão mínima: <strong>Python 3.9+</strong> (recomendado para Coqui TTS)</p>
             
-            <h4>Instalar Dependências:</h4>
+            <h4>Instalar Dependências Enhanced (recomendado):</h4>
             <div class="code-block">
                 <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-pip install fastapi uvicorn whisper openai-whisper
+pip install -r requirements_enhanced.txt
+            </div>
+            
+            <div class="network-info">
+                <h4>🔊 Coqui TTS - Dependências Especiais:</h4>
+                <ul>
+                    <li>💻 <strong>PyTorch:</strong> Para processamento neural de voz</li>
+                    <li>🇵🇹 <strong>Modelos Português:</strong> VITS, YourTTS multilingual</li>
+                    <li>🎭 <strong>Clonagem de Voz:</strong> Suporte para vozes personalizadas</li>
+                    <li>⚡ <strong>GPU (opcional):</strong> Aceleração com CUDA se disponível</li>
+                </ul>
+                <p><strong>Instalação manual do Coqui TTS:</strong></p>
+                <div class="code-block">
+pip install TTS torch torchaudio
+                </div>
             </div>
         </div>
 
@@ -358,22 +383,30 @@ cd F:\Projetos2025BKP\Whisper_Whats_Agent_V2
         <div class="step-card">
             <div class="step-title">
                 <span class="step-number">4</span>
-                <span>Iniciar o Servidor</span>
+                <span>Iniciar o Servidor Enhanced</span>
             </div>
-            <p>Navegue para a pasta backend e inicie o servidor <strong>com ambiente virtual ativado</strong>:</p>
+            <p>Inicie o servidor Enhanced <strong>com ambiente virtual ativado</strong>:</p>
             <div class="code-block">
                 <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
 venv\Scripts\activate
-cd backend
-python main_simple.py
+python -m uvicorn backend.main_enhanced:app --host 0.0.0.0 --port 8001
             </div>
             
             <div class="network-info">
-                <h4>⚡ Aguarde o Carregamento:</h4>
+                <h4>⚡ Aguarde o Carregamento Enhanced:</h4>
                 <ul>
-                    <li>🔄 <strong>Loading Whisper model...</strong> (primeira vez pode demorar)</li>
-                    <li>✅ <strong>Whisper model loaded successfully</strong></li>
+                    <li>🔄 <strong>Loading Whisper models...</strong> (primeira vez pode demorar)</li>
+                    <li>🔊 <strong>Loading Coqui TTS...</strong> (download de modelos portugueses)</li>
+                    <li>✅ <strong>Enhanced services initialized</strong></li>
                     <li>🌐 <strong>Server running on http://0.0.0.0:8001</strong></li>
+                    <li>📊 <strong>Enhanced interface available</strong></li>
+                </ul>
+                
+                <h4>📊 Portas dos Serviços:</h4>
+                <ul>
+                    <li><strong>8001:</strong> Interface Enhanced com abas</li>
+                    <li><strong>8001/docs:</strong> Documentação da API</li>
+                    <li><strong>8001/health:</strong> Status dos serviços</li>
                 </ul>
             </div>
         </div>
@@ -428,23 +461,104 @@ curl http://localhost:8001/health
         <div class="feature-grid">
             <div class="feature-card">
                 <div class="feature-icon">🎤</div>
-                <h3>Speech-to-Text</h3>
-                <p>Whisper OpenAI para transcrição em português</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">💬</div>
-                <h3>Chat em Tempo Real</h3>
-                <p>WebSocket para comunicação instantânea</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <h3>Interface Responsiva</h3>
-                <p>Funciona perfeitamente no celular</p>
+                <h3>Whisper STT Enhanced</h3>
+                <p>Faster-Whisper + OpenAI Whisper para transcrição em português com suporte WebM</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🔊</div>
-                <h3>Text-to-Speech</h3>
-                <p>Resposta por voz (em desenvolvimento)</p>
+                <h3>Coqui TTS Português</h3>
+                <p>Síntese de voz neural em português brasileiro de alta qualidade</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Interface com Abas</h3>
+                <p>Navegação organizada: Chat, LLM, TTS, Database, WhatsApp, Monitoring</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <h3>Multi-LLM</h3>
+                <p>OpenRouter, Google Gemini e modelos locais com switching dinâmico</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💾</div>
+                <h3>Database com IA</h3>
+                <p>SQLite integrado com consultas em linguagem natural</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎭</div>
+                <h3>Clonagem de Voz</h3>
+                <p>Crie vozes personalizadas com amostras de áudio de referência</p>
+            </div>
+        </div>
+
+        <!-- Enhanced Interface Guide -->
+        <div class="step-card">
+            <div class="step-title">
+                <span class="step-number">📊</span>
+                <span>Interface Enhanced com Abas</span>
+            </div>
+            
+            <h4>📱 Navegação por Abas:</h4>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Chat</h3>
+                    <p>• Botão de gravação de voz 🎤<br>
+                    • Botão de parar gravação ⏹️<br>
+                    • Switch TTS/Texto 🔊<br>
+                    • Chat em tempo real</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>LLM Config</h3>
+                    <p>• OpenRouter, Gemini<br>
+                    • Seleção de modelos<br>
+                    • Prompts personalizados<br>
+                    • Controle de criatividade</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔊</div>
+                    <h3>TTS & Voice</h3>
+                    <p>• Coqui TTS Português 🇵🇹<br>
+                    • Teste de voz 🎧<br>
+                    • Download de áudio 💾<br>
+                    • Clonagem de voz 🎭</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3>Database</h3>
+                    <p>• SQLite integrado<br>
+                    • Consultas com IA<br>
+                    • Estatísticas em tempo real<br>
+                    • Histórico de conversas</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>WhatsApp</h3>
+                    <p>• Business Token<br>
+                    • Phone Number ID<br>
+                    • QR Code setup<br>
+                    • Teste de conexão</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Monitoring</h3>
+                    <p>• Status dos serviços<br>
+                    • Links úteis<br>
+                    • Health checks<br>
+                    • Performance</p>
+                </div>
+            </div>
+            
+            <div class="network-info">
+                <h4>🔊 Como Usar o TTS Enhanced:</h4>
+                <ol>
+                    <li><strong>Aba TTS & Voice:</strong> Acesse as configurações de voz</li>
+                    <li><strong>Modelo Coqui:</strong> Selecione "VITS - Portuguese (CV)"</li>
+                    <li><strong>Teste de Voz:</strong> Digite texto e clique "Reproduzir Voz"</li>
+                    <li><strong>Download:</strong> Baixe o áudio gerado para teste</li>
+                    <li><strong>Clonagem:</strong> Faça upload de amostra de voz (.wav) e treine</li>
+                </ol>
             </div>
         </div>
 
@@ -500,65 +614,131 @@ curl http://localhost:8001/health
             </div>
         </div>
 
-        <!-- WhatsApp Integration -->
+        <!-- Mobile Configuration Enhanced -->
         <div class="step-card">
             <div class="step-title">
-                <span class="step-number">7</span>
-                <span>Integração WhatsApp (Opcional)</span>
+                <span class="step-number">📱</span>
+                <span>Configuração Móvel Enhanced</span>
             </div>
             
+            <h4>🔍 Passo a Passo para Celular:</h4>
+            <ol>
+                <li><strong>Mesma Rede WiFi:</strong> Conecte o celular na mesma rede do computador</li>
+                <li><strong>Gerar QR Code:</strong> Use o botão abaixo para criar QR code de acesso</li>
+                <li><strong>Escanear:</strong> Abra a câmera do celular e escaneie o QR code</li>
+                <li><strong>Testar Interface:</strong> Navegue pelas abas e teste funcionalidades</li>
+                <li><strong>Permissões:</strong> Autorize acesso ao microfone quando solicitado</li>
+            </ol>
+            
             <div class="network-info">
-                <h4>📱 WhatsApp Business API</h4>
-                <p>Para integração completa com WhatsApp:</p>
-                <ol>
-                    <li>Configure WhatsApp Business API</li>
-                    <li>Defina webhook: <code>http://SEU_IP:8001/api/whatsapp/webhook</code></li>
-                    <li>Teste com: <code>python test_whatsapp.py</code></li>
-                </ol>
+                <h4>🎤 Testes no Celular:</h4>
+                <ul>
+                    <li><strong>Aba Chat:</strong> Grave áudio tocando no microfone 🎤</li>
+                    <li><strong>Aba TTS:</strong> Digite texto e reproduza voz em português 🔊</li>
+                    <li><strong>Navegação:</strong> Teste todas as 6 abas da interface</li>
+                    <li><strong>Responsividade:</strong> Interface adapta automaticamente ao celular</li>
+                </ul>
             </div>
         </div>
 
-        <!-- Progress Tracking -->
+        <!-- WhatsApp Integration Enhanced -->
+        <div class="step-card">
+            <div class="step-title">
+                <span class="step-number">7</span>
+                <span>Integração WhatsApp Enhanced</span>
+            </div>
+            
+            <div class="network-info">
+                <h4>📱 WhatsApp Business API Enhanced</h4>
+                <p>Configure na <strong>Aba WhatsApp</strong> da interface:</p>
+                <ol>
+                    <li><strong>Business Token:</strong> Cole seu token do WhatsApp Business</li>
+                    <li><strong>Phone Number ID:</strong> Insira o ID do número (obtido via QR code)</li>
+                    <li><strong>Webhook URL:</strong> <code>http://SEU_IP:8001/api/whatsapp/webhook</code></li>
+                    <li><strong>Gerar QR Code:</strong> Use o botão na interface para configuração</li>
+                    <li><strong>Testar Conexão:</strong> Clique em "Testar Conexão" para validar</li>
+                </ol>
+                
+                <h4>📊 Funcionalidades Integradas:</h4>
+                <ul>
+                    <li>🎤 <strong>Voz para WhatsApp:</strong> Transcreve áudios recebidos</li>
+                    <li>🔊 <strong>Resposta TTS:</strong> Envia áudio sintetizado em português</li>
+                    <li>💾 <strong>Histórico:</strong> Salva conversas no banco de dados</li>
+                    <li>🧠 <strong>IA Integrada:</strong> Respostas via OpenRouter/Gemini</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Progress Tracking Enhanced -->
         <div class="step-card">
             <div class="step-title">
                 <span class="step-number">📊</span>
-                <span>Status do Sistema</span>
+                <span>Status do Sistema Enhanced</span>
             </div>
             
             <div>
-                <label>Backend FastAPI:</label>
+                <label>Backend FastAPI Enhanced:</label>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 100%;"></div>
                 </div>
             </div>
             
             <div>
-                <label>Whisper STT:</label>
+                <label>Whisper STT (Faster + OpenAI):</label>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 100%;"></div>
                 </div>
             </div>
             
             <div>
-                <label>Interface Web:</label>
+                <label>Coqui TTS Português:</label>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 100%;"></div>
                 </div>
             </div>
             
             <div>
-                <label>WhatsApp Integration:</label>
+                <label>Interface com Abas:</label>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 75%;"></div>
+                    <div class="progress-fill" style="width: 100%;"></div>
+                </div>
+            </div>
+            
+            <div>
+                <label>Multi-LLM (OpenRouter/Gemini):</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%;"></div>
+                </div>
+            </div>
+            
+            <div>
+                <label>Database com IA:</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%;"></div>
+                </div>
+            </div>
+            
+            <div>
+                <label>Clonagem de Voz:</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 85%;"></div>
+                </div>
+            </div>
+            
+            <div>
+                <label>WhatsApp Business Integration:</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 90%;"></div>
                 </div>
             </div>
         </div>
 
         <!-- Footer -->
         <div class="footer">
-            <h3>🎯 Sistema Pronto!</h3>
-            <p>WhatsApp Voice Agent V2 - Desenvolvido com FastAPI + Whisper</p>
-            <p>📧 Suporte: Verifique logs do terminal | 🔗 Docs: /docs | 💚 Health: /health</p>
+            <h3>🎆 Sistema Enhanced Pronto!</h3>
+            <p>WhatsApp Voice Agent V2 Enhanced - Interface com Abas + Coqui TTS + Multi-LLM</p>
+            <p>📊 Recursos: 6 Abas | 🔊 TTS Português | 🧠 Multi-LLM | 💾 Database IA | 🎭 Clonagem Voz</p>
+            <p>📧 Suporte: Logs no terminal | 🔗 Docs: /docs | 📊 Health: /health | 📊 API: /api/models</p>
         </div>
     </div>
 

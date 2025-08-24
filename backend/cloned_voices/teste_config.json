@@ -1,0 +1,6 @@
+{
+  "name": "teste",
+  "created_at": "2025-08-24T04:01:32.311310",
+  "status": "trained",
+  "model_path": "models/cloned_voices/teste.pth"
+}

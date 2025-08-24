@@ -2,11 +2,13 @@
 """
 Git Management Utility for WhatsApp Voice Agent V2
 Helps identify and clean up large files that should be excluded from git
+Prevents repository bloat and push timeouts
 """
 
 import os
 import glob
 import shutil
+import subprocess
 from pathlib import Path
 
 def format_size(size_bytes):
@@ -20,6 +22,37 @@ def format_size(size_bytes):
         size_bytes /= 1024.0
         i += 1
     return f"{size_bytes:.1f} {size_names[i]}"
+
+def get_git_tracked_files():
+    """Get list of files currently tracked by git"""
+    try:
+        result = subprocess.run(['git', 'ls-files'], capture_output=True, text=True)
+        if result.returncode == 0:
+            return result.stdout.strip().split('\n') if result.stdout.strip() else []
+        return []
+    except Exception:
+        return []
+
+def check_large_tracked_files(min_size_mb=1):
+    """Check for large files currently tracked by git"""
+    tracked_files = get_git_tracked_files()
+    large_tracked = []
+    min_size_bytes = min_size_mb * 1024 * 1024
+    
+    for file_path in tracked_files:
+        if os.path.exists(file_path):
+            try:
+                file_size = os.path.getsize(file_path)
+                if file_size > min_size_bytes:
+                    large_tracked.append({
+                        'path': file_path,
+                        'size': file_size,
+                        'size_str': format_size(file_size)
+                    })
+            except (OSError, IOError):
+                continue
+    
+    return sorted(large_tracked, key=lambda x: x['size'], reverse=True)
 
 def find_large_files(directory=".", min_size_mb=1):
     """Find files larger than specified size"""
@@ -125,6 +158,28 @@ def main():
     # Check git status
     if not check_git_status():
         return
+    
+    # Check for large files currently tracked by git (CRITICAL CHECK)
+    print("\n⚠️ Checking for large files currently tracked by git...")
+    large_tracked = check_large_tracked_files(min_size_mb=1)
+    
+    if large_tracked:
+        print(f"\n🚨 CRITICAL: Found {len(large_tracked)} large files being tracked by git!")
+        print("These files are causing push timeouts and should be removed:")
+        total_size = 0
+        for file_info in large_tracked:
+            print(f"   {file_info['size_str']:>8} - {file_info['path']}")
+            total_size += file_info['size']
+        
+        print(f"\n📈 Total size being tracked: {format_size(total_size)}")
+        print("\n🛠️ To fix this, run:")
+        for file_info in large_tracked:
+            print(f"   git rm --cached '{file_info['path']}'")
+        print("   git commit -m 'Remove large files from tracking'")
+        
+        return
+    else:
+        print("✅ No large files currently tracked by git")
     
     # Find large files
     print("\n📊 Searching for large files (>1MB)...")

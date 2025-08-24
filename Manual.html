@@ -275,31 +275,32 @@
         <div class="step-card">
             <div class="step-title">
                 <span class="step-number">🚀</span>
-                <span>Início Rápido - VERSÃO ENHANCED (5 Minutos)</span>
+                <span>Início Rápido - VERSÃO ENHANCED com Port Cleanup (3 Minutos)</span>
             </div>
-            <p><strong>Use o script automatizado para a versão Enhanced:</strong></p>
+            <p><strong>Use o script automatizado Enhanced com limpeza de portas:</strong></p>
             <div class="code-block">
                 <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-start_enhanced.bat
+start_enhanced_correct.bat
             </div>
             <p><strong>Ou manualmente com servidor Enhanced:</strong></p>
             <div class="code-block">
                 <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements_enhanced.txt
-python -m uvicorn backend.main_enhanced:app --host 0.0.0.0 --port 8001
+cd backend
+python main_enhanced.py
             </div>
             <p>Depois acesse: <a href="http://localhost:8001" target="_blank">http://localhost:8001</a></p>
             
             <div class="network-info">
-                <h4>⚡ Novos Recursos Enhanced:</h4>
+                <h4>⚡ Novos Recursos Enhanced 2025:</h4>
                 <ul>
+                    <li>🧹 <strong>Port Cleanup Automático:</strong> Sistema mata processos nas portas 8001/8002 automaticamente</li>
                     <li>📊 <strong>Interface com Abas:</strong> Chat, LLM Config, TTS & Voice, Database, WhatsApp, Monitoring</li>
-                    <li>🔊 <strong>Coqui TTS:</strong> Síntese de voz em português brasileiro de alta qualidade</li>
-                    <li>🎭 <strong>Clonagem de Voz:</strong> Crie vozes personalizadas com amostras de áudio</li>
-                    <li>💾 <strong>Banco de Dados:</strong> SQLite com consultas inteligentes por IA</li>
-                    <li>🔍 <strong>Monitoramento:</strong> Status em tempo real de todos os serviços</li>
+                    <li>🔊 <strong>Coqui TTS Expandido:</strong> 6 modelos portugueses incluindo VITS, YourTTS, Tacotron2 e Bark</li>
+                    <li>🎭 <strong>Clonagem de Voz Avançada:</strong> Upload WAV/MP3/FLAC, validação automática, listar vozes</li>
+                    <li>💾 <strong>Banco de Dados IA:</strong> SQLite com consultas em linguagem natural</li>
+                    <li>🔍 <strong>Monitoramento Real-time:</strong> Status detalhado de todos os serviços</li>
+                    <li>⚙️ <strong>Stop Button Fix:</strong> Botão parar funciona corretamente sem travamentos</li>
+                    <li>🎤 <strong>STT Visual:</strong> Confirmação visual da transcrição no chat</li>
                 </ul>
             </div>
         </div>
@@ -383,30 +384,68 @@ cd F:\Projetos2025BKP\Whisper_Whats_Agent_V2
         <div class="step-card">
             <div class="step-title">
                 <span class="step-number">4</span>
-                <span>Iniciar o Servidor Enhanced</span>
+                <span>Iniciar o Servidor Enhanced com Port Cleanup</span>
             </div>
+            
+            <h4>🚀 Método 1: Script Automatizado (Recomendado)</h4>
+            <p>Use o script que <strong>limpa portas automaticamente</strong> e inicia o servidor:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+start_enhanced_correct.bat
+            </div>
+            
+            <h4>🛠️ Método 2: Manual com Virtual Environment</h4>
             <p>Inicie o servidor Enhanced <strong>com ambiente virtual ativado</strong>:</p>
             <div class="code-block">
                 <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
 venv\Scripts\activate
-python -m uvicorn backend.main_enhanced:app --host 0.0.0.0 --port 8001
+cd backend
+python main_enhanced.py
+            </div>
+            
+            <h4>🧹 Método 3: Cleanup Manual de Portas</h4>
+            <p>Se tiver conflitos de porta, execute primeiro:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+cleanup_ports.bat
             </div>
             
             <div class="network-info">
-                <h4>⚡ Aguarde o Carregamento Enhanced:</h4>
+                <h4>🧹 Novo Sistema de Port Cleanup Automático:</h4>
                 <ul>
-                    <li>🔄 <strong>Loading Whisper models...</strong> (primeira vez pode demorar)</li>
-                    <li>🔊 <strong>Loading Coqui TTS...</strong> (download de modelos portugueses)</li>
-                    <li>✅ <strong>Enhanced services initialized</strong></li>
-                    <li>🌐 <strong>Server running on http://0.0.0.0:8001</strong></li>
-                    <li>📊 <strong>Enhanced interface available</strong></li>
+                    <li>🔍 <strong>Verifica portas 8001/8002:</strong> Detecta processos usando as portas</li>
+                    <li>🛑 <strong>Termina processos:</strong> Mata automaticamente PIDs conflitantes</li>
+                    <li>🐍 <strong>Cleanup Python:</strong> Remove servidores Python residuais</li>
+                    <li>✅ <strong>Verificação final:</strong> Confirma se portas estão livres</li>
+                    <li>⚡ <strong>Inicialização limpa:</strong> Garante startup sem conflitos</li>
                 </ul>
                 
-                <h4>📊 Portas dos Serviços:</h4>
+                <h4>⚡ Aguarde o Carregamento Enhanced:</h4>
                 <ul>
-                    <li><strong>8001:</strong> Interface Enhanced com abas</li>
-                    <li><strong>8001/docs:</strong> Documentação da API</li>
-                    <li><strong>8001/health:</strong> Status dos serviços</li>
+                    <li>🧹 <strong>Port cleanup completed...</strong> (limpeza automática)</li>
+                    <li>🔄 <strong>Loading Whisper models...</strong> (primeira vez pode demorar)</li>
+                    <li>🔊 <strong>Loading Coqui TTS...</strong> (download de 6 modelos portugueses)</li>
+                    <li>🎭 <strong>Voice cloning ready...</strong> (sistema de clonagem ativo)</li>
+                    <li>💾 <strong>Database initialized...</strong> (SQLite com IA)</li>
+                    <li>✅ <strong>Enhanced services initialized</strong></li>
+                    <li>🌐 <strong>Server running on http://0.0.0.0:8001</strong></li>
+                    <li>📊 <strong>Enhanced interface with 6 tabs available</strong></li>
+                </ul>
+                
+                <h4>📊 Portas dos Serviços Enhanced:</h4>
+                <ul>
+                    <li><strong>8001:</strong> Interface Enhanced com 6 abas (Chat, LLM, TTS, DB, WhatsApp, Monitor)</li>
+                    <li><strong>8001/docs:</strong> Documentação completa da API FastAPI</li>
+                    <li><strong>8001/health:</strong> Status detalhado de todos os serviços</li>
+                    <li><strong>8001/api/tts/models:</strong> Lista dos 6 modelos Coqui TTS portugueses</li>
+                    <li><strong>8001/api/tts/list-cloned-voices:</strong> Gerenciamento de vozes clonadas</li>
+                </ul>
+                
+                <h4>🔧 Utilitários Inclusos:</h4>
+                <ul>
+                    <li><strong>start_enhanced_correct.bat:</strong> Startup completo com port cleanup</li>
+                    <li><strong>cleanup_ports.bat:</strong> Limpeza manual de portas</li>
+                    <li><strong>start_venv.bat:</strong> Criação/ativação do ambiente virtual</li>
                 </ul>
             </div>
         </div>
@@ -586,32 +625,81 @@ curl http://localhost:8001/health
         <div class="troubleshoot">
             <h3>🔧 Solução de Problemas</h3>
             
+            <h4>❌ Erro: "Port already in use" / "Porta já em uso"</h4>
+            <ul>
+                <li><strong>Solução Automática:</strong> Use <code>start_enhanced_correct.bat</code> (já inclui cleanup)</li>
+                <li><strong>Solução Manual:</strong> Execute <code>cleanup_ports.bat</code> antes de iniciar</li>
+                <li><strong>Verificação:</strong> <code>netstat -ano | findstr ":8001"</code> para ver processos ativos</li>
+                <li><strong>Kill Manual:</strong> <code>taskkill /f /pid [PID_NUMBER]</code> para terminar processo específico</li>
+            </ul>
+            
             <h4>❌ Erro: "Modelo Whisper não carregando"</h4>
             <ul>
-                <li>Aguarde o download (primeira execução)</li>
-                <li>Verifique espaço em disco (modelo ~150MB)</li>
-                <li>Reinstale: <code>pip install --upgrade openai-whisper</code></li>
+                <li>Aguarde o download (primeira execução pode demorar 5-10 minutos)</li>
+                <li>Verifique espaço em disco (modelos Whisper ~150MB + Coqui TTS ~500MB)</li>
+                <li>Reinstale: <code>pip install --upgrade openai-whisper faster-whisper</code></li>
+                <li>Limpe cache: Apague pasta <code>~/.cache/whisper</code></li>
             </ul>
 
             <h4>❌ Erro: "Connection Refused"</h4>
             <ul>
-                <li>Verifique se o servidor está rodando</li>
-                <li>Confirme a porta 8001</li>
+                <li>Verifique se o servidor está rodando (veja logs no terminal)</li>
+                <li>Confirme a porta 8001 com <code>netstat -ano | findstr ":8001"</code></li>
                 <li>Desative firewall/antivírus temporariamente</li>
+                <li>Teste localhost primeiro: <code>curl http://localhost:8001/health</code></li>
             </ul>
 
             <h4>❌ Erro: "Microfone não funciona"</h4>
             <ul>
-                <li>Permita acesso ao microfone no navegador</li>
-                <li>Use HTTPS em produção</li>
-                <li>Teste em navegador diferente</li>
+                <li>Permita acesso ao microfone no navegador (clique no ícone de cadeado)</li>
+                <li>Use HTTPS em produção para acesso externo</li>
+                <li>Teste em navegador diferente (Chrome recomendado)</li>
+                <li>Verifique se microfone funciona em outras aplicações</li>
+            </ul>
+            
+            <h4>❌ Erro: "Coqui TTS não funciona"</h4>
+            <ul>
+                <li>Instale manualmente: <code>pip install TTS torch torchaudio</code></li>
+                <li>Teste modelo específico na aba "TTS & Voice"</li>
+                <li>Verifique logs para erros de download de modelos</li>
+                <li>Primeira execução baixa modelos automaticamente (~500MB)</li>
+            </ul>
+            
+            <h4>❌ Erro: "Virtual Environment"</h4>
+            <ul>
+                <li>Crie manualmente: <code>python -m venv venv</code></li>
+                <li>Ative: <code>venv\Scripts\activate</code> (Windows)</li>
+                <li>Instale dependências: <code>pip install -r requirements.txt</code></li>
+                <li>Use <code>start_venv.bat</code> para automatizar</li>
             </ul>
 
-            <h4>🔍 Verificar Logs:</h4>
+            <h4>🔍 Verificar Logs e Status:</h4>
             <div class="code-block">
 # Terminal onde o servidor está rodando mostra logs em tempo real
-# Procure por: "✅ Whisper model loaded successfully"
+# Procure por estas mensagens de sucesso:
+# ✅ "Port cleanup completed"
+# ✅ "Whisper model loaded successfully"
+# ✅ "Coqui TTS initialized"
+# ✅ "Enhanced services initialized"
+# ✅ "Server running on http://0.0.0.0:8001"
+
+# Health check:
+curl http://localhost:8001/health
+
+# Verificar modelos TTS:
+curl http://localhost:8001/api/tts/models
+
+# Status dos serviços:
+curl http://localhost:8001/api/status
             </div>
+            
+            <h4>🎆 Dicas de Performance:</h4>
+            <ul>
+                <li><strong>GPU:</strong> Se tiver NVIDIA, instale CUDA para aceleração</li>
+                <li><strong>RAM:</strong> Mínimo 4GB, recomendado 8GB+ para todos os modelos</li>
+                <li><strong>Disco:</strong> SSD recomendado para carregamento rápido de modelos</li>
+                <li><strong>Internet:</strong> Primeira execução requer boa conexão para downloads</li>
+            </ul>
         </div>
 
         <!-- Mobile Configuration Enhanced -->

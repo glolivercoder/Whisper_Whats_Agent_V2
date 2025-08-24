@@ -878,10 +878,12 @@
                     <div class="control-group">
                         <label for="coqui-model">Modelo Português BR:</label>
                         <select id="coqui-model">
-                            <option value="tts_models/pt/cv/vits">VITS - Portuguese (CV)</option>
-                            <option value="tts_models/multilingual/multi-dataset/your_tts">YourTTS - Multilingual</option>
-                            <option value="tts_models/pt/custom/female">Modelo Feminino BR</option>
-                            <option value="tts_models/pt/custom/male">Modelo Masculino BR</option>
+                            <option value="tts_models/pt/cv/vits">VITS - Portuguese (CV) 🇵🇹</option>
+                            <option value="tts_models/multilingual/multi-dataset/your_tts">YourTTS - Multilingual 🌍</option>
+                            <option value="tts_models/pt/cv/tacotron2-DDC">Tacotron2 - Portuguese 🔊</option>
+                            <option value="tts_models/pt/custom/female">Modelo Feminino BR 👩</option>
+                            <option value="tts_models/pt/custom/male">Modelo Masculino BR 👨</option>
+                            <option value="tts_models/multilingual/multi-dataset/bark">Bark - Multilingual 🐕</option>
                         </select>
                     </div>
                     <div class="control-group">
@@ -897,20 +899,39 @@
                 </div>
                 
                 <div class="config-section">
-                    <h3>🎭 Clonagem de Voz</h3>
-                    <div class="control-group">
-                        <label for="reference-audio">Áudio de Referência (.wav):</label>
-                        <input type="file" id="reference-audio" accept=".wav,.mp3" onchange="uploadReferenceAudio(this)">
+                    <h3>🎭 Clonagem de Voz Avançada</h3>
+                    <div class="voice-cloning-info" style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #007bff;">
+                        <h4>📝 Instruções para Clonagem:</h4>
+                        <ul style="margin: 10px 0; padding-left: 20px; font-size: 12px;">
+                            <li><strong>Formato:</strong> WAV, MP3 ou FLAC (recomendado: WAV)</li>
+                            <li><strong>Duração:</strong> Mínimo 10s, ideal 30-60s</li>
+                            <li><strong>Qualidade:</strong> Áudio limpo, sem ruído de fundo</li>
+                            <li><strong>Conteúdo:</strong> Fala clara em português brasileiro</li>
+                            <li><strong>Tamanho:</strong> Máximo 25MB</li>
+                        </ul>
                     </div>
                     <div class="control-group">
-                        <label for="cloned-voice-name">Nome da Voz Clonada:</label>
-                        <input type="text" id="cloned-voice-name" placeholder="Ex: Minha Voz">
+                        <label for="reference-audio">📁 Áudio de Referência (.wav):</label>
+                        <input type="file" id="reference-audio" accept=".wav,.mp3,.flac" onchange="uploadReferenceAudio(this)">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Upload de amostra de voz em alta qualidade
+                        </small>
+                    </div>
+                    <div class="control-group">
+                        <label for="cloned-voice-name">🏷️ Nome da Voz Clonada:</label>
+                        <input type="text" id="cloned-voice-name" placeholder="Ex: Voz_Maria_BR" maxlength="50">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Use apenas letras, números e sublinhados
+                        </small>
                     </div>
                     <div class="btn-group">
-                        <button class="btn-small" onclick="trainVoiceClone()">🎯 Treinar Modelo</button>
-                        <button class="btn-small" onclick="testClonedVoice()">🔊 Testar Voz</button>
+                        <button class="btn-small" onclick="trainVoiceClone()" style="background: #28a745; color: white;">🎯 Treinar Modelo</button>
+                        <button class="btn-small" onclick="testClonedVoice()" style="background: #17a2b8; color: white;">🎙️ Testar Voz</button>
+                        <button class="btn-small" onclick="listClonedVoices()" style="background: #6c757d; color: white;">📄 Listar Vozes</button>
                     </div>
-                    <div id="cloning-status" class="status-message"></div>
+                    <div id="cloning-status" class="status-message" style="min-height: 30px; font-family: monospace; font-size: 11px;">
+                        🔄 Aguardando upload de áudio de referência...
+                    </div>
                 </div>
                 
                 <!-- Add voice testing section to TTS tab -->
@@ -1427,12 +1448,19 @@
                 const stopBtn = document.getElementById('stop-btn');
                 recordBtn.style.display = 'none';
                 stopBtn.style.display = 'inline-block';
+                recordBtn.disabled = true;
                 
-                updateStatus('Gravando áudio...');
+                updateStatus('🎤 Gravando áudio... Clique em PARAR para finalizar');
                 
             } catch (error) {
                 console.error('Error starting recording:', error);
-                updateStatus('Erro ao acessar microfone');
+                updateStatus('❌ Erro ao acessar microfone');
+                // Reset buttons on error
+                const recordBtn = document.getElementById('record-btn');
+                const stopBtn = document.getElementById('stop-btn');
+                recordBtn.style.display = 'inline-block';
+                stopBtn.style.display = 'none';
+                recordBtn.disabled = false;
             }
         }
 
@@ -1446,8 +1474,9 @@
                 const stopBtn = document.getElementById('stop-btn');
                 recordBtn.style.display = 'inline-block';
                 stopBtn.style.display = 'none';
+                recordBtn.disabled = false;
                 
-                updateStatus('Processando áudio...');
+                updateStatus('⏳ Processando áudio...');
             }
         }
 
@@ -1606,7 +1635,24 @@
             if (!file) return;
             
             const statusDiv = document.getElementById('cloning-status');
-            statusDiv.innerHTML = '📤 Uploading reference audio...';
+            statusDiv.innerHTML = '📎 Validando arquivo de áudio...';
+            
+            // Validate file size
+            if (file.size > 25 * 1024 * 1024) {
+                statusDiv.innerHTML = '❌ Arquivo muito grande! Máximo 25MB';
+                input.value = '';
+                return;
+            }
+            
+            // Validate file type
+            const validTypes = ['audio/wav', 'audio/mp3', 'audio/mpeg', 'audio/flac'];
+            if (!validTypes.includes(file.type) && !file.name.match(/\.(wav|mp3|flac)$/i)) {
+                statusDiv.innerHTML = '❌ Formato inválido! Use WAV, MP3 ou FLAC';
+                input.value = '';
+                return;
+            }
+            
+            statusDiv.innerHTML = '📤 Fazendo upload do áudio de referência...';
             
             const formData = new FormData();
             formData.append('audio', file);
@@ -1619,25 +1665,31 @@
                 
                 const result = await response.json();
                 if (result.success) {
-                    statusDiv.innerHTML = '✅ Audio uploaded successfully!';
+                    statusDiv.innerHTML = `✅ Upload realizado com sucesso! Arquivo: ${file.name} (${(file.size/1024/1024).toFixed(2)}MB)`;
                 } else {
-                    statusDiv.innerHTML = '❌ Upload failed: ' + result.error;
+                    statusDiv.innerHTML = '❌ Upload falhou: ' + result.error;
                 }
             } catch (error) {
-                statusDiv.innerHTML = '❌ Upload error: ' + error.message;
+                statusDiv.innerHTML = '❌ Erro no upload: ' + error.message;
             }
         }
 
         async function trainVoiceClone() {
-            const voiceName = document.getElementById('cloned-voice-name').value;
+            const voiceName = document.getElementById('cloned-voice-name').value.trim();
             const statusDiv = document.getElementById('cloning-status');
             
             if (!voiceName) {
-                statusDiv.innerHTML = '⚠️ Please enter a voice name';
+                statusDiv.innerHTML = '⚠️ Por favor, insira um nome para a voz';
                 return;
             }
             
-            statusDiv.innerHTML = '🎯 Training voice model...';
+            // Validate voice name
+            if (!/^[a-zA-Z0-9_]+$/.test(voiceName)) {
+                statusDiv.innerHTML = '❌ Nome inválido! Use apenas letras, números e sublinhados';
+                return;
+            }
+            
+            statusDiv.innerHTML = '🎯 Iniciando treinamento do modelo de voz...';
             
             try {
                 const response = await fetch('/api/tts/train-clone', {
@@ -1648,25 +1700,25 @@
                 
                 const result = await response.json();
                 if (result.success) {
-                    statusDiv.innerHTML = '✅ Voice model trained successfully!';
+                    statusDiv.innerHTML = `✅ Modelo '${voiceName}' treinado com sucesso! Tempo: ${result.training_time || 'N/A'}`;
                 } else {
-                    statusDiv.innerHTML = '❌ Training failed: ' + result.error;
+                    statusDiv.innerHTML = '❌ Treinamento falhou: ' + result.error;
                 }
             } catch (error) {
-                statusDiv.innerHTML = '❌ Training error: ' + error.message;
+                statusDiv.innerHTML = '❌ Erro no treinamento: ' + error.message;
             }
         }
 
         async function testClonedVoice() {
-            const voiceName = document.getElementById('cloned-voice-name').value;
+            const voiceName = document.getElementById('cloned-voice-name').value.trim();
             const statusDiv = document.getElementById('cloning-status');
             
             if (!voiceName) {
-                statusDiv.innerHTML = '⚠️ Please enter a voice name';
+                statusDiv.innerHTML = '⚠️ Por favor, insira o nome da voz para testar';
                 return;
             }
             
-            statusDiv.innerHTML = '🔊 Testing cloned voice...';
+            statusDiv.innerHTML = '🎙️ Testando voz clonada...';
             
             try {
                 const response = await fetch('/api/tts/test-clone', {
@@ -1674,7 +1726,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         voice_name: voiceName,
-                        text: 'Olá, esta é a sua voz clonada falando em português brasileiro.'
+                        text: 'Olá, esta é a sua voz clonada falando em português brasileiro. Como você pode ouvir, a qualidade da síntese é muito boa.'
                     })
                 });
                 
@@ -1683,12 +1735,37 @@
                     // Play the generated audio
                     const audio = new Audio('data:audio/wav;base64,' + result.audio_data);
                     audio.play();
-                    statusDiv.innerHTML = '✅ Voice test completed!';
+                    statusDiv.innerHTML = `✅ Teste concluído! Voz '${voiceName}' reproduzida com sucesso.`;
                 } else {
-                    statusDiv.innerHTML = '❌ Test failed: ' + (result.error || 'No audio generated');
+                    statusDiv.innerHTML = '❌ Teste falhou: ' + (result.error || 'Nenhum áudio gerado');
                 }
             } catch (error) {
-                statusDiv.innerHTML = '❌ Test error: ' + error.message;
+                statusDiv.innerHTML = '❌ Erro no teste: ' + error.message;
+            }
+        }
+        
+        async function listClonedVoices() {
+            const statusDiv = document.getElementById('cloning-status');
+            statusDiv.innerHTML = '🔍 Listando vozes clonadas...';
+            
+            try {
+                const response = await fetch('/api/tts/list-cloned-voices');
+                const result = await response.json();
+                
+                if (result.success && result.voices) {
+                    if (result.voices.length === 0) {
+                        statusDiv.innerHTML = '📄 Nenhuma voz clonada encontrada. Faça upload de um áudio de referência primeiro.';
+                    } else {
+                        let voicesList = result.voices.map(voice => 
+                            `• ${voice.name} (${voice.date_created || 'N/A'})`
+                        ).join('<br>');
+                        statusDiv.innerHTML = `📄 Vozes disponíveis (${result.voices.length}):<br>${voicesList}`;
+                    }
+                } else {
+                    statusDiv.innerHTML = '❌ Erro ao listar vozes: ' + (result.error || 'Falha desconhecida');
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Erro na consulta: ' + error.message;
             }
         }
 
@@ -1938,15 +2015,6 @@
                 }
             } catch (error) {
                 statusDiv.innerHTML = '❌ Erro no download: ' + error.message;
-            }
-        }
-
-        function stopRecording() {
-            if (isRecording && mediaRecorder) {
-                mediaRecorder.stop();
-                document.getElementById('record-btn').style.display = 'inline-block';
-                document.getElementById('stop-btn').style.display = 'none';
-                updateStatus('Processando áudio...');
             }
         }
 

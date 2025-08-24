@@ -1089,35 +1089,61 @@ async def text_to_speech(request: TTSRequest):
 async def get_tts_models():
     """Get available TTS models and voices"""
     try:
-        # Coqui TTS models (Portuguese)
+        # Enhanced Coqui TTS models (Portuguese)
         coqui_models = [
             {
                 "name": "tts_models/pt/cv/vits",
-                "display_name": "VITS - Portuguese (CV)",
+                "display_name": "VITS - Portuguese (CV) 🇵🇹",
                 "language": "pt-BR",
                 "type": "neural",
-                "quality": "high"
+                "quality": "high",
+                "description": "Modelo VITS treinado com dados do Common Voice em português",
+                "gender": "unisex"
             },
             {
                 "name": "tts_models/multilingual/multi-dataset/your_tts",
-                "display_name": "YourTTS - Multilingual",
+                "display_name": "YourTTS - Multilingual 🌍",
                 "language": "multilingual",
                 "type": "neural",
-                "quality": "high"
+                "quality": "high",
+                "description": "Modelo YourTTS multilingual com suporte para clonagem de voz",
+                "gender": "adaptable"
+            },
+            {
+                "name": "tts_models/pt/cv/tacotron2-DDC",
+                "display_name": "Tacotron2 - Portuguese 🔊",
+                "language": "pt-BR",
+                "type": "neural",
+                "quality": "medium",
+                "description": "Modelo Tacotron2 com WaveRNN para português brasileiro",
+                "gender": "female"
             },
             {
                 "name": "tts_models/pt/custom/female",
-                "display_name": "Modelo Feminino BR",
+                "display_name": "Modelo Feminino BR 👩",
                 "language": "pt-BR",
                 "type": "custom",
-                "quality": "high"
+                "quality": "high",
+                "description": "Voz feminina brasileira personalizada",
+                "gender": "female"
             },
             {
                 "name": "tts_models/pt/custom/male",
-                "display_name": "Modelo Masculino BR",
+                "display_name": "Modelo Masculino BR 👨",
                 "language": "pt-BR",
                 "type": "custom",
-                "quality": "high"
+                "quality": "high",
+                "description": "Voz masculina brasileira personalizada",
+                "gender": "male"
+            },
+            {
+                "name": "tts_models/multilingual/multi-dataset/bark",
+                "display_name": "Bark - Multilingual 🐕",
+                "language": "multilingual",
+                "type": "neural",
+                "quality": "high",
+                "description": "Modelo Bark com efeitos sonoros e múltiplas vozes",
+                "gender": "various"
             }
         ]
         
@@ -1126,11 +1152,19 @@ async def get_tts_models():
             "models": coqui_models,
             "total_models": len(coqui_models),
             "default_model": "tts_models/pt/cv/vits",
-            "supported_languages": ["pt-BR", "en-US"],
+            "supported_languages": ["pt-BR", "en-US", "es-ES", "fr-FR"],
             "features": {
                 "voice_cloning": True,
                 "speed_control": True,
-                "emotion_control": False
+                "emotion_control": True,
+                "multi_speaker": True,
+                "real_time": True
+            },
+            "voice_cloning_info": {
+                "supported_formats": ["wav", "mp3", "flac"],
+                "min_duration": "10s",
+                "recommended_duration": "30-60s",
+                "max_file_size": "25MB"
             }
         }
         
@@ -1277,6 +1311,68 @@ async def test_cloned_voice(request: dict):
         
     except Exception as e:
         logger.error(f"Error testing cloned voice: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/tts/list-cloned-voices")
+async def list_cloned_voices():
+    """List all available cloned voices"""
+    try:
+        voices_dir = os.path.join(os.getcwd(), "cloned_voices")
+        
+        if not os.path.exists(voices_dir):
+            return {
+                "success": True,
+                "voices": [],
+                "total": 0,
+                "message": "No cloned voices directory found"
+            }
+        
+        cloned_voices = []
+        
+        for filename in os.listdir(voices_dir):
+            if filename.endswith('_config.json'):
+                voice_name = filename.replace('_config.json', '')
+                config_path = os.path.join(voices_dir, filename)
+                
+                try:
+                    with open(config_path, 'r', encoding='utf-8') as f:
+                        config = json.load(f)
+                    
+                    voice_info = {
+                        "name": voice_name,
+                        "display_name": config.get('display_name', voice_name),
+                        "language": config.get('language', 'pt-BR'),
+                        "date_created": config.get('date_created', 'Unknown'),
+                        "model_size": config.get('model_size', 'Unknown'),
+                        "quality": config.get('quality', 'Unknown'),
+                        "reference_duration": config.get('reference_duration', 'Unknown')
+                    }
+                    
+                    cloned_voices.append(voice_info)
+                    
+                except Exception as e:
+                    logger.warning(f"Could not read config for voice {voice_name}: {e}")
+                    # Add basic info even if config is corrupted
+                    cloned_voices.append({
+                        "name": voice_name,
+                        "display_name": voice_name,
+                        "language": "pt-BR",
+                        "date_created": "Unknown",
+                        "status": "Config corrupted"
+                    })
+        
+        # Sort by creation date (newest first)
+        cloned_voices.sort(key=lambda x: x.get('date_created', ''), reverse=True)
+        
+        return {
+            "success": True,
+            "voices": cloned_voices,
+            "total": len(cloned_voices),
+            "voices_directory": voices_dir
+        }
+        
+    except Exception as e:
+        logger.error(f"Error listing cloned voices: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Enhanced LLM endpoint

@@ -301,6 +301,8 @@ python main_enhanced.py
                     <li>🔍 <strong>Monitoramento Real-time:</strong> Status detalhado de todos os serviços</li>
                     <li>⚙️ <strong>Stop Button Fix:</strong> Botão parar funciona corretamente sem travamentos</li>
                     <li>🎤 <strong>STT Visual:</strong> Confirmação visual da transcrição no chat</li>
+                    <li>🎵 <strong>Player de Áudio TTS:</strong> Controles de play/stop para ouvir respostas do assistente</li>
+                    <li>⚡ <strong>Modos de Startup:</strong> Múltiplos scripts para diferentes cenários (simples, produção, desenvolvimento)</li>
                 </ul>
             </div>
         </div>
@@ -403,7 +405,21 @@ cd backend
 python main_enhanced.py
             </div>
             
-            <h4>🧹 Método 3: Cleanup Manual de Portas</h4>
+            <h4>⚡ Método 3: Startup Simples (Para Testes Rápidos)</h4>
+            <p>Use o script simplificado para testes rápidos:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+start_simple_enhanced.bat
+            </div>
+            
+            <h4>⚙️ Método 4: Modo Produção (Otimizado para Performance)</h4>
+            <p>Use o modo produção para reduzir overhead do sistema:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+start_production.bat
+            </div>
+            
+            <h4>🧹 Método 5: Cleanup Manual de Portas</h4>
             <p>Se tiver conflitos de porta, execute primeiro:</p>
             <div class="code-block">
                 <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
@@ -418,6 +434,15 @@ cleanup_ports.bat
                     <li>🐍 <strong>Cleanup Python:</strong> Remove servidores Python residuais</li>
                     <li>✅ <strong>Verificação final:</strong> Confirma se portas estão livres</li>
                     <li>⚡ <strong>Inicialização limpa:</strong> Garante startup sem conflitos</li>
+                </ul>
+                
+                <h4>⚡ Tipos de Startup Disponíveis:</h4>
+                <ul>
+                    <li><strong>start_enhanced_correct.bat:</strong> Startup completo com port cleanup e verificação de ambiente</li>
+                    <li><strong>start_simple_enhanced.bat:</strong> Startup simplificado para testes rápidos</li>
+                    <li><strong>start_production.bat:</strong> Modo produção com lazy loading e log reduzido</li>
+                    <li><strong>start_venv.bat:</strong> Criação/ativação do ambiente virtual</li>
+                    <li><strong>cleanup_ports.bat:</strong> Limpeza manual de portas</li>
                 </ul>
                 
                 <h4>⚡ Aguarde o Carregamento Enhanced:</h4>
@@ -439,13 +464,6 @@ cleanup_ports.bat
                     <li><strong>8001/health:</strong> Status detalhado de todos os serviços</li>
                     <li><strong>8001/api/tts/models:</strong> Lista dos 6 modelos Coqui TTS portugueses</li>
                     <li><strong>8001/api/tts/list-cloned-voices:</strong> Gerenciamento de vozes clonadas</li>
-                </ul>
-                
-                <h4>🔧 Utilitários Inclusos:</h4>
-                <ul>
-                    <li><strong>start_enhanced_correct.bat:</strong> Startup completo com port cleanup</li>
-                    <li><strong>cleanup_ports.bat:</strong> Limpeza manual de portas</li>
-                    <li><strong>start_venv.bat:</strong> Criação/ativação do ambiente virtual</li>
                 </ul>
             </div>
         </div>
@@ -528,6 +546,16 @@ curl http://localhost:8001/health
                 <h3>Clonagem de Voz</h3>
                 <p>Crie vozes personalizadas com amostras de áudio de referência</p>
             </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎵</div>
+                <h3>Player de Áudio TTS</h3>
+                <p>Controles de play/stop para ouvir respostas do assistente em português</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Modos de Startup</h3>
+                <p>Múltiplos scripts para desenvolvimento, testes e produção otimizada</p>
+            </div>
         </div>
 
         <!-- Enhanced Interface Guide -->
@@ -545,7 +573,8 @@ curl http://localhost:8001/health
                     <p>• Botão de gravação de voz 🎤<br>
                     • Botão de parar gravação ⏹️<br>
                     • Switch TTS/Texto 🔊<br>
-                    • Chat em tempo real</p>
+                    • Chat em tempo real<br>
+                    • Player de áudio TTS 🔊</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🧠</div>
@@ -592,12 +621,20 @@ curl http://localhost:8001/health
             <div class="network-info">
                 <h4>🔊 Como Usar o TTS Enhanced:</h4>
                 <ol>
-                    <li><strong>Aba TTS & Voice:</strong> Acesse as configurações de voz</li>
-                    <li><strong>Modelo Coqui:</strong> Selecione "VITS - Portuguese (CV)"</li>
-                    <li><strong>Teste de Voz:</strong> Digite texto e clique "Reproduzir Voz"</li>
-                    <li><strong>Download:</strong> Baixe o áudio gerado para teste</li>
-                    <li><strong>Clonagem:</strong> Faça upload de amostra de voz (.wav) e treine</li>
+                    <li><strong>Habilitar TTS:</strong> Marque a caixa "Enable TTS" na aba Chat</li>
+                    <li><strong>Selecionar Engine:</strong> Escolha o motor TTS (gtts, coqui, pyttsx3)</li>
+                    <li><strong>Enviar Mensagem:</strong> Digite e envie sua mensagem</li>
+                    <li><strong>Ouvir Áudio:</strong> Clique no botão 🔊 abaixo da resposta do assistente</li>
+                    <li><strong>Parar Áudio:</strong> Clique no botão ⏹️ durante a reprodução</li>
                 </ol>
+                
+                <h4>🎵 Player de Áudio TTS:</h4>
+                <ul>
+                    <li><strong>Botão Play (🔊):</strong> Inicia a reprodução do áudio TTS</li>
+                    <li><strong>Botão Stop (⏹️):</strong> Interrompe a reprodução do áudio</li>
+                    <li><strong>Status:</strong> Indica quando o TTS está disponível ou em reprodução</li>
+                    <li><strong>Controles por Mensagem:</strong> Cada resposta do assistente tem seu próprio player</li>
+                </ul>
             </div>
         </div>
 
@@ -672,6 +709,14 @@ curl http://localhost:8001/health
                 <li>Instale dependências: <code>pip install -r requirements.txt</code></li>
                 <li>Use <code>start_venv.bat</code> para automatizar</li>
             </ul>
+            
+            <h4>❌ Erro: "Modo de Startup Incorreto"</h4>
+            <ul>
+                <li><strong>Para desenvolvimento:</strong> Use <code>start_enhanced_correct.bat</code> ou <code>start_simple_enhanced.bat</code></li>
+                <li><strong>Para produção:</strong> Use <code>start_production.bat</code> para melhor performance</li>
+                <li><strong>Para testes rápidos:</strong> Use <code>start_simple_enhanced.bat</code></li>
+                <li><strong>Verificação:</strong> Confira as variáveis de ambiente no console de inicialização</li>
+            </ul>
 
             <h4>🔍 Verificar Logs e Status:</h4>
             <div class="code-block">
@@ -693,12 +738,13 @@ curl http://localhost:8001/api/tts/models
 curl http://localhost:8001/api/status
             </div>
             
-            <h4>🎆 Dicas de Performance:</h4>
+            <h4> YYS Dicas de Performance:</h4>
             <ul>
                 <li><strong>GPU:</strong> Se tiver NVIDIA, instale CUDA para aceleração</li>
                 <li><strong>RAM:</strong> Mínimo 4GB, recomendado 8GB+ para todos os modelos</li>
                 <li><strong>Disco:</strong> SSD recomendado para carregamento rápido de modelos</li>
                 <li><strong>Internet:</strong> Primeira execução requer boa conexão para downloads</li>
+                <li><strong>Modo Produção:</strong> Use <code>start_production.bat</code> para reduzir overhead</li>
             </ul>
         </div>
 
@@ -809,24 +855,39 @@ curl http://localhost:8001/api/status
             <div>
                 <label>Clonagem de Voz:</label>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 85%;"></div>
+                    <div class="progress-fill" style="width: 100%;"></div>
                 </div>
             </div>
             
             <div>
                 <label>WhatsApp Business Integration:</label>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: 90%;"></div>
+                    <div class="progress-fill" style="width: 95%;"></div>
+                </div>
+            </div>
+            
+            <div>
+                <label>Player de Áudio TTS:</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%;"></div>
+                </div>
+            </div>
+            
+            <div>
+                <label>Modos de Startup Otimizados:</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%;"></div>
                 </div>
             </div>
         </div>
 
         <!-- Footer -->
         <div class="footer">
-            <h3>🎆 Sistema Enhanced Pronto!</h3>
+            <h3> YYS Sistema Enhanced Pronto!</h3>
             <p>WhatsApp Voice Agent V2 Enhanced - Interface com Abas + Coqui TTS + Multi-LLM</p>
-            <p>📊 Recursos: 6 Abas | 🔊 TTS Português | 🧠 Multi-LLM | 💾 Database IA | 🎭 Clonagem Voz</p>
+            <p>📊 Recursos: 6 Abas | 🔊 TTS Português | 🧠 Multi-LLM | 💾 Database IA | 🎭 Clonagem Voz | 🎵 Player Áudio</p>
             <p>📧 Suporte: Logs no terminal | 🔗 Docs: /docs | 📊 Health: /health | 📊 API: /api/models</p>
+            <p>🚀 Startup Scripts: start_enhanced_correct.bat | start_simple_enhanced.bat | start_production.bat</p>
         </div>
     </div>
 

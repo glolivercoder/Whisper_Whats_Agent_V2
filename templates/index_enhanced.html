@@ -383,6 +383,56 @@
             margin-top: 5px;
         }
 
+        /* TTS Audio Player Styles */
+        .tts-audio-player {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            padding: 6px 10px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 1px solid #dee2e6;
+            font-size: 11px;
+        }
+
+        .audio-play-btn,
+        .audio-stop-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .audio-play-btn:hover {
+            background: #e9ecef;
+            transform: scale(1.1);
+        }
+
+        .audio-stop-btn:hover {
+            background: #f8d7da;
+            transform: scale(1.1);
+        }
+
+        .tts-status {
+            color: #6c757d;
+            font-size: 10px;
+            margin-left: auto;
+        }
+
+        .tts-status.playing {
+            color: #28a745;
+            font-weight: 500;
+        }
+
         .chat-input-area {
             padding: 15px;
             border-top: 1px solid #dee2e6;
@@ -1374,10 +1424,17 @@
                 document.getElementById('session-id').textContent = sessionId.substring(0, 8);
                 addMessage('assistant', data.message, 'WebSocket');
             } else if (data.type === 'response') {
-                addMessage('assistant', data.message, data.provider);
+                // Check if TTS audio data is available
+                const audioData = data.audio_data || null;
+                addMessage('assistant', data.message, data.provider, audioData);
                 document.getElementById('last-provider').textContent = data.provider;
                 messageCount++;
                 document.getElementById('message-count').textContent = messageCount;
+                
+                // Log TTS info if available
+                if (data.tts_info) {
+                    console.log('TTS info:', data.tts_info);
+                }
             }
         }
 
@@ -1451,7 +1508,9 @@
                 const responseTime = Date.now() - startTime;
                 
                 if (result.success) {
-                    addMessage('assistant', result.bot_response, result.llm_provider || 'API');
+                    // Check if TTS audio data is available
+                    const audioData = result.audio_data || null;
+                    addMessage('assistant', result.bot_response, result.llm_provider || 'API', audioData);
                     document.getElementById('response-time').textContent = `${responseTime}ms`;
                     document.getElementById('last-provider').textContent = result.llm_provider || 'API';
                     messageCount++;
@@ -1619,7 +1678,7 @@
             }
         }
 
-        function addMessage(type, content, provider = '') {
+        function addMessage(type, content, provider = '', audioData = null) {
             const messagesContainer = document.getElementById('chat-messages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}`;
@@ -1627,8 +1686,32 @@
             const timestamp = new Date().toLocaleTimeString();
             const meta = provider ? `${provider} • ${timestamp}` : timestamp;
             
+            // Create unique ID for this message
+            const messageId = 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            messageDiv.id = messageId;
+            
+            let audioPlayerHtml = '';
+            if (audioData && type === 'assistant') {
+                // Create audio player controls for TTS
+                audioPlayerHtml = `
+                    <div class="tts-audio-player" data-message-id="${messageId}">
+                        <button class="audio-play-btn" onclick="playTTSAudio('${messageId}')" title="Reproduzir TTS">
+                            🔊
+                        </button>
+                        <button class="audio-stop-btn" onclick="stopTTSAudio('${messageId}')" title="Parar TTS" style="display: none;">
+                            ⏹️
+                        </button>
+                        <span class="tts-status">TTS disponível</span>
+                    </div>
+                `;
+                
+                // Store audio data on the message element
+                messageDiv.setAttribute('data-audio', audioData);
+            }
+            
             messageDiv.innerHTML = `
-                <div>${content}</div>
+                <div class="message-content">${content}</div>
+                ${audioPlayerHtml}
                 <div class="message-meta">${meta}</div>
             `;
             
@@ -1682,6 +1765,97 @@
             const statusText = document.getElementById('status-text');
             if (statusText) {
                 statusText.textContent = message;
+            }
+        }
+
+        // TTS Audio Player Functions
+        let currentAudio = null;
+        let currentMessageId = null;
+        
+        function playTTSAudio(messageId) {
+            try {
+                // Stop any currently playing audio
+                if (currentAudio) {
+                    stopTTSAudio(currentMessageId);
+                }
+                
+                // Find the message element
+                const messageElement = document.getElementById(messageId);
+                if (!messageElement) {
+                    console.error('Message element not found:', messageId);
+                    return;
+                }
+                
+                // Get audio data from the message element
+                const audioData = messageElement.getAttribute('data-audio');
+                if (!audioData) {
+                    console.error('No audio data found for message:', messageId);
+                    return;
+                }
+                
+                // Create and play audio
+                currentAudio = new Audio('data:audio/wav;base64,' + audioData);
+                currentMessageId = messageId;
+                
+                // Update UI elements
+                const playBtn = messageElement.querySelector('.audio-play-btn');
+                const stopBtn = messageElement.querySelector('.audio-stop-btn');
+                const status = messageElement.querySelector('.tts-status');
+                
+                if (playBtn) playBtn.style.display = 'none';
+                if (stopBtn) stopBtn.style.display = 'flex';
+                if (status) {
+                    status.textContent = 'Reproduzindo...';
+                    status.classList.add('playing');
+                }
+                
+                // Set up audio event listeners
+                currentAudio.onended = () => {
+                    stopTTSAudio(messageId);
+                };
+                
+                currentAudio.onerror = (error) => {
+                    console.error('Audio playback error:', error);
+                    stopTTSAudio(messageId);
+                    if (status) status.textContent = 'Erro na reprodução';
+                };
+                
+                // Play the audio
+                currentAudio.play();
+                
+            } catch (error) {
+                console.error('Error playing TTS audio:', error);
+            }
+        }
+        
+        function stopTTSAudio(messageId) {
+            try {
+                // Stop current audio if playing
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    currentAudio = null;
+                }
+                
+                // Reset UI for the specific message
+                const messageElement = document.getElementById(messageId);
+                if (messageElement) {
+                    const playBtn = messageElement.querySelector('.audio-play-btn');
+                    const stopBtn = messageElement.querySelector('.audio-stop-btn');
+                    const status = messageElement.querySelector('.tts-status');
+                    
+                    if (playBtn) playBtn.style.display = 'flex';
+                    if (stopBtn) stopBtn.style.display = 'none';
+                    if (status) {
+                        status.textContent = 'TTS disponível';
+                        status.classList.remove('playing');
+                    }
+                }
+                
+                currentMessageId = null;
+                
+            } catch (error) {
+                console.error('Error stopping TTS audio:', error);
             }
         }
 

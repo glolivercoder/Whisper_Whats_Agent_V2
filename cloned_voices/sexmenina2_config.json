@@ -1,0 +1,11 @@
+{
+  "name": "sexmenina2",
+  "display_name": "sexmenina2",
+  "created_at": "2025-08-25T20:17:03.836877",
+  "status": "simulated",
+  "description": "Voz clonada simulada: sexmenina2",
+  "language": "pt-BR",
+  "gender": "unknown",
+  "reference_file": null,
+  "model_type": "simulated"
+}

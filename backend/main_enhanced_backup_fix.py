@@ -35,8 +35,14 @@ try:
 except Exception as e:
     print(f"ℹ️ Could not add XTTS config to safe globals: {e}")
 
-# CloningTool class placeholder
-# (Actual implementation is later in the file)
+# CloningTool class for voice cloning functionality
+class CloningTool:
+    def __init__(self, config):
+        self.config = config
+
+    def clone_voice(self, audio_file):
+        print(f"Cloning voice from {audio_file}")
+        # Add voice cloning logic here
 
 # Port cleanup function
 def cleanup_ports():
@@ -542,8 +548,8 @@ class TTSService:
             "language": "pt-BR"
         }
         
-    async def synthesize_speech(self, text: str, voice: str = "", 
-                               speed: float = 1.0, language: str = "", engine: str = ""):
+    async def synthesize_speech(self, text: str, voice: str = None, 
+                               speed: float = 1.0, language: str = None, engine: str = None):
         """Synthesize speech from text with Coqui TTS support"""
         try:
             if not self.enabled:
@@ -555,8 +561,6 @@ class TTSService:
             
             # Check if this is a cloned voice request
             is_cloned_voice = voice and (voice.startswith('cloned_') or voice.startswith('cloned:'))
-            cloned_voice_name = ""
-            
             if is_cloned_voice:
                 # Handle both formats of cloned voice naming
                 if voice.startswith('cloned:'):
@@ -583,35 +587,42 @@ class TTSService:
                     if is_cloned_voice:
                         # For cloned voices, we need to handle them properly
                         # Check if this is a XTTS v2 or YourTTS model that supports voice cloning
-                        logger.info(f"🎤 Using advanced model with speaker embedding for cloned voice '{cloned_voice_name}'")
-                        
-                        # Check if we have a reference audio file for this cloned voice
-                        ref_audio_dir = os.path.join(os.getcwd(), "reference_audio")
-                        ref_audio_path = None
-                        
-                        if os.path.exists(ref_audio_dir):
-                            # Look for reference audio files matching the cloned voice name
-                            for filename in os.listdir(ref_audio_dir):
-                                if cloned_voice_name.lower() in filename.lower() and filename.endswith(('.wav', '.mp3', '.flac')):
-                                    ref_audio_path = os.path.join(ref_audio_dir, filename)
-                                    break
-                        
-                        # XTTS v2 and YourTTS support speaker_wav parameter for voice cloning
-                        if ref_audio_path and os.path.exists(ref_audio_path):
-                            logger.info(f"🎵 Using reference audio: {ref_audio_path}")
-                            # Use the reference audio for voice cloning with speaker_wav parameter
-                            self.coqui_tts.tts_to_file(
-                                text=text,
-                                file_path=temp_path,
-                                speaker_wav=ref_audio_path,
-                                language="pt-br"  # Brazilian Portuguese
-                            )
+                        if (self.current_model and ("xtts_v2" in self.current_model or "your_tts" in self.current_model)) or \
+                           (hasattr(self.coqui_tts, 'is_multi_speaker') and self.coqui_tts.is_multi_speaker):
+                            # Use speaker embedding for cloned voices
+                            logger.info(f"🎤 Using advanced model with speaker embedding for cloned voice '{cloned_voice_name}'")
+                            
+                            # Check if we have a reference audio file for this cloned voice
+                            ref_audio_dir = os.path.join(os.getcwd(), "reference_audio")
+                            ref_audio_path = None
+                            
+                            if os.path.exists(ref_audio_dir):
+                                # Look for reference audio files matching the cloned voice name
+                                for filename in os.listdir(ref_audio_dir):
+                                    if cloned_voice_name.lower() in filename.lower() and filename.endswith(('.wav', '.mp3', '.flac')):
+                                        ref_audio_path = os.path.join(ref_audio_dir, filename)
+                                        break
+                            
+                            if ref_audio_path and os.path.exists(ref_audio_path):
+                                logger.info(f"🎵 Using reference audio: {ref_audio_path}")
+                                # Use the reference audio for voice cloning
+                                # XTTS v2 and YourTTS support speaker_wav parameter
+                                self.coqui_tts.tts_to_file(
+                                    text=text,
+                                    file_path=temp_path,
+                                    speaker_wav=ref_audio_path,
+                                    language="pt-br"  # Brazilian Portuguese
+                                )
+                            else:
+                                logger.warning(f"⚠️ No reference audio found for cloned voice '{cloned_voice_name}', using default speaker")
+                                # Fallback to default speaker
+                                self.coqui_tts.tts_to_file(text=text, file_path=temp_path, language="pt-br")
                         else:
-                            logger.warning(f"⚠️ No reference audio found for cloned voice '{cloned_voice_name}', using default speaker")
-                            # Fallback to default speaker
-                            self.coqui_tts.tts_to_file(text=text, file_path=temp_path, language="pt-br")
+                            # For other models, add a prefix to indicate it's a cloned voice
+                            synthesis_text = f"[Cloned Voice: {cloned_voice_name}] {text}"
+                            self.coqui_tts.tts_to_file(text=synthesis_text, file_path=temp_path)
                     else:
-                        # Regular synthesis with speaker parameter for better voice control
+                        # Regular synthesis
                         # Use appropriate language code based on model
                         language_code = "pt-br" if "pt" in (language or "").lower() else "en"
                         self.coqui_tts.tts_to_file(text=text, file_path=temp_path, language=language_code)
@@ -1590,34 +1601,13 @@ async def train_voice_clone(request: dict):
             }
         
         # Add safe globals for XTTS config to fix PyTorch 2.6+ compatibility issue
-        # Removed try-except-finally block to fix syntax error
-        # try:
-        #     import torch
-        #     from TTS.tts.configs.xtts_config import XttsConfig
-        #     torch.serialization.add_safe_globals([XttsConfig])
-        #     print("✅ Added XTTS config to safe globals for PyTorch compatibility")
-        # except Exception as e:
-        #     print(f"ℹ️ Could not add XTTS config to safe globals: {e}")
-
-        # Save the voice config
-        voices_dir = os.path.join(os.getcwd(), "cloned_voices")
-        os.makedirs(voices_dir, exist_ok=True)
-        config_path = os.path.join(voices_dir, f"{voice_name}_config.json")
-        
-        with open(config_path, 'w', encoding='utf-8') as f:
-            json.dump(voice_config, f, ensure_ascii=False, indent=2)
-            
-        return {
-            "success": True,
-            "message": f"Voice clone '{voice_name}' configured successfully",
-            "voice_name": voice_name,
-            "config_path": config_path
-        }
-        
-    except Exception as e:
-        logger.error(f"Error training voice clone: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
+        try:
+            import torch
+            from TTS.tts.configs.xtts_config import XttsConfig
+            torch.serialization.add_safe_globals([XttsConfig])
+            print("✅ Added XTTS config to safe globals for PyTorch compatibility")
+        except Exception as e:
+            print(f"ℹ️ Could not add XTTS config to safe globals: {e}")
 
 # CloningTool class for voice cloning functionality
 class CloningTool:

@@ -970,6 +970,23 @@
                 </div>
                 
                 <div class="config-section">
+                    <h3>📘 Dicas para Vozes Clonadas de Qualidade</h3>
+                    <div style="background: #e8f4f8; border-left: 4px solid #17a2b8; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+                        <h4 style="margin-top: 0; color: #17a2b8;">ℹ️ Importante sobre Vozes Clonadas</h4>
+                        <ul style="padding-left: 20px; margin: 10px 0;">
+                            <li><strong>Áudio de referência:</strong> Use arquivos WAV/MP3 de 30+ segundos com voz clara</li>
+                            <li><strong>Modelo de treinamento:</strong> Nosso sistema usa principalmente voz brasileira</li>
+                            <li><strong>Sotaque português:</strong> Sotaque europeu pode soar diferente devido ao treinamento</li>
+                            <li><strong>Qualidade:</strong> Vozes clonadas são simuladas com tecnologia avançada, mas não perfeitas</li>
+                        </ul>
+                        <p style="margin: 10px 0 0 0; font-size: 13px;">
+                            <strong>💡 Dica:</strong> Para melhor resultado, use referências em português brasileiro. 
+                            Veja o guia completo em <code>CLONED_VOICES_IMPROVEMENT_GUIDE.md</code>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="config-section">
                     <h3>🎭 Clonagem de Voz Avançada Enhanced</h3>
                     <div class="voice-cloning-info" style="background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%); padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #007bff; box-shadow: 0 2px 4px rgba(0,123,255,0.1);">
                         <h4>📝 Instruções para Clonagem Enhanced:</h4>
@@ -1492,15 +1509,15 @@
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
                         message: message,
-                        session_id: sessionId,
                         llm_provider: document.getElementById('llm-provider').value,
                         llm_model: document.getElementById('llm-model').value,
                         use_tts: document.getElementById('tts-enabled').checked,
-                        tts_engine: document.getElementById('default-tts-engine').value
+                        tts_engine: document.getElementById('default-tts-engine').value,
+                        tts_voice: document.getElementById('coqui-model').value  // Add selected voice
                     })
                 });
                 
@@ -2311,10 +2328,6 @@
                 const modelsResponse = await fetch('/api/tts/models');
                 const modelsResult = await modelsResponse.json();
                 
-                // Carregar vozes clonadas
-                const voicesResponse = await fetch('/api/tts/list-cloned-voices');
-                const voicesResult = await voicesResponse.json();
-                
                 if (modelsResult.success) {
                     modelSelect.innerHTML = '';
                     
@@ -2323,34 +2336,40 @@
                     defaultGroup.label = '🎭 Modelos Coqui TTS Padrão';
                     
                     modelsResult.models.forEach(model => {
-                        const option = document.createElement('option');
-                        option.value = model.name;
-                        option.textContent = model.display_name;
-                        option.dataset.quality = model.quality;
-                        option.dataset.gender = model.gender;
-                        option.dataset.description = model.description;
-                        defaultGroup.appendChild(option);
+                        // Only show Coqui models (not cloned voices which are handled separately)
+                        if (!model.is_cloned) {
+                            const option = document.createElement('option');
+                            option.value = model.name;
+                            option.textContent = model.display_name;
+                            option.dataset.quality = model.quality;
+                            option.dataset.gender = model.gender;
+                            option.dataset.description = model.description;
+                            defaultGroup.appendChild(option);
+                        }
                     });
                     modelSelect.appendChild(defaultGroup);
                     
-                    // Adicionar vozes clonadas se disponíveis
-                    if (voicesResult.success && voicesResult.voices && voicesResult.voices.length > 0) {
+                    // Adicionar vozes clonadas separadamente
+                    const clonedVoices = modelsResult.models.filter(model => model.is_cloned);
+                    if (clonedVoices.length > 0) {
                         const clonedGroup = document.createElement('optgroup');
                         clonedGroup.label = '🎤 Suas Vozes Clonadas';
                         
-                        voicesResult.voices.forEach(voice => {
+                        clonedVoices.forEach(model => {
                             const option = document.createElement('option');
-                            option.value = `cloned:${voice.name}`;
-                            option.textContent = `🎆 ${voice.name} (Clonada)`;
+                            option.value = model.name;  // This will be 'cloned_voice_name'
+                            option.textContent = model.display_name;
+                            option.dataset.quality = model.quality;
+                            option.dataset.gender = model.gender;
+                            option.dataset.description = model.description;
                             option.dataset.type = 'cloned';
-                            option.dataset.description = `Voz clonada criada em ${voice.created_at || 'data desconhecida'}`;
                             clonedGroup.appendChild(option);
                         });
                         modelSelect.appendChild(clonedGroup);
                     }
                     
-                    const totalModels = modelsResult.models.length + (voicesResult.voices?.length || 0);
-                    statusDiv.innerHTML = `✅ ${modelsResult.models.length} modelos + ${voicesResult.voices?.length || 0} vozes clonadas carregadas`;
+                    const totalModels = modelsResult.models.length;
+                    statusDiv.innerHTML = `✅ ${modelsResult.models.filter(m => !m.is_cloned).length} modelos + ${clonedVoices.length} vozes clonadas carregadas`;
                 } else {
                     statusDiv.innerHTML = '❌ Erro ao carregar modelos: ' + (modelsResult.error || 'Resposta inválida');
                 }

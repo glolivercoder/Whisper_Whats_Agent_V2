@@ -1,0 +1,11 @@
+{
+  "name": "Mulhersex",
+  "display_name": "Mulhersex",
+  "created_at": "2025-08-25T10:34:29.935782",
+  "status": "simulated",
+  "description": "Voz clonada simulada: Mulhersex",
+  "language": "pt-BR",
+  "gender": "unknown",
+  "reference_file": null,
+  "model_type": "simulated"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Vozdemeninablogueirinha",
+  "display_name": "Vozdemeninablogueirinha",
+  "created_at": "2025-08-25T20:19:44.220908",
+  "status": "simulated",
+  "description": "Voz clonada simulada: Vozdemeninablogueirinha",
+  "language": "pt-BR",
+  "gender": "unknown",
+  "reference_file": null,
+  "model_type": "simulated"
+}

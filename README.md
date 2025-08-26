@@ -7,6 +7,9 @@
 # Windows
 start.bat
 
+# Windows (com XTTS v2 fixes)
+start_with_xtts_v2_fixes.bat
+
 # Linux/Mac
 chmod +x start.sh && ./start.sh
 ```
@@ -91,9 +94,17 @@ WEBHOOK_URL = "http://seu_ip:8000/api/whatsapp/webhook"
 
 ### 3. TTS (Text-to-Speech)
 ```python
-# Para implementar Coqui TTS
-pip install TTS
-# Editar synthesize_speech() em main.py
+# Coqui TTS com XTTS v2 (já implementado)
+# Suporte completo para voice cloning
+# Fixes para compatibilidade Windows incluídos
+
+# Para reinstalar TTS (se necessário)
+pip install TTS==0.21.0
+
+# Modelos disponíveis:
+# - tts_models/multilingual/multi-dataset/xtts_v2 (padrão)
+# - tts_models/pt/cv/vits
+# - tts_models/multilingual/multi-dataset/your_tts
 ```
 
 ## 📱 Teste no Celular
@@ -131,6 +142,13 @@ ifconfig
 - Aguardar download inicial (primeira execução)
 - Verificar espaço em disco (modelos são grandes)
 
+### Voz Robótica ou com Sotaque Incorreto
+- Verificar qualidade do áudio de referência (mínimo 30 segundos, somente um falante)
+- Usar arquivos WAV de alta qualidade (44.1kHz ou 48kHz)
+- Gravar em ambiente silencioso com microfone decente
+- O modelo XTTS v2 foi treinado principalmente em português brasileiro
+- Vozes clonadas são uma tecnologia emergente com limitações inerentes
+
 ## 🔄 Próximos Passos
 
 ### Fase 1 - Básico (Implementado ✅)
@@ -140,7 +158,7 @@ ifconfig
 - [x] Estrutura WhatsApp
 
 ### Fase 2 - Avançado (A fazer)
-- [ ] Implementar Coqui TTS real
+- [x] Implementar Coqui TTS real (com XTTS v2)
 - [ ] Integração LLM (OpenRouter/Gemini)
 - [ ] Banco de dados
 - [ ] Deploy produção

@@ -1,0 +1,6 @@
+{
+  "name": "menina2",
+  "created_at": "2025-08-28T10:38:32.749465",
+  "status": "trained",
+  "model_path": "models/cloned_voices/menina2.pth"
+}

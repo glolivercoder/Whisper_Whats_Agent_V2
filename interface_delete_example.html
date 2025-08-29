@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo - Exclusão de Vozes Clonadas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .voice-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .voice-info {
+            flex-grow: 1;
+        }
+        
+        .voice-name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .voice-details {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .delete-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .delete-btn:hover {
+            background: #cc0000;
+            transform: scale(1.1);
+        }
+        
+        .delete-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .regular-voice {
+            opacity: 0.7;
+        }
+        
+        .cloned-voice {
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .confirmation-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .dialog-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .dialog-buttons {
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn-danger {
+            background: #ff4444;
+            color: white;
+        }
+        
+        .btn-cancel {
+            background: #ccc;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎭 Gerenciamento de Vozes Clonadas</h1>
+    <p>Exemplo de como os ícones de exclusão aparecem na interface:</p>
+    
+    <div class="voice-item regular-voice">
+        <div class="voice-info">
+            <div class="voice-name">🔊 VITS - Portuguese (CV)</div>
+            <div class="voice-details">Modelo padrão • Não pode ser excluído</div>
+        </div>
+        <div style="width: 40px;"></div> <!-- Espaço vazio para modelos não excluíveis -->
+    </div>
+    
+    <div class="voice-item cloned-voice">
+        <div class="voice-info">
+            <div class="voice-name">🎭 João Silva (Clonada)</div>
+            <div class="voice-details">Voz clonada personalizada • Criada em 26/08/2025</div>
+        </div>
+        <button class="delete-btn" onclick="confirmDelete('João Silva')" title="Excluir voz clonada">
+            ❌
+        </button>
+    </div>
+    
+    <div class="voice-item cloned-voice">
+        <div class="voice-info">
+            <div class="voice-name">🎭 Maria Santos (Clonada)</div>
+            <div class="voice-details">Voz clonada personalizada • Criada em 25/08/2025</div>
+        </div>
+        <button class="delete-btn" onclick="confirmDelete('Maria Santos')" title="Excluir voz clonada">
+            ❌
+        </button>
+    </div>
+    
+    <div class="voice-item cloned-voice">
+        <div class="voice-info">
+            <div class="voice-name">🎭 Pedro Costa (Clonada)</div>
+            <div class="voice-details">Voz clonada personalizada • Criada em 24/08/2025</div>
+        </div>
+        <button class="delete-btn" onclick="confirmDelete('Pedro Costa')" title="Excluir voz clonada">
+            ❌
+        </button>
+    </div>
+    
+    <!-- Dialog de confirmação -->
+    <div id="confirmDialog" class="confirmation-dialog">
+        <div class="dialog-content">
+            <h3>⚠️ Confirmar Exclusão</h3>
+            <p>Tem certeza que deseja excluir a voz clonada <strong id="voiceName"></strong>?</p>
+            <p><small>Esta ação não pode ser desfeita. Todos os arquivos relacionados serão removidos.</small></p>
+            <div class="dialog-buttons">
+                <button class="btn btn-danger" onclick="deleteVoice()">🗑️ Excluir</button>
+                <button class="btn btn-cancel" onclick="cancelDelete()">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let voiceToDelete = null;
+        
+        function confirmDelete(voiceName) {
+            voiceToDelete = voiceName;
+            document.getElementById('voiceName').textContent = voiceName;
+            document.getElementById('confirmDialog').style.display = 'flex';
+        }
+        
+        function cancelDelete() {
+            voiceToDelete = null;
+            document.getElementById('confirmDialog').style.display = 'none';
+        }
+        
+        async function deleteVoice() {
+            if (!voiceToDelete) return;
+            
+            try {
+                // Converter nome para ID (remover espaços, etc.)
+                const voiceId = voiceToDelete.toLowerCase().replace(/\s+/g, '_');
+                
+                const response = await fetch(`/api/tts/delete-cloned-voice/${voiceId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(`✅ ${result.message}`);
+                    
+                    // Remover da interface
+                    location.reload();
+                } else {
+                    const error = await response.json();
+                    alert(`❌ Erro: ${error.detail}`);
+                }
+            } catch (error) {
+                alert(`❌ Erro de conexão: ${error.message}`);
+            }
+            
+            cancelDelete();
+        }
+        
+        // Fechar dialog ao clicar fora
+        document.getElementById('confirmDialog').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cancelDelete();
+            }
+        });
+    </script>
+    
+    <div style="margin-top: 40px; padding: 20px; background: #e8f5e8; border-radius: 8px;">
+        <h3>📋 Como Implementar na Interface Real:</h3>
+        <ol>
+            <li><strong>Listar modelos:</strong> GET <code>/api/tts/coqui-models</code></li>
+            <li><strong>Verificar campo:</strong> <code>can_delete: true</code></li>
+            <li><strong>Mostrar ícone:</strong> <code>delete_icon: "❌"</code></li>
+            <li><strong>Excluir voz:</strong> DELETE <code>/api/tts/delete-cloned-voice/{voice_id}</code></li>
+            <li><strong>Confirmar exclusão:</strong> Dialog de confirmação</li>
+            <li><strong>Atualizar lista:</strong> Recarregar modelos após exclusão</li>
+        </ol>
+        
+        <h4>🎨 Campos Adicionados aos Modelos Clonados:</h4>
+        <ul>
+            <li><code>can_delete: true</code> - Indica que pode ser excluído</li>
+            <li><code>delete_icon: "❌"</code> - Ícone para mostrar</li>
+            <li><code>delete_title: "Excluir voz clonada"</code> - Tooltip</li>
+            <li><code>voice_id: "nome_da_voz"</code> - ID para exclusão</li>
+        </ul>
+    </div>
+</body>
+</html>

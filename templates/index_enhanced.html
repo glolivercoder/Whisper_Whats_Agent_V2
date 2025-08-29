@@ -383,55 +383,7 @@
             margin-top: 5px;
         }
 
-        /* TTS Audio Player Styles */
-        .tts-audio-player {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 8px 0;
-            padding: 6px 10px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            border: 1px solid #dee2e6;
-            font-size: 11px;
-        }
-
-        .audio-play-btn,
-        .audio-stop-btn {
-            background: none;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 4px 6px;
-            border-radius: 50%;
-            transition: all 0.2s ease;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .audio-play-btn:hover {
-            background: #e9ecef;
-            transform: scale(1.1);
-        }
-
-        .audio-stop-btn:hover {
-            background: #f8d7da;
-            transform: scale(1.1);
-        }
-
-        .tts-status {
-            color: #6c757d;
-            font-size: 10px;
-            margin-left: auto;
-        }
-
-        .tts-status.playing {
-            color: #28a745;
-            font-weight: 500;
-        }
+        /* TTS styles removed - TTS functionality has been removed from the system */
 
         .chat-input-area {
             padding: 15px;
@@ -647,7 +599,6 @@
             <button class="tab-button active" onclick="switchTab('chat')">💬 Chat</button>
             <button class="tab-button" onclick="switchTab('history')">📜 Histórico</button>
             <button class="tab-button" onclick="switchTab('llm')">🧠 LLM Config</button>
-            <button class="tab-button" onclick="switchTab('tts')">🔊 TTS & Voice</button>
             <button class="tab-button" onclick="switchTab('database')">💾 Database</button>
             <button class="tab-button" onclick="switchTab('whatsapp')">📱 WhatsApp</button>
             <button class="tab-button" onclick="switchTab('monitoring')">📊 Monitoring</button>
@@ -691,21 +642,10 @@
                     <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
                         <button class="record-button" id="record-btn" onclick="toggleRecording()" style="font-size: 24px; padding: 15px 20px; background: #28a745; color: white; border: none; border-radius: 10px; cursor: pointer;">🎤 Gravar</button>
                         <button class="stop-button" id="stop-btn" onclick="stopRecording()" style="font-size: 24px; padding: 15px 20px; background: #dc3545; color: white; border: none; border-radius: 10px; cursor: pointer; display: none;">⏹️ Parar</button>
-                        <div class="response-mode-switch" style="display: flex; gap: 10px; align-items: center;">
-                            <label style="display: flex; align-items: center; gap: 5px; padding: 8px 12px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">
-                                <input type="radio" name="response-mode" value="tts" checked> 🔊 Resposta TTS
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 5px; padding: 8px 12px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">
-                                <input type="radio" name="response-mode" value="text"> 💬 Apenas Texto
-                            </label>
-                        </div>
-                        <div class="tts-default-selector" style="display: flex; gap: 10px; align-items: center;">
-                            <label style="font-weight: bold; color: #495057;">🎛️ TTS Padrão:</label>
-                            <select id="default-tts-engine" onchange="updateDefaultTTS()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; background: white; font-size: 14px;">
-                                <option value="gtts" selected>🌐 Google TTS (Flash) - Padrão</option>
-                                <option value="coqui">🎭 Coqui TTS + Vozes Clonadas</option>
-                                <option value="pyttsx3">💻 pyttsx3 (Offline)</option>
-                            </select>
+                        <div class="response-mode-info" style="display: flex; gap: 10px; align-items: center;">
+                            <span style="background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; color: #666;">
+                                💬 Apenas texto (TTS removido)
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -721,7 +661,7 @@
                                 <div>🤖 Olá! Sou o assistente de voz enhanced com:</div>
                                 <div>• 🎤 STT avançado (Whisper)</div>
                                 <div>• 🧠 Multi-LLM (OpenRouter, Gemini)</div>
-                                <div>• 🔊 Síntese de voz com Coqui TTS</div>
+                                <div>• ❗ TTS removido (apenas texto)</div>
                                 <div>• 💾 Banco de dados integrado</div>
                                 <div>• 📱 API WhatsApp completa</div>
                                 <div class="message-meta">Sistema inicializado</div>
@@ -902,174 +842,7 @@
             </div>
         </div>
 
-        <!-- TTS & Voice Configuration Tab -->
-        <div id="tts-tab" class="tab-content">
-            <h2>🔊 Configuração de Voz Coqui TTS</h2>
-            <div class="config-grid">
-                <div class="config-section">
-                    <h3>Configurações Básicas</h3>
-                    <div class="control-group">
-                        <label>
-                            <input type="checkbox" id="tts-enabled" checked> Ativar TTS
-                        </label>
-                    </div>
-                    <div class="control-group">
-                        <label for="tts-language">Idioma:</label>
-                        <select id="tts-language">
-                            <option value="pt-BR">🇧🇷 Português (BR)</option>
-                            <option value="en-US">🇺🇸 English (US)</option>
-                            <option value="es-ES">🇪🇸 Español (ES)</option>
-                        </select>
-                    </div>
-                    <div class="control-group">
-                        <label style="color: #666; font-style: italic;">Nota: Engine TTS padrão agora gerenciado na aba Chat</label>
-                    </div>
-                </div>
-                
-                <div class="config-section">
-                    <h3>🎭 Coqui TTS - Modelos + Vozes Clonadas</h3>
-                    <div class="control-group">
-                        <label for="coqui-model">Modelo Português BR + Vozes Clonadas:</label>
-                        <select id="coqui-model" onchange="onModelChange()">
-                            <option value="">🔄 Carregando modelos e vozes clonadas...</option>
-                        </select>
-                        <div id="model-status" class="status-message" style="margin-top: 5px; font-size: 11px; min-height: 20px;">
-                            🔄 Verificando modelos TTS e vozes clonadas...
-                        </div>
-                        <small style="color: #666; display: block; margin-top: 5px;">
-                            🎆 Inclui modelos Coqui TTS + suas vozes clonadas personalizadas
-                        </small>
-                    </div>
-                    <div class="control-group">
-                        <label>📊 Informações do Modelo:</label>
-                        <div id="model-info" style="background: #f8f9fa; padding: 10px; border-radius: 5px; border-left: 4px solid #007bff; font-size: 12px; min-height: 40px;">
-                            <div id="model-description">Selecione um modelo para ver as informações</div>
-                            <div id="model-details" style="margin-top: 5px; color: #666;"></div>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label for="voice-speed">🎛️ Velocidade da Voz:</label>
-                        <input type="range" id="voice-speed" min="0.5" max="2" step="0.1" value="1" oninput="updateSpeedValue(this.value)">
-                        <span id="speed-value" style="font-weight: bold; color: #007bff;">1.0x</span>
-                    </div>
-                    <div class="control-group">
-                        <label for="voice-pitch">🎵 Tom da Voz:</label>
-                        <input type="range" id="voice-pitch" min="0.5" max="2" step="0.1" value="1" oninput="updatePitchValue(this.value)">
-                        <span id="pitch-value" style="font-weight: bold; color: #28a745;">1.0</span>
-                    </div>
-                    <div class="control-group">
-                        <label for="voice-emotion">😊 Intensidade Emocional:</label>
-                        <input type="range" id="voice-emotion" min="0" max="1" step="0.1" value="0.5" oninput="updateEmotionValue(this.value)">
-                        <span id="emotion-value" style="font-weight: bold; color: #dc3545;">0.5</span>
-                    </div>
-                    <div class="control-group">
-                        <label>
-                            <input type="checkbox" id="voice-cloning-enabled"> 🎭 Ativar Clonagem de Voz
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="config-section">
-                    <h3>📘 Dicas para Vozes Clonadas de Qualidade</h3>
-                    <div style="background: #e8f4f8; border-left: 4px solid #17a2b8; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
-                        <h4 style="margin-top: 0; color: #17a2b8;">ℹ️ Importante sobre Vozes Clonadas</h4>
-                        <ul style="padding-left: 20px; margin: 10px 0;">
-                            <li><strong>Áudio de referência:</strong> Use arquivos WAV/MP3 de 30+ segundos com voz clara</li>
-                            <li><strong>Modelo de treinamento:</strong> Nosso sistema usa principalmente voz brasileira</li>
-                            <li><strong>Sotaque português:</strong> Sotaque europeu pode soar diferente devido ao treinamento</li>
-                            <li><strong>Qualidade:</strong> Vozes clonadas são simuladas com tecnologia avançada, mas não perfeitas</li>
-                        </ul>
-                        <p style="margin: 10px 0 0 0; font-size: 13px;">
-                            <strong>💡 Dica:</strong> Para melhor resultado, use referências em português brasileiro. 
-                            Veja o guia completo em <code>CLONED_VOICES_IMPROVEMENT_GUIDE.md</code>
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="config-section">
-                    <h3>🎭 Clonagem de Voz Avançada Enhanced</h3>
-                    <div class="voice-cloning-info" style="background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%); padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #007bff; box-shadow: 0 2px 4px rgba(0,123,255,0.1);">
-                        <h4>📝 Instruções para Clonagem Enhanced:</h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; font-size: 12px;">
-                            <ul style="margin: 0; padding-left: 20px;">
-                                <li><strong>Formato:</strong> WAV, MP3 ou FLAC (recomendado: WAV 44.1kHz)</li>
-                                <li><strong>Duração:</strong> Mínimo 15s, ideal 30-90s</li>
-                                <li><strong>Qualidade:</strong> Áudio limpo, sem ruído de fundo</li>
-                            </ul>
-                            <ul style="margin: 0; padding-left: 20px;">
-                                <li><strong>Conteúdo:</strong> Fala clara em português brasileiro</li>
-                                <li><strong>Tamanho:</strong> Máximo 50MB para melhor qualidade</li>
-                                <li><strong>Ambiente:</strong> Ambiente silencioso, sem eco</li>
-                            </ul>
-                        </div>
-                        <div style="background: #fff; padding: 8px; border-radius: 4px; margin-top: 10px; border: 1px solid #dee2e6;">
-                            📊 <strong>Dica Pro:</strong> Para melhor qualidade, grave em ambiente fechado, fale devagar e com boa articulação
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label for="reference-audio">📁 Áudio de Referência Enhanced (.wav/.mp3/.flac):</label>
-                        <div style="position: relative;">
-                            <input type="file" id="reference-audio" accept=".wav,.mp3,.flac" onchange="uploadReferenceAudio(this)" style="margin-bottom: 5px;">
-                            <div id="file-validation" style="font-size: 11px; color: #666; margin-top: 5px; min-height: 15px;">
-                                Nenhum arquivo selecionado
-                            </div>
-                        </div>
-                        <small style="color: #666; display: block; margin-top: 5px;">
-                            📊 Upload de amostra de voz em alta qualidade | Suporte aprimorado para validação automática
-                        </small>
-                    </div>
-                    <div class="control-group">
-                        <label for="cloned-voice-name">🏷️ Nome da Voz Clonada Enhanced:</label>
-                        <input type="text" id="cloned-voice-name" placeholder="Ex: Voz_Maria_BR_2024" maxlength="50" oninput="validateVoiceName(this.value)">
-                        <div id="name-validation" style="font-size: 11px; margin-top: 5px; min-height: 15px;">
-                            <span style="color: #666;">Use apenas letras, números e sublinhados (mín: 3, máx: 50 caracteres)</span>
-                        </div>
-                    </div>
-                    <div class="btn-group" style="margin-bottom: 10px;">
-                        <button class="btn-small" onclick="trainVoiceClone()" style="background: #28a745; color: white; position: relative;" id="train-btn">
-                            🎯 Treinar Modelo Enhanced
-                        </button>
-                        <button class="btn-small" onclick="testClonedVoice()" style="background: #17a2b8; color: white;" id="test-btn">
-                            🎤 Testar Voz
-                        </button>
-                        <button class="btn-small" onclick="listClonedVoices()" style="background: #6c757d; color: white;">
-                            📄 Listar Vozes
-                        </button>
-                        <button class="btn-small" onclick="previewVoiceSample()" style="background: #fd7e14; color: white;" id="preview-btn">
-                            🔊 Preview Amostra
-                        </button>
-                    </div>
-                    <div id="training-progress" style="display: none; margin: 10px 0;">
-                        <div style="background: #f8f9fa; border-radius: 4px; overflow: hidden; border: 1px solid #dee2e6;">
-                            <div id="progress-bar" style="background: linear-gradient(90deg, #28a745, #20c997); height: 20px; width: 0%; transition: width 0.3s ease;"></div>
-                        </div>
-                        <div id="progress-text" style="text-align: center; font-size: 11px; margin-top: 5px; color: #666;">Aguardando início do treinamento...</div>
-                    </div>
-                    <div id="cloning-status" class="status-message" style="min-height: 40px; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; font-size: 11px; line-height: 1.4; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #dee2e6; border-radius: 6px; padding: 10px;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 14px;">🔄</span>
-                            <span>Aguardando upload de áudio de referência... | Sistema Enhanced Pronto</span>
-                        </div>
-                        <div id="detailed-status" style="margin-top: 5px; color: #666; font-size: 10px;">Sistema de clonagem de voz Enhanced carregado com validação avançada</div>
-                    </div>
-                </div>
-                
-                <!-- Add voice testing section to TTS tab -->
-                <div class="config-section">
-                    <h3>🎧 Teste de Voz</h3>
-                    <div class="control-group">
-                        <label for="test-text">Texto para Teste:</label>
-                        <textarea id="test-text" rows="3" placeholder="Digite o texto para testar a síntese de voz...">Olá, este é um teste da síntese de voz em português brasileiro.</textarea>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn-small" onclick="playTestVoice()">🔊 Reproduzir Voz</button>
-                        <button class="btn-small" onclick="downloadTestAudio()">💾 Baixar Áudio</button>
-                    </div>
-                    <div id="audio-player" style="margin-top: 10px;"></div>
-                    <div id="test-status" class="status-message" style="display: none;"></div>
-                </div>
-            </div>
-        </div>
+        
 
         <!-- Database Configuration Tab -->
         <div id="database-tab" class="tab-content">
@@ -1279,9 +1052,6 @@
                 case 'monitoring':
                     updateMonitoringStatus();
                     break;
-                case 'tts':
-                    checkCoquiModels();
-                    break;
                 case 'history':
                     loadConversationHistory();
                     break;
@@ -1298,14 +1068,7 @@
                 });
             }
 
-            // Voice speed slider
-            const speedSlider = document.getElementById('voice-speed');
-            const speedValue = document.getElementById('speed-value');
-            if (speedSlider && speedValue) {
-                speedSlider.addEventListener('input', (e) => {
-                    speedValue.textContent = e.target.value + 'x';
-                });
-            }
+            
 
             // Database type change
             const dbType = document.getElementById('db-type');
@@ -1336,13 +1099,13 @@
             try {
                 const response = await fetch('/health');
                 const health = await response.json();
-                
-                // Update service status indicators
-                updateServiceStatus('stt-status', health.services.whisper_stt.status);
-                updateServiceStatus('llm-status', health.services.llm_service.status);
-                updateServiceStatus('tts-status', health.services.tts_service.status);
-                updateServiceStatus('db-status', health.services.database.status);
-                
+
+                // Update service status indicators with null checks
+                updateServiceStatus('stt-status', health.services?.whisper_stt?.status || 'unknown');
+                updateServiceStatus('llm-status', health.services?.llm_service?.status || 'unknown');
+                updateServiceStatus('tts-status', 'removed'); // TTS removed from system
+                updateServiceStatus('db-status', health.services?.database?.status || 'unknown');
+
                 console.log('System health:', health);
             } catch (error) {
                 console.error('Health check failed:', error);
@@ -1474,14 +1237,14 @@
         async function sendMessage() {
             const messageInput = document.getElementById('message-input');
             const message = messageInput.value.trim();
-            
+
             if (!message) return;
-            
+
             // Add user message to chat
             addMessage('user', message);
             messageInput.value = '';
             messageInput.style.height = 'auto';
-            
+
             // Send via WebSocket
             if (websocket && websocket.readyState === WebSocket.OPEN) {
                 const data = {
@@ -1490,10 +1253,10 @@
                     provider: document.getElementById('llm-provider').value,
                     model: document.getElementById('llm-model').value,
                     system_prompt: document.getElementById('system-prompt').value,
-                    use_tts: document.getElementById('tts-enabled').checked,
-                    tts_engine: document.getElementById('default-tts-engine').value
+                    use_tts: false,  // TTS removed from system
+                    tts_engine: 'none'  // TTS removed from system
                 };
-                
+
                 websocket.send(JSON.stringify(data));
             } else {
                 // Fallback to HTTP API
@@ -1505,7 +1268,7 @@
             try {
                 const startTime = Date.now();
                 updateStatus('Processando mensagem...');
-                
+
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
@@ -1515,34 +1278,28 @@
                         message: message,
                         llm_provider: document.getElementById('llm-provider').value,
                         llm_model: document.getElementById('llm-model').value,
-                        use_tts: document.getElementById('tts-enabled').checked,
-                        tts_engine: document.getElementById('default-tts-engine').value,
-                        tts_voice: document.getElementById('coqui-model').value  // Add selected voice
+                        use_tts: false,  // TTS removed from system
+                        tts_engine: 'none',  // TTS removed from system
+                        tts_voice: 'none'  // TTS removed from system
                     })
                 });
-                
+
                 const result = await response.json();
                 const responseTime = Date.now() - startTime;
-                
+
                 if (result.success) {
-                    // Check if TTS audio data is available
-                    const audioData = result.audio_data || null;
-                    addMessage('assistant', result.bot_response, result.llm_provider || 'API', audioData);
+                    // No TTS audio data needed (removed from system)
+                    addMessage('assistant', result.bot_response, result.llm_provider || 'API', null);
                     document.getElementById('response-time').textContent = `${responseTime}ms`;
                     document.getElementById('last-provider').textContent = result.llm_provider || 'API';
                     messageCount++;
                     document.getElementById('message-count').textContent = messageCount;
-                    
-                    if (result.has_audio && result.tts_info) {
-                        // Handle TTS audio if available
-                        console.log('TTS audio available:', result.tts_info);
-                    }
                 } else {
                     addMessage('assistant', 'Erro ao processar mensagem.', 'Error');
                 }
-                
+
                 updateStatus('Sistema pronto!');
-                
+
             } catch (error) {
                 console.error('Error sending message:', error);
                 addMessage('assistant', 'Erro de conexão. Tente novamente.', 'Error');
@@ -1699,51 +1456,35 @@
             const messagesContainer = document.getElementById('chat-messages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}`;
-            
+
             const timestamp = new Date().toLocaleTimeString();
             const meta = provider ? `${provider} • ${timestamp}` : timestamp;
-            
+
             // Create unique ID for this message
             const messageId = 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
             messageDiv.id = messageId;
-            
+
             let audioPlayerHtml = '';
-            if (audioData && type === 'assistant') {
-                // Create audio player controls for TTS
-                audioPlayerHtml = `
-                    <div class="tts-audio-player" data-message-id="${messageId}">
-                        <button class="audio-play-btn" onclick="playTTSAudio('${messageId}')" title="Reproduzir TTS">
-                            🔊
-                        </button>
-                        <button class="audio-stop-btn" onclick="stopTTSAudio('${messageId}')" title="Parar TTS" style="display: none;">
-                            ⏹️
-                        </button>
-                        <span class="tts-status">TTS disponível</span>
-                    </div>
-                `;
-                
-                // Store audio data on the message element
-                messageDiv.setAttribute('data-audio', audioData);
-            }
-            
+            // TTS functionality removed - no audio player HTML needed
+
             messageDiv.innerHTML = `
                 <div class="message-content">${content}</div>
                 ${audioPlayerHtml}
                 <div class="message-meta">${meta}</div>
             `;
-            
+
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         async function testServices() {
             updateStatus('Testando serviços...');
-            
+
             try {
                 // Test health endpoint
                 const healthResponse = await fetch('/health');
                 const health = await healthResponse.json();
-                
+
                 // Test LLM
                 const llmResponse = await fetch('/api/llm', {
                     method: 'POST',
@@ -1754,15 +1495,15 @@
                     })
                 });
                 const llmResult = await llmResponse.json();
-                
+
                 addMessage('assistant', `✅ Teste de serviços concluído:
-• STT: ${health.services.whisper_stt.status}
+• STT: ${health.services?.whisper_stt?.status || 'unknown'}
 • LLM: ${llmResult.success ? 'OK' : 'Error'}
-• TTS: ${health.services.tts_service.status}
-• Database: ${health.services.database.status}`, 'Test');
-                
+• TTS: Removed (não disponível)
+• Database: ${health.services?.database?.status || 'unknown'}`, 'Test');
+
                 updateStatus('Testes concluídos!');
-                
+
             } catch (error) {
                 console.error('Service test failed:', error);
                 addMessage('assistant', '❌ Erro nos testes de serviços.', 'Test');
@@ -1785,264 +1526,9 @@
             }
         }
 
-        // TTS Audio Player Functions
-        let currentAudio = null;
-        let currentMessageId = null;
+        // TTS functions removed - TTS functionality has been removed from the system
+
         
-        function playTTSAudio(messageId) {
-            try {
-                // Stop any currently playing audio
-                if (currentAudio) {
-                    stopTTSAudio(currentMessageId);
-                }
-                
-                // Find the message element
-                const messageElement = document.getElementById(messageId);
-                if (!messageElement) {
-                    console.error('Message element not found:', messageId);
-                    return;
-                }
-                
-                // Get audio data from the message element
-                const audioData = messageElement.getAttribute('data-audio');
-                if (!audioData) {
-                    console.error('No audio data found for message:', messageId);
-                    return;
-                }
-                
-                // Create and play audio
-                currentAudio = new Audio('data:audio/wav;base64,' + audioData);
-                currentMessageId = messageId;
-                
-                // Update UI elements
-                const playBtn = messageElement.querySelector('.audio-play-btn');
-                const stopBtn = messageElement.querySelector('.audio-stop-btn');
-                const status = messageElement.querySelector('.tts-status');
-                
-                if (playBtn) playBtn.style.display = 'none';
-                if (stopBtn) stopBtn.style.display = 'flex';
-                if (status) {
-                    status.textContent = 'Reproduzindo...';
-                    status.classList.add('playing');
-                }
-                
-                // Set up audio event listeners
-                currentAudio.onended = () => {
-                    stopTTSAudio(messageId);
-                };
-                
-                currentAudio.onerror = (error) => {
-                    console.error('Audio playback error:', error);
-                    stopTTSAudio(messageId);
-                    if (status) status.textContent = 'Erro na reprodução';
-                };
-                
-                // Play the audio
-                currentAudio.play();
-                
-            } catch (error) {
-                console.error('Error playing TTS audio:', error);
-            }
-        }
-        
-        function stopTTSAudio(messageId) {
-            try {
-                // Stop current audio if playing
-                if (currentAudio) {
-                    currentAudio.pause();
-                    currentAudio.currentTime = 0;
-                    currentAudio = null;
-                }
-                
-                // Reset UI for the specific message
-                const messageElement = document.getElementById(messageId);
-                if (messageElement) {
-                    const playBtn = messageElement.querySelector('.audio-play-btn');
-                    const stopBtn = messageElement.querySelector('.audio-stop-btn');
-                    const status = messageElement.querySelector('.tts-status');
-                    
-                    if (playBtn) playBtn.style.display = 'flex';
-                    if (stopBtn) stopBtn.style.display = 'none';
-                    if (status) {
-                        status.textContent = 'TTS disponível';
-                        status.classList.remove('playing');
-                    }
-                }
-                
-                currentMessageId = null;
-                
-            } catch (error) {
-                console.error('Error stopping TTS audio:', error);
-            }
-        }
-
-        // TTS and Voice Cloning Functions
-        async function uploadReferenceAudio(input) {
-            const file = input.files[0];
-            if (!file) return;
-            
-            const statusDiv = document.getElementById('cloning-status');
-            statusDiv.innerHTML = '📎 Validando arquivo de áudio...';
-            
-            // Validate file size
-            if (file.size > 25 * 1024 * 1024) {
-                statusDiv.innerHTML = '❌ Arquivo muito grande! Máximo 25MB';
-                input.value = '';
-                return;
-            }
-            
-            // Validate file type
-            const validTypes = ['audio/wav', 'audio/mp3', 'audio/mpeg', 'audio/flac'];
-            if (!validTypes.includes(file.type) && !file.name.match(/\.(wav|mp3|flac)$/i)) {
-                statusDiv.innerHTML = '❌ Formato inválido! Use WAV, MP3 ou FLAC';
-                input.value = '';
-                return;
-            }
-            
-            statusDiv.innerHTML = '📤 Fazendo upload do áudio de referência...';
-            
-            const formData = new FormData();
-            formData.append('audio', file);
-            
-            try {
-                const response = await fetch('/api/tts/upload-reference', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    statusDiv.innerHTML = `✅ Upload realizado com sucesso! Arquivo: ${file.name} (${(file.size/1024/1024).toFixed(2)}MB)`;
-                } else {
-                    statusDiv.innerHTML = '❌ Upload falhou: ' + result.error;
-                }
-            } catch (error) {
-                statusDiv.innerHTML = '❌ Erro no upload: ' + error.message;
-            }
-        }
-
-        async function trainVoiceClone() {
-            const voiceName = document.getElementById('cloned-voice-name').value.trim();
-            const statusDiv = document.getElementById('cloning-status');
-            
-            if (!validateVoiceName(voiceName)) {
-                statusDiv.innerHTML = '⚠️ Por favor, insira um nome válido para a voz';
-                return;
-            }
-            
-            const fileInput = document.getElementById('reference-audio');
-            if (!fileInput.files[0]) {
-                statusDiv.innerHTML = '⚠️ Por favor, faça upload de um áudio de referência primeiro';
-                return;
-            }
-            
-            statusDiv.innerHTML = '🎯 Iniciando treinamento Enhanced do modelo de voz...';
-            showTrainingProgress();
-            
-            try {
-                const response = await fetch('/api/tts/train-clone', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ voice_name: voiceName })
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    statusDiv.innerHTML = `✅ Modelo '${voiceName}' treinado com sucesso! | ⏱️ Tempo: ${result.training_time || 'N/A'} | 🎤 Pronto para uso`;
-                    
-                    // Enable test button
-                    document.getElementById('test-btn').disabled = false;
-                } else {
-                    statusDiv.innerHTML = '❌ Treinamento falhou: ' + result.error;
-                }
-            } catch (error) {
-                statusDiv.innerHTML = '❌ Erro no treinamento: ' + error.message;
-            }
-        }
-
-        async function testClonedVoice() {
-            const voiceName = document.getElementById('cloned-voice-name').value.trim();
-            const statusDiv = document.getElementById('cloning-status');
-            
-            if (!voiceName) {
-                statusDiv.innerHTML = '⚠️ Por favor, insira o nome da voz para testar';
-                return;
-            }
-            
-            statusDiv.innerHTML = '🎙️ Testando voz clonada...';
-            
-            try {
-                const response = await fetch('/api/tts/test-clone', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        voice_name: voiceName,
-                        text: 'Olá, esta é a sua voz clonada falando em português brasileiro. Como você pode ouvir, a qualidade da síntese é muito boa.'
-                    })
-                });
-                
-                const result = await response.json();
-                if (result.success && result.audio_data) {
-                    // Play the generated audio
-                    const audio = new Audio('data:audio/wav;base64,' + result.audio_data);
-                    audio.play();
-                    statusDiv.innerHTML = `✅ Teste concluído! Voz '${voiceName}' reproduzida com sucesso.`;
-                } else {
-                    statusDiv.innerHTML = '❌ Teste falhou: ' + (result.error || 'Nenhum áudio gerado');
-                }
-            } catch (error) {
-                statusDiv.innerHTML = '❌ Erro no teste: ' + error.message;
-            }
-        }
-        
-        async function listClonedVoices() {
-            const statusDiv = document.getElementById('cloning-status');
-            statusDiv.innerHTML = '🔍 Listando vozes clonadas...';
-            
-            try {
-                const response = await fetch('/api/tts/list-cloned-voices');
-                const result = await response.json();
-                
-                if (result.success && result.voices) {
-                    if (result.voices.length === 0) {
-                        statusDiv.innerHTML = '📄 Nenhuma voz clonada encontrada. Faça upload de um áudio de referência primeiro.';
-                    } else {
-                        let voicesList = result.voices.map(voice => 
-                            `• ${voice.name} (${voice.date_created || 'N/A'})`
-                        ).join('<br>');
-                        statusDiv.innerHTML = `📄 Vozes disponíveis (${result.voices.length}):<br>${voicesList}`;
-                    }
-                } else {
-                    statusDiv.innerHTML = '❌ Erro ao listar vozes: ' + (result.error || 'Falha desconhecida');
-                }
-            } catch (error) {
-                statusDiv.innerHTML = '❌ Erro na consulta: ' + error.message;
-            }
-        }
-
-        async function checkCoquiModels() {
-            try {
-                const response = await fetch('/api/tts/models');
-                const result = await response.json();
-                
-                if (result.success) {
-                    console.log('Available Coqui models:', result.models);
-                    // Update model selector with available models
-                    const modelSelect = document.getElementById('coqui-model');
-                    if (modelSelect && result.models) {
-                        modelSelect.innerHTML = '';
-                        result.models.forEach(model => {
-                            const option = document.createElement('option');
-                            option.value = model.name;
-                            option.textContent = model.display_name || model.name;
-                            modelSelect.appendChild(option);
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error('Error checking Coqui models:', error);
-            }
-        }
 
         // Database Functions
         function updateDbConfig() {
@@ -2158,116 +1644,24 @@
             try {
                 const response = await fetch('/health');
                 const health = await response.json();
-                
+
                 // Update monitoring status dots and details
                 updateServiceStatus('monitor-stt', health.services?.whisper_stt?.status || 'unknown');
                 updateServiceStatus('monitor-llm', health.services?.llm_service?.status || 'unknown');
-                updateServiceStatus('monitor-tts', health.services?.tts_service?.status || 'unknown');
+                updateServiceStatus('monitor-tts', 'removed'); // TTS removed from system
                 updateServiceStatus('monitor-db', health.services?.database?.status || 'unknown');
-                
+
                 document.getElementById('stt-details').textContent = health.services?.whisper_stt?.details || '-';
                 document.getElementById('llm-details').textContent = health.services?.llm_service?.details || '-';
-                document.getElementById('tts-details').textContent = health.services?.tts_service?.details || '-';
+                document.getElementById('tts-details').textContent = 'TTS removido do sistema'; // TTS removed
                 document.getElementById('db-details').textContent = health.services?.database?.details || '-';
-                
+
             } catch (error) {
                 console.error('Error updating monitoring status:', error);
             }
         }
 
-        // Add JavaScript functions for new features
-        async function playTestVoice() {
-            const text = document.getElementById('test-text').value;
-            const statusDiv = document.getElementById('test-status');
-            
-            if (!text.trim()) {
-                statusDiv.innerHTML = '⚠️ Digite um texto para testar';
-                statusDiv.style.display = 'block';
-                return;
-            }
-            
-            statusDiv.innerHTML = '🔄 Gerando áudio...';
-            statusDiv.style.display = 'block';
-            
-            try {
-                const response = await fetch('/api/tts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        text: text,
-                        language: document.getElementById('tts-language').value,
-                        voice: document.getElementById('coqui-model').value,
-                        engine: window.defaultTTSEngine || 'gtts', // Use default TTS engine
-                        speed: parseFloat(document.getElementById('voice-speed').value)
-                    })
-                });
-                
-                const result = await response.json();
-                if (result.success && result.audio_data) {
-                    const audio = new Audio('data:audio/wav;base64,' + result.audio_data);
-                    audio.play();
-                    
-                    // Add audio player to page
-                    document.getElementById('audio-player').innerHTML = `
-                        <audio controls style="width: 100%;">
-                            <source src="data:audio/wav;base64,${result.audio_data}" type="audio/wav">
-                        </audio>
-                    `;
-                    
-                    statusDiv.innerHTML = '✅ Áudio reproduzido com sucesso!';
-                } else {
-                    statusDiv.innerHTML = '❌ Erro ao gerar áudio: ' + (result.error || 'Falha desconhecida');
-                }
-            } catch (error) {
-                statusDiv.innerHTML = '❌ Erro de conexão: ' + error.message;
-            }
-        }
-
-        async function downloadTestAudio() {
-            const text = document.getElementById('test-text').value;
-            const statusDiv = document.getElementById('test-status');
-            
-            if (!text.trim()) {
-                statusDiv.innerHTML = '⚠️ Digite um texto para gerar áudio';
-                statusDiv.style.display = 'block';
-                return;
-            }
-            
-            statusDiv.innerHTML = '💾 Preparando download...';
-            statusDiv.style.display = 'block';
-            
-            try {
-                const response = await fetch('/api/tts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        text: text,
-                        language: document.getElementById('tts-language').value,
-                        voice: document.getElementById('coqui-model').value,
-                        engine: window.defaultTTSEngine || 'gtts', // Use default TTS engine
-                        speed: parseFloat(document.getElementById('voice-speed').value)
-                    })
-                });
-                
-                const result = await response.json();
-                if (result.success && result.audio_data) {
-                    // Create download link
-                    const blob = new Blob([Uint8Array.from(atob(result.audio_data), c => c.charCodeAt(0))], {type: 'audio/wav'});
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'coqui_tts_test.wav';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    
-                    statusDiv.innerHTML = '✅ Download iniciado!';
-                } else {
-                    statusDiv.innerHTML = '❌ Erro ao gerar áudio para download';
-                }
-            } catch (error) {
-                statusDiv.innerHTML = '❌ Erro no download: ' + error.message;
-            }
-        }
+        
 
         function generateQRCode() {
             const phoneId = document.getElementById('phone-number-id').value;
@@ -2316,225 +1710,7 @@
             }
         }
 
-        // Enhanced TTS Functions
-        async function loadTTSModels() {
-            const modelSelect = document.getElementById('coqui-model');
-            const statusDiv = document.getElementById('model-status');
-            
-            try {
-                statusDiv.innerHTML = '🔄 Carregando modelos TTS e vozes clonadas...';
-                
-                // Carregar modelos Coqui TTS
-                const modelsResponse = await fetch('/api/tts/models');
-                const modelsResult = await modelsResponse.json();
-                
-                if (modelsResult.success) {
-                    modelSelect.innerHTML = '';
-                    
-                    // Adicionar modelos Coqui padrão
-                    const defaultGroup = document.createElement('optgroup');
-                    defaultGroup.label = '🎭 Modelos Coqui TTS Padrão';
-                    
-                    modelsResult.models.forEach(model => {
-                        // Only show Coqui models (not cloned voices which are handled separately)
-                        if (!model.is_cloned) {
-                            const option = document.createElement('option');
-                            option.value = model.name;
-                            option.textContent = model.display_name;
-                            option.dataset.quality = model.quality;
-                            option.dataset.gender = model.gender;
-                            option.dataset.description = model.description;
-                            defaultGroup.appendChild(option);
-                        }
-                    });
-                    modelSelect.appendChild(defaultGroup);
-                    
-                    // Adicionar vozes clonadas separadamente
-                    const clonedVoices = modelsResult.models.filter(model => model.is_cloned);
-                    if (clonedVoices.length > 0) {
-                        const clonedGroup = document.createElement('optgroup');
-                        clonedGroup.label = '🎤 Suas Vozes Clonadas';
-                        
-                        clonedVoices.forEach(model => {
-                            const option = document.createElement('option');
-                            option.value = model.name;  // This will be 'cloned_voice_name'
-                            option.textContent = model.display_name;
-                            option.dataset.quality = model.quality;
-                            option.dataset.gender = model.gender;
-                            option.dataset.description = model.description;
-                            option.dataset.type = 'cloned';
-                            clonedGroup.appendChild(option);
-                        });
-                        modelSelect.appendChild(clonedGroup);
-                    }
-                    
-                    const totalModels = modelsResult.models.length;
-                    statusDiv.innerHTML = `✅ ${modelsResult.models.filter(m => !m.is_cloned).length} modelos + ${clonedVoices.length} vozes clonadas carregadas`;
-                } else {
-                    statusDiv.innerHTML = '❌ Erro ao carregar modelos: ' + (modelsResult.error || 'Resposta inválida');
-                }
-            } catch (error) {
-                statusDiv.innerHTML = '❌ Falha na conexão: ' + error.message;
-            }
-        }
         
-        function onModelChange() {
-            const modelSelect = document.getElementById('coqui-model');
-            const selectedOption = modelSelect.selectedOptions[0];
-            const descDiv = document.getElementById('model-description');
-            const detailsDiv = document.getElementById('model-details');
-            
-            if (selectedOption && selectedOption.dataset.description) {
-                descDiv.textContent = selectedOption.dataset.description;
-                detailsDiv.innerHTML = `
-                    📊 <strong>Qualidade:</strong> ${selectedOption.dataset.quality} | 
-                    👤 <strong>Gênero:</strong> ${selectedOption.dataset.gender} |
-                    🎯 <strong>Tipo:</strong> Neural TTS
-                `;
-            } else {
-                descDiv.textContent = 'Selecione um modelo para ver as informações';
-                detailsDiv.textContent = '';
-            }
-        }
-        
-        function updateSpeedValue(value) {
-            document.getElementById('speed-value').textContent = value + 'x';
-        }
-        
-        function updatePitchValue(value) {
-            document.getElementById('pitch-value').textContent = value;
-        }
-        
-        function updateDefaultTTS() {
-            const ttsEngine = document.getElementById('default-tts-engine').value;
-            
-            // Salvar preferência no localStorage
-            localStorage.setItem('defaultTTSEngine', ttsEngine);
-            
-            // Atualizar variável global
-            window.defaultTTSEngine = ttsEngine;
-            
-            // Feedback visual
-            const statusText = document.getElementById('status-text');
-            const engineNames = {
-                'gtts': 'Google TTS (Flash)',
-                'coqui': 'Coqui TTS',
-                'pyttsx3': 'pyttsx3 (Offline)'
-            };
-            
-            if (statusText) {
-                statusText.textContent = `TTS padrão: ${engineNames[ttsEngine]}`;
-                setTimeout(() => {
-                    statusText.textContent = 'Sistema pronto!';
-                }, 3000);
-            }
-            
-            console.log(`🎛️ TTS padrão atualizado para: ${engineNames[ttsEngine]}`);
-        }
-        
-        function loadDefaultTTSPreference() {
-            const savedEngine = localStorage.getItem('defaultTTSEngine') || 'gtts'; // Google TTS como padrão
-            const engineSelect = document.getElementById('default-tts-engine');
-            
-            if (engineSelect) {
-                engineSelect.value = savedEngine;
-                window.defaultTTSEngine = savedEngine;
-            }
-        }
-        
-        function validateVoiceName(name) {
-            const validationDiv = document.getElementById('name-validation');
-            
-            if (!name) {
-                validationDiv.innerHTML = '<span style="color: #666;">Use apenas letras, números e sublinhados (mín: 3, máx: 50 caracteres)</span>';
-                return false;
-            }
-            
-            if (name.length < 3) {
-                validationDiv.innerHTML = '<span style="color: #dc3545;">❌ Nome muito curto (mínimo 3 caracteres)</span>';
-                return false;
-            }
-            
-            if (!/^[a-zA-Z0-9_]+$/.test(name)) {
-                validationDiv.innerHTML = '<span style="color: #dc3545;">❌ Use apenas letras, números e sublinhados</span>';
-                return false;
-            }
-            
-            validationDiv.innerHTML = '<span style="color: #28a745;">✅ Nome válido</span>';
-            return true;
-        }
-        
-        async function previewVoiceSample() {
-            const fileInput = document.getElementById('reference-audio');
-            const statusDiv = document.getElementById('cloning-status');
-            
-            if (!fileInput.files[0]) {
-                statusDiv.innerHTML = '⚠️ Selecione um arquivo de áudio primeiro';
-                return;
-            }
-            
-            const file = fileInput.files[0];
-            statusDiv.innerHTML = '🔊 Reproduzindo amostra de referência...';
-            
-            try {
-                const url = URL.createObjectURL(file);
-                const audio = new Audio(url);
-                
-                audio.onloadedmetadata = () => {
-                    const duration = audio.duration;
-                    const fileSize = (file.size / 1024 / 1024).toFixed(2);
-                    statusDiv.innerHTML = `🎵 Reproduzindo: ${file.name} | ⏱️ ${duration.toFixed(1)}s | 📊 ${fileSize}MB`;
-                };
-                
-                audio.onended = () => {
-                    statusDiv.innerHTML = '✅ Preview concluído. Arquivo pronto para treinamento.';
-                    URL.revokeObjectURL(url);
-                };
-                
-                audio.onerror = () => {
-                    statusDiv.innerHTML = '❌ Erro ao reproduzir arquivo de áudio';
-                    URL.revokeObjectURL(url);
-                };
-                
-                audio.play();
-            } catch (error) {
-                statusDiv.innerHTML = '❌ Erro no preview: ' + error.message;
-            }
-        }
-        
-        // Enhanced Training Progress
-        function showTrainingProgress() {
-            const progressDiv = document.getElementById('training-progress');
-            const progressBar = document.getElementById('progress-bar');
-            const progressText = document.getElementById('progress-text');
-            
-            progressDiv.style.display = 'block';
-            
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 10;
-                if (progress > 100) progress = 100;
-                
-                progressBar.style.width = progress + '%';
-                
-                if (progress < 20) {
-                    progressText.textContent = '🔄 Processando áudio de referência...';
-                } else if (progress < 50) {
-                    progressText.textContent = '🧠 Extraindo características de voz...';
-                } else if (progress < 80) {
-                    progressText.textContent = '🎯 Treinando modelo neural...';
-                } else if (progress < 100) {
-                    progressText.textContent = '✅ Finalizando e salvando modelo...';
-                } else {
-                    progressText.textContent = '🎉 Treinamento concluído com sucesso!';
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        progressDiv.style.display = 'none';
-                        progressBar.style.width = '0%';
-                    }, 2000);
-                }
-            }, 200);
-        }
 
         // History Tab Functions
         async function loadConversationHistory() {
@@ -2737,15 +1913,9 @@
             }
         }
         
-        // Initialize Enhanced TTS System
+        // Initialize System
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Initializing Enhanced TTS System...');
-            
-            // Carregar preferência TTS padrão (Google Flash como padrão)
-            loadDefaultTTSPreference();
-            
-            // Load TTS models when page loads
-            loadTTSModels();
+            console.log('🚀 Initializing System...');
             
             // Initialize monitoring
             updateMonitoringStatus();
@@ -2758,7 +1928,7 @@
                 console.warn('Could not load conversation history:', error);
             }
             
-            console.log('✅ Enhanced TTS System initialized with Google Flash as default');
+            console.log('✅ System initialized');
         });
     </script>
 </body>

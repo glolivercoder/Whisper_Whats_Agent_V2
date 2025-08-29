@@ -1,6 +1,0 @@
-{
-  "name": "Narrador_Grave",
-  "created_at": "2025-08-25T03:14:32.988200",
-  "status": "trained",
-  "model_path": "models/cloned_voices/Narrador_Grave.pth"
-}

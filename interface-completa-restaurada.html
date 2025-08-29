@@ -11,14 +11,12 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #333;
         }
-
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -28,7 +26,6 @@
             gap: 20px;
             height: 100vh;
         }
-
         .sidebar-left {
             background: white;
             border-radius: 15px;
@@ -36,7 +33,6 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             height: fit-content;
         }
-
         .sidebar-left h3 {
             color: #4F46E5;
             margin-bottom: 15px;
@@ -44,7 +40,6 @@
             align-items: center;
             gap: 10px;
         }
-
         .chat-main {
             background: white;
             border-radius: 15px;
@@ -53,21 +48,18 @@
             flex-direction: column;
             height: calc(100vh - 40px);
         }
-
         .chat-header {
             padding: 20px;
             border-bottom: 1px solid #E5E7EB;
             background: #F9FAFB;
             border-radius: 15px 15px 0 0;
         }
-
         .chat-header h2 {
             color: #4F46E5;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
         .status-indicator {
             display: inline-block;
             width: 10px;
@@ -75,65 +67,54 @@
             border-radius: 50%;
             margin-left: 10px;
         }
-
         .status-indicator.connected { background: #10B981; }
         .status-indicator.disconnected { background: #EF4444; }
         .status-indicator.loading { background: #F59E0B; }
-
         .chat-messages {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
             background: #F9FAFB;
         }
-
         .message {
             margin-bottom: 15px;
             display: flex;
             align-items: flex-start;
             gap: 10px;
         }
-
         .message.sent {
             justify-content: flex-end;
         }
-
         .message-content {
             max-width: 70%;
             padding: 12px 16px;
             border-radius: 18px;
             word-wrap: break-word;
         }
-
         .message.received .message-content {
             background: white;
             border: 1px solid #E5E7EB;
         }
-
         .message.sent .message-content {
             background: #4F46E5;
             color: white;
         }
-
         .message-time {
             font-size: 0.75rem;
             color: #9CA3AF;
             margin-top: 5px;
         }
-
         .chat-input {
             padding: 20px;
             border-top: 1px solid #E5E7EB;
             background: white;
             border-radius: 0 0 15px 15px;
         }
-
         .input-group {
             display: flex;
             gap: 10px;
             align-items: flex-end;
         }
-
         .message-input {
             flex: 1;
             padding: 12px 16px;
@@ -144,12 +125,10 @@
             min-height: 50px;
             max-height: 120px;
         }
-
         .message-input:focus {
             outline: none;
             border-color: #4F46E5;
         }
-
         .send-btn {
             background: #4F46E5;
             color: white;
@@ -160,18 +139,15 @@
             font-size: 1rem;
             transition: all 0.3s ease;
         }
-
         .send-btn:hover {
             background: #3730A3;
             transform: translateY(-2px);
         }
-
         .send-btn:disabled {
             background: #9CA3AF;
             cursor: not-allowed;
             transform: none;
         }
-
         .sidebar-right {
             background: white;
             border-radius: 15px;
@@ -179,7 +155,6 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             height: fit-content;
         }
-
         .sidebar-right h3 {
             color: #4F46E5;
             margin-bottom: 15px;
@@ -187,18 +162,15 @@
             align-items: center;
             gap: 10px;
         }
-
         .form-group {
             margin-bottom: 15px;
         }
-
         .form-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: 500;
             color: #374151;
         }
-
         .form-group input,
         .form-group select,
         .form-group textarea {
@@ -209,14 +181,12 @@
             font-size: 0.9rem;
             transition: border-color 0.3s ease;
         }
-
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: #4F46E5;
         }
-
         .btn {
             background: #4F46E5;
             color: white;
@@ -230,28 +200,22 @@
             width: 100%;
             margin-bottom: 10px;
         }
-
         .btn:hover {
             background: #3730A3;
         }
-
         .btn.success {
             background: #10B981;
         }
-
         .btn.danger {
             background: #EF4444;
         }
-
         .btn.warning {
             background: #F59E0B;
         }
-
         .btn:disabled {
             background: #9CA3AF;
             cursor: not-allowed;
         }
-
         .client-list {
             max-height: 300px;
             overflow-y: auto;
@@ -259,55 +223,45 @@
             border-radius: 8px;
             margin-top: 10px;
         }
-
         .client-item {
             padding: 10px;
             border-bottom: 1px solid #E5E7EB;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-
         .client-item:hover {
             background: #F3F4F6;
         }
-
         .client-item.active {
             background: #4F46E5;
             color: white;
         }
-
         .client-name {
             font-weight: 500;
             margin-bottom: 2px;
         }
-
         .client-phone {
             font-size: 0.8rem;
             color: #6B7280;
         }
-
         .client-item.active .client-phone {
             color: #E5E7EB;
         }
-
         .status-card {
             background: #F3F4F6;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 15px;
         }
-
         .status-card h4 {
             color: #374151;
             margin-bottom: 8px;
             font-size: 0.9rem;
         }
-
         .status-card p {
             color: #6B7280;
             font-size: 0.8rem;
         }
-
         .log {
             background: #1F2937;
             color: #F9FAFB;
@@ -319,49 +273,40 @@
             overflow-y: auto;
             margin-top: 15px;
         }
-
         .log-entry {
             margin-bottom: 5px;
             padding: 2px 0;
         }
-
         .log-entry.info { color: #60A5FA; }
         .log-entry.success { color: #34D399; }
         .log-entry.error { color: #F87171; }
         .log-entry.warning { color: #FBBF24; }
-
         /* Tabs */
         .tabs {
             display: flex;
             border-bottom: 1px solid #E5E7EB;
             margin-bottom: 20px;
         }
-
         .tab {
             padding: 10px 20px;
             cursor: pointer;
             border-bottom: 2px solid transparent;
             transition: all 0.3s ease;
         }
-
         .tab.active {
             border-bottom-color: #4F46E5;
             color: #4F46E5;
             font-weight: 500;
         }
-
         .tab:hover {
             background: #F3F4F6;
         }
-
         .tab-content {
             display: none;
         }
-
         .tab-content.active {
             display: block;
         }
-
         /* QR Code */
         .qr-container {
             text-align: center;
@@ -371,12 +316,10 @@
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
         .qr-code {
             max-width: 300px;
             margin: 0 auto;
         }
-
         /* Service Controls */
         .service-controls {
             display: grid;
@@ -384,7 +327,6 @@
             gap: 10px;
             margin-bottom: 15px;
         }
-
         .service-status {
             padding: 10px;
             border-radius: 8px;
@@ -392,62 +334,50 @@
             font-size: 0.8rem;
             font-weight: 500;
         }
-
         .service-status.running {
             background: #D1FAE5;
             color: #065F46;
         }
-
         .service-status.stopped {
             background: #FEE2E2;
             color: #991B1B;
         }
-
         .service-status.starting {
             background: #FEF3C7;
             color: #92400E;
         }
-
         @media (max-width: 1200px) {
             .container {
                 grid-template-columns: 1fr;
                 gap: 15px;
             }
-            
             .sidebar-left,
             .sidebar-right {
                 order: 2;
             }
-            
             .chat-main {
                 order: 1;
                 height: 60vh;
             }
         }
-
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
             }
-            
             .chat-main {
                 height: 50vh;
             }
         }
-
         .fade-in {
             animation: fadeIn 0.5s ease-in;
         }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .pulse {
             animation: pulse 2s infinite;
         }
-
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -460,14 +390,11 @@
         <!-- Sidebar Esquerda - Configurações -->
         <div class="sidebar-left">
             <h3><i class="fas fa-cog"></i> Configurações</h3>
-            
             <!-- Tabs -->
             <div class="tabs">
                 <div class="tab active" data-tab="services">Serviços</div>
                 <div class="tab" data-tab="ai">IA</div>
-                <div class="tab" data-tab="tts">TTS</div>
-            </div>
-
+                </div>
             <!-- Tab: Serviços -->
             <div class="tab-content active" id="services">
                 <!-- Status dos Serviços -->
@@ -478,7 +405,6 @@
                         <div class="service-status" id="weaviate-status">Verificando...</div>
                     </div>
                 </div>
-
                 <!-- Controles do Backend FastAPI -->
                 <h4><i class="fas fa-server"></i> FastAPI Backend</h4>
                 <button class="btn success" id="start-wppconnect">
@@ -490,9 +416,7 @@
                 <button class="btn" id="check-wppconnect">
                     <i class="fas fa-sync"></i> Verificar Status
                 </button>
-
                 <hr style="margin: 20px 0; border: none; border-top: 1px solid #E5E7EB;">
-
                 <!-- Controles do STT Whisper -->
                 <h4><i class="fas fa-microphone"></i> STT Whisper</h4>
                 <button class="btn success" id="start-weaviate">
@@ -504,9 +428,7 @@
                 <button class="btn" id="open-weaviate">
                     <i class="fas fa-external-link-alt"></i> Ver Docs API
                 </button>
-
                 <hr style="margin: 20px 0; border: none; border-top: 1px solid #E5E7EB;">
-
                 <!-- Controles do WebSocket -->
                 <h4><i class="fas fa-wifi"></i> WebSocket Chat</h4>
                 <button class="btn success" id="start-airflow">
@@ -519,14 +441,12 @@
                     <i class="fas fa-external-link-alt"></i> Abrir Interface
                 </button>
             </div>
-
             <!-- Tab: IA -->
             <div class="tab-content" id="ai">
                 <div class="form-group">
                     <label for="openrouter-key">OpenRouter API Key:</label>
                     <input type="password" id="openrouter-key" value="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" readonly>
                 </div>
-
                 <!-- Filtros de Modelos -->
                 <div class="form-group">
                     <label>Filtros de Modelos:</label>
@@ -537,7 +457,6 @@
                         </label>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="company-filter">Filtrar por Empresa:</label>
                     <select id="company-filter">
@@ -550,88 +469,31 @@
                         <option value="microsoft">Microsoft</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label for="ai-model">Modelo AI:</label>
                     <select id="ai-model" style="height: 200px;">
                         <!-- Modelos serão carregados dinamicamente -->
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label for="model-info">Informações do Modelo:</label>
                     <div id="model-info" style="background: #F3F4F6; padding: 10px; border-radius: 8px; font-size: 0.8rem; color: #6B7280;">
                         Selecione um modelo para ver informações
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="system-prompt">Prompt do Sistema:</label>
                     <textarea id="system-prompt" rows="3">Você é um assistente útil que responde em português brasileiro. Seja conciso e amigável.</textarea>
                 </div>
-
                 <button class="btn" id="save-config">
                     <i class="fas fa-save"></i> Salvar Configuração
                 </button>
-
                 <button class="btn warning" id="test-model">
                     <i class="fas fa-vial"></i> Testar Modelo
                 </button>
             </div>
-
-            <!-- Tab: TTS -->
-            <div class="tab-content" id="tts">
-                <div class="form-group">
-                    <label for="tts-language">Idioma TTS:</label>
-                    <select id="tts-language">
-                        <option value="pt-BR">🇧🇷 Português (Brasil)</option>
-                        <option value="en-US">🇺🇸 English (US)</option>
-                        <option value="es-ES">🇪🇸 Español (España)</option>
-                        <option value="fr-FR">🇫🇷 Français (France)</option>
-                        <option value="de-DE">🇩🇪 Deutsch (Deutschland)</option>
-                        <option value="it-IT">🇮🇹 Italiano (Italia)</option>
-                        <option value="ja-JP">🇯🇵 日本語 (日本)</option>
-                        <option value="ko-KR">🇰🇷 한국어 (대한민국)</option>
-                        <option value="zh-CN">🇨🇳 中文 (中国)</option>
-                        <option value="ru-RU">🇷🇺 Русский (Россия)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="tts-voice">Voz TTS:</label>
-                    <select id="tts-voice">
-                        <option value="">Carregando vozes...</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="tts-voice-rate">Velocidade da Voz:</label>
-                    <input type="range" id="tts-voice-rate" min="0.5" max="2.0" step="0.1" value="1.0">
-                    <span id="voice-rate-value">1.0</span>
-                </div>
-
-                <div class="form-group">
-                    <label for="tts-voice-pitch">Tom da Voz:</label>
-                    <input type="range" id="tts-voice-pitch" min="0.5" max="2.0" step="0.1" value="1.0">
-                    <span id="voice-pitch-value">1.0</span>
-                </div>
-
-                <div class="form-group">
-                    <label for="tts-volume">Volume:</label>
-                    <input type="range" id="tts-volume" min="0.1" max="1.0" step="0.1" value="0.7">
-                    <span id="voice-volume-value">0.7</span>
-                </div>
-
-                <button class="btn success" id="test-tts">
-                    <i class="fas fa-play"></i> Testar TTS
-                </button>
-
-                <button class="btn warning" id="refresh-voices">
-                    <i class="fas fa-sync"></i> Atualizar Vozes
-                </button>
             </div>
         </div>
-
         <!-- Chat Principal -->
         <div class="chat-main">
             <div class="chat-header">
@@ -642,7 +504,6 @@
                 </h2>
                 <p id="chat-status">Conectando...</p>
             </div>
-
             <div class="chat-messages" id="chat-messages">
                 <div class="message received fade-in">
                     <div class="message-content">
@@ -652,7 +513,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="chat-input">
                 <div class="input-group">
                     <textarea 
@@ -667,51 +527,39 @@
                 </div>
             </div>
         </div>
-
         <!-- Sidebar Direita - Clientes e IA -->
         <div class="sidebar-right">
             <!-- Cadastro de Cliente -->
             <h3><i class="fas fa-user-plus"></i> Cadastrar Cliente</h3>
-            
             <div class="form-group">
                 <label for="client-name">Nome do Cliente:</label>
                 <input type="text" id="client-name" placeholder="Nome completo">
             </div>
-
             <div class="form-group">
                 <label for="client-phone">Número WhatsApp:</label>
                 <input type="tel" id="client-phone" placeholder="+557191913595">
             </div>
-
             <button class="btn success" id="add-client">
                 <i class="fas fa-plus"></i> Adicionar Cliente
             </button>
-
             <hr style="margin: 20px 0; border: none; border-top: 1px solid #E5E7EB;">
-
             <!-- Lista de Clientes -->
             <h3><i class="fas fa-users"></i> Clientes</h3>
             <div class="client-list" id="client-list">
                 <!-- Clientes serão adicionados aqui -->
             </div>
-
             <hr style="margin: 20px 0; border: none; border-top: 1px solid #E5E7EB;">
-
             <!-- Ações Rápidas -->
             <h3><i class="fas fa-bolt"></i> Ações Rápidas</h3>
-            
             <button class="btn" id="send-test-message">
                 <i class="fas fa-paper-plane"></i> Enviar Mensagem de Teste
             </button>
-
             <button class="btn" id="test-ai">
                 <i class="fas fa-robot"></i> Testar IA
             </button>
-
             <button class="btn danger" id="clear-chat">
                 <i class="fas fa-trash"></i> Limpar Chat
             </button>
-
             <!-- Log de Atividades -->
             <h3><i class="fas fa-list"></i> Log de Atividades</h3>
             <div class="log" id="activity-log">
@@ -719,7 +567,6 @@
             </div>
         </div>
     </div>
-
     <script>
         class WhatsAppWeaviateInterface {
             constructor() {
@@ -736,44 +583,30 @@
                 this.websocket = null;
                 this.isRecording = false;
                 this.mediaRecorder = null;
-                
                 // CONFIGURAÇÕES EXISTENTES DO .env
                 this.openRouterApiKey = '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';
                 this.googleApiKey = 'AIzaSyCRLSO9lT31tIZgr-hAfgUWNm-9wV7GZ4w';
-                
                 this.initializeElements();
                 this.bindEvents();
                 this.loadSavedData();
                 this.initialize();
             }
-
             initializeElements() {
                 // Tabs
                 this.tabs = document.querySelectorAll('.tab');
                 this.tabContents = document.querySelectorAll('.tab-content');
-
                 // Configurações
                 this.openrouterKey = document.getElementById('openrouter-key');
                 this.aiModel = document.getElementById('ai-model');
                 this.systemPrompt = document.getElementById('system-prompt');
-                this.ttsLanguage = document.getElementById('tts-language');
-                this.ttsVoice = document.getElementById('tts-voice');
-                this.ttsVoiceRate = document.getElementById('tts-voice-rate');
-                this.ttsVoicePitch = document.getElementById('tts-voice-pitch');
-                this.ttsVolume = document.getElementById('tts-volume');
-                this.voiceRateValue = document.getElementById('voice-rate-value');
-                this.voicePitchValue = document.getElementById('voice-pitch-value');
-                this.voiceVolumeValue = document.getElementById('voice-volume-value');
                 this.saveConfigBtn = document.getElementById('save-config');
                 this.testTtsBtn = document.getElementById('test-tts');
                 this.refreshVoicesBtn = document.getElementById('refresh-voices');
-
                 // Filtros de Modelos
                 this.freeModelsOnly = document.getElementById('free-models-only');
                 this.companyFilter = document.getElementById('company-filter');
                 this.modelInfo = document.getElementById('model-info');
                 this.testModelBtn = document.getElementById('test-model');
-
                 // Chat
                 this.chatMessages = document.getElementById('chat-messages');
                 this.messageInput = document.getElementById('message-input');
@@ -782,21 +615,17 @@
                 this.whatsappIndicator = document.getElementById('whatsapp-indicator');
                 this.chatIndicator = document.getElementById('chat-indicator');
                 this.chatStatus = document.getElementById('chat-status');
-
                 // Clientes
                 this.clientName = document.getElementById('client-name');
                 this.clientPhone = document.getElementById('client-phone');
                 this.addClientBtn = document.getElementById('add-client');
                 this.clientList = document.getElementById('client-list');
-
                 // Ações
                 this.sendTestBtn = document.getElementById('send-test-message');
                 this.testAiBtn = document.getElementById('test-ai');
                 this.clearChatBtn = document.getElementById('clear-chat');
-
                 // Log
                 this.activityLog = document.getElementById('activity-log');
-
                 // Service Controls
                 this.wppconnectStatus = document.getElementById('wppconnect-status');
                 this.weaviateStatus = document.getElementById('weaviate-status');
@@ -809,18 +638,15 @@
                 this.startAirflowBtn = document.getElementById('start-airflow');
                 this.stopAirflowBtn = document.getElementById('stop-airflow');
                 this.openAirflowBtn = document.getElementById('open-airflow');
-
                 // QR Code
                 this.qrContainer = document.getElementById('qr-container');
                 this.qrCode = document.getElementById('qr-code');
             }
-
             bindEvents() {
                 // Tabs
                 this.tabs.forEach(tab => {
                     tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
                 });
-
                 // Service Controls
                 this.startWppconnectBtn.addEventListener('click', () => this.startWPPConnect());
                 this.stopWppconnectBtn.addEventListener('click', () => this.stopWPPConnect());
@@ -831,89 +657,43 @@
                 this.startAirflowBtn.addEventListener('click', () => this.startAirflow());
                 this.stopAirflowBtn.addEventListener('click', () => this.stopAirflow());
                 this.openAirflowBtn.addEventListener('click', () => this.openAirflow());
-
                 // Configurações
                 this.saveConfigBtn.addEventListener('click', () => this.saveConfig());
-                this.testTtsBtn.addEventListener('click', () => this.testTTS());
-                this.testModelBtn.addEventListener('click', () => this.testModel());
-                this.refreshVoicesBtn.addEventListener('click', () => this.loadVoices());
-
-                // Filtros de Modelos
-                this.freeModelsOnly.addEventListener('change', () => this.filterModels());
-                this.companyFilter.addEventListener('change', () => this.filterModels());
-                this.aiModel.addEventListener('change', () => this.updateModelInfo());
-
-                // TTS Controls
-                this.ttsLanguage.addEventListener('change', () => this.updateVoicesForLanguage());
-                this.ttsVoiceRate.addEventListener('input', (e) => {
-                    this.voiceRateValue.textContent = e.target.value;
+                this.testTtsBtn.addEventListener('click', () => this.
                 });
-                this.ttsVoicePitch.addEventListener('input', (e) => {
-                    this.voicePitchValue.textContent = e.target.value;
-                });
-                this.ttsVolume.addEventListener('input', (e) => {
-                    this.voiceVolumeValue.textContent = e.target.value;
-                });
-
-                // Chat
-                this.sendBtn.addEventListener('click', () => this.sendMessage());
-                this.messageInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        this.sendMessage();
-                    }
-                });
-
                 // Clientes
                 this.addClientBtn.addEventListener('click', () => this.addClient());
-
                 // Ações
                 this.sendTestBtn.addEventListener('click', () => this.sendTestMessage());
                 this.testAiBtn.addEventListener('click', () => this.testAI());
                 this.clearChatBtn.addEventListener('click', () => this.clearChat());
-
                 // TTS Controls
-                this.ttsVoiceRate.addEventListener('input', (e) => {
-                    this.voiceRateValue.textContent = e.target.value;
-                });
-
-                this.ttsVoicePitch.addEventListener('input', (e) => {
-                    this.voicePitchValue.textContent = e.target.value;
-                });
-
                 // Auto-resize textarea
                 this.messageInput.addEventListener('input', () => {
                     this.messageInput.style.height = 'auto';
                     this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 120) + 'px';
                 });
             }
-
             switchTab(tabName) {
                 // Remove active class from all tabs and contents
                 this.tabs.forEach(tab => tab.classList.remove('active'));
                 this.tabContents.forEach(content => content.classList.remove('active'));
-
                 // Add active class to clicked tab and corresponding content
                 document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
                 document.getElementById(tabName).classList.add('active');
             }
-
             async initialize() {
                 this.log('Inicializando interface completa...', 'info');
-                
                 // Verificar todos os serviços
                 await this.checkAllServices();
-                
                 // Inicializar chat
                 this.initializeChat();
             }
-
             async checkAllServices() {
                 await this.checkBackend();
                 await this.checkSTT();
                 await this.initializeWebSocket();
             }
-
             async checkBackend() {
                 try {
                     const response = await fetch(`${this.healthUrl}`);
@@ -925,7 +705,6 @@
                     this.log('Backend FastAPI não está respondendo', 'error');
                 }
             }
-
             async checkSTT() {
                 try {
                     const response = await fetch(`${this.healthUrl}`);
@@ -942,18 +721,15 @@
                     this.log('STT não está respondendo', 'error');
                 }
             }
-
             async initializeWebSocket() {
                 try {
                     this.websocket = new WebSocket(this.websocketUrl);
-                    
                     this.websocket.onopen = () => {
                         this.updateServiceStatus('airflow', 'running', 'WebSocket Conectado');
                         this.isConnected = true;
                         this.log('WebSocket conectado', 'success');
                         this.updateStatus('chat', 'connected', 'Conectado');
                     };
-                    
                     this.websocket.onmessage = (event) => {
                         try {
                             const data = JSON.parse(event.data);
@@ -962,31 +738,26 @@
                             this.log(`Erro ao processar mensagem WebSocket: ${error}`, 'error');
                         }
                     };
-                    
                     this.websocket.onerror = (error) => {
                         this.log('Erro no WebSocket', 'error');
                         this.updateStatus('chat', 'disconnected', 'Erro de conexão');
                     };
-                    
                     this.websocket.onclose = () => {
                         this.updateServiceStatus('airflow', 'stopped', 'WebSocket Desconectado');
                         this.isConnected = false;
                         this.log('WebSocket desconectado', 'warning');
                         this.updateStatus('chat', 'disconnected', 'Desconectado');
-                        
                         // Tentar reconectar após 3 segundos
                         setTimeout(() => {
                             this.log('Tentando reconectar WebSocket...', 'info');
                             this.initializeWebSocket();
                         }, 3000);
                     };
-                    
                 } catch (error) {
                     this.log(`Erro ao conectar WebSocket: ${error.message}`, 'error');
                     this.updateServiceStatus('airflow', 'stopped', 'WebSocket Erro');
                 }
             }
-
             updateServiceStatus(service, status, message) {
                 const statusElement = document.getElementById(`${service}-status`);
                 if (statusElement) {
@@ -994,12 +765,10 @@
                     statusElement.textContent = message;
                 }
             }
-
             async startWPPConnect() {
                 try {
                     this.log('Conectando ao backend FastAPI...', 'info');
                     this.updateServiceStatus('wppconnect', 'starting', 'Conectando...');
-                    
                     // Verificar se o backend está rodando
                     const response = await fetch(this.healthUrl);
                     if (response.ok) {
@@ -1009,13 +778,11 @@
                     } else {
                         throw new Error('Backend não responde');
                     }
-                    
                 } catch (error) {
                     this.log(`Erro ao conectar backend: ${error.message}`, 'error');
                     this.updateServiceStatus('wppconnect', 'stopped', 'Backend Erro');
                 }
             }
-
             async stopWPPConnect() {
                 try {
                     this.log('Desconectando do backend...', 'info');
@@ -1028,32 +795,26 @@
                     this.log(`Erro ao desconectar backend: ${error.message}`, 'error');
                 }
             }
-
             async startWeaviate() {
                 try {
                     this.log('Testando STT Whisper...', 'info');
                     this.updateServiceStatus('weaviate', 'starting', 'Testando STT...');
-                    
                     // Testar se Whisper está carregado
                     const response = await fetch(this.healthUrl);
                     const data = await response.json();
-                    
                     if (data.whisper_loaded || data.faster_whisper_loaded) {
                         this.updateServiceStatus('weaviate', 'running', 'STT Ativo');
                         this.log('STT Whisper testado e ativo', 'success');
-                        
                         // Adicionar botão de gravação se não existir
                         this.addVoiceRecordingButton();
                     } else {
                         throw new Error('Whisper não carregado');
                     }
-                    
                 } catch (error) {
                     this.log(`Erro ao testar STT: ${error.message}`, 'error');
                     this.updateServiceStatus('weaviate', 'stopped', 'STT Erro');
                 }
             }
-
             async stopWeaviate() {
                 try {
                     this.log('Parando STT...', 'info');
@@ -1066,12 +827,10 @@
                     this.log(`Erro ao parar STT: ${error.message}`, 'error');
                 }
             }
-
             openWeaviate() {
                 window.open(`${this.backendUrl}/docs`, '_blank');
                 this.log('Documentação da API aberta', 'info');
             }
-
             async startAirflow() {
                 try {
                     this.log('Iniciando WebSocket...', 'info');
@@ -1082,7 +841,6 @@
                     this.updateServiceStatus('airflow', 'stopped', 'WebSocket Erro');
                 }
             }
-
             async stopAirflow() {
                 try {
                     this.log('Parando WebSocket...', 'info');
@@ -1095,31 +853,25 @@
                     this.log(`Erro ao parar WebSocket: ${error.message}`, 'error');
                 }
             }
-
             openAirflow() {
                 window.open(this.backendUrl, '_blank');
                 this.log('Interface principal aberta', 'info');
             }
-
             updateStatus(type, status, message) {
                 const indicator = type === 'whatsapp' ? this.whatsappIndicator : this.chatIndicator;
                 const statusElement = type === 'whatsapp' ? this.whatsappStatus : this.chatStatus;
-                
                 indicator.className = `status-indicator ${status}`;
                 statusElement.textContent = message;
-                
                 if (status === 'connected') {
                     this.isConnected = true;
                 }
             }
-
             initializeChat() {
                 this.log('Chat inicializado com FastAPI backend', 'success');
                 this.addMessage('🤖 Sistema conectado ao WhatsApp Voice Agent V2!', 'received');
                 this.addMessage('🎤 Gravação de voz disponível (clique no microfone)', 'received');
                 this.addMessage('💬 Digite mensagens ou use comando de voz', 'received');
             }
-
             addVoiceRecordingButton() {
                 // Adicionar botão de gravação à interface se não existir
                 const inputGroup = document.querySelector('.input-group');
@@ -1129,14 +881,11 @@
                     voiceBtn.className = 'send-btn';
                     voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
                     voiceBtn.onclick = () => this.toggleRecording();
-                    
                     // Inserir antes do botão de enviar
                     inputGroup.insertBefore(voiceBtn, this.sendBtn);
-                    
                     this.log('Botão de gravação adicionado', 'success');
                 }
             }
-
             async toggleRecording() {
                 if (this.isRecording) {
                     this.stopRecording();
@@ -1144,99 +893,77 @@
                     await this.startRecording();
                 }
             }
-
             async startRecording() {
                 try {
                     this.log('Iniciando gravação de voz...', 'info');
-                    
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     this.mediaRecorder = new MediaRecorder(stream);
                     this.audioChunks = [];
-                    
                     this.mediaRecorder.ondataavailable = (event) => {
                         this.audioChunks.push(event.data);
                     };
-                    
                     this.mediaRecorder.onstop = async () => {
                         const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
                         await this.sendAudioToSTT(audioBlob);
                     };
-                    
                     this.mediaRecorder.start();
                     this.isRecording = true;
-                    
                     // Atualizar UI
                     const voiceBtn = document.getElementById('voice-btn');
                     if (voiceBtn) {
                         voiceBtn.innerHTML = '<i class="fas fa-stop"></i>';
                         voiceBtn.style.background = '#dc3545';
                     }
-                    
                     this.addMessage('🎤 Gravando... Clique novamente para parar', 'received');
                     this.log('Gravação iniciada', 'success');
-                    
                 } catch (error) {
                     this.log(`Erro ao iniciar gravação: ${error.message}`, 'error');
                     this.addMessage('❌ Erro ao acessar microfone. Verifique permissões.', 'received');
                 }
             }
-
             stopRecording() {
                 if (this.mediaRecorder && this.isRecording) {
                     this.mediaRecorder.stop();
                     this.isRecording = false;
-                    
                     // Parar todas as faixas de áudio
                     this.mediaRecorder.stream.getTracks().forEach(track => track.stop());
-                    
                     // Atualizar UI
                     const voiceBtn = document.getElementById('voice-btn');
                     if (voiceBtn) {
                         voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
                         voiceBtn.style.background = '#4F46E5';
                     }
-                    
                     this.addMessage('🔄 Processando áudio...', 'received');
                     this.log('Gravação parada, enviando para STT', 'info');
                 }
             }
-
             async sendAudioToSTT(audioBlob) {
                 try {
                     this.log(`Enviando áudio para STT (${audioBlob.size} bytes)`, 'info');
-                    
                     const formData = new FormData();
                     formData.append('audio', audioBlob, 'audio.webm');
-                    
                     const response = await fetch(this.sttUrl, {
                         method: 'POST',
                         body: formData
                     });
-                    
                     if (!response.ok) {
                         throw new Error(`STT failed: ${response.status} ${response.statusText}`);
                     }
-                    
                     const result = await response.json();
                     const transcription = result.text || result.transcription || 'Transcrição vazia';
-                    
                     this.log(`STT resultado: ${transcription}`, 'success');
-                    
                     // Adicionar transcrição como mensagem enviada
                     this.addMessage(`🎤 ${transcription}`, 'sent');
-                    
                     // Processar com IA se disponível
                     const aiResponse = await this.getAIResponse(transcription);
                     if (aiResponse) {
                         this.addMessage(aiResponse, 'received');
                     }
-                    
                 } catch (error) {
                     this.log(`Erro no STT: ${error.message}`, 'error');
                     this.addMessage('❌ Erro ao processar áudio. Tente novamente.', 'received');
                 }
             }
-
             handleWebSocketMessage(data) {
                 // Processar mensagens do WebSocket
                 if (data.type === 'chat_message') {
@@ -1247,35 +974,27 @@
                     this.log(`Erro WebSocket: ${data.message}`, 'error');
                 }
             }
-
             addMessage(text, type = 'sent') {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${type} fade-in`;
-                
                 const time = new Date().toLocaleTimeString();
-                
                 messageDiv.innerHTML = `
                     <div class="message-content">
                         <p>${text}</p>
                         <div class="message-time">${time}</div>
                     </div>
                 `;
-                
                 this.chatMessages.appendChild(messageDiv);
                 this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
             }
-
             async sendMessage() {
                 const message = this.messageInput.value.trim();
                 if (!message) return;
-
                 // Adicionar mensagem ao chat
                 this.addMessage(message, 'sent');
                 this.messageInput.value = '';
                 this.messageInput.style.height = 'auto';
-
                 this.log(`Mensagem enviada: ${message}`, 'info');
-
                 // Enviar via WebSocket se conectado
                 if (this.websocket && this.isConnected) {
                     try {
@@ -1289,20 +1008,17 @@
                         this.log(`Erro ao enviar via WebSocket: ${error.message}`, 'error');
                     }
                 }
-
                 // Se há cliente selecionado, simular envio via WhatsApp
                 if (this.currentClient) {
                     this.log(`Mensagem seria enviada para ${this.currentClient.name} (${this.currentClient.phone})`, 'info');
                     // Aqui você pode integrar com WhatsApp Business API quando disponível
                 }
-
                 // Processar com IA usando configurações existentes
                 const aiResponse = await this.getAIResponse(message);
                 if (aiResponse) {
                     this.addMessage(aiResponse, 'received');
                 }
             }
-
             async sendWhatsAppMessage(phone, message) {
                 try {
                     const response = await fetch(`${this.wppconnectUrl}/api/send-message/${this.sessionName}`, {
@@ -1315,7 +1031,6 @@
                             message: message
                         })
                     });
-
                     if (response.ok) {
                         this.log(`Mensagem enviada para ${phone}`, 'success');
                     } else {
@@ -1325,14 +1040,11 @@
                     this.log(`Erro ao enviar mensagem: ${error.message}`, 'error');
                 }
             }
-
             async getAIResponse(message) {
                 try {
                     const model = this.aiModel.value;
                     const systemPrompt = this.systemPrompt.value;
-
                     this.log(`Enviando para IA: ${model}`, 'info');
-
                     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                         method: 'POST',
                         headers: {
@@ -1348,61 +1060,30 @@
                             max_tokens: 500
                         })
                     });
-
                     if (!response.ok) {
                         throw new Error(`OpenRouter error: ${response.statusText}`);
                     }
-
                     const data = await response.json();
                     const aiResponse = data.choices[0].message.content;
-                    
                     this.log(`Resposta da IA: ${aiResponse.substring(0, 50)}...`, 'success');
                     return aiResponse;
-
                 } catch (error) {
                     this.log(`Erro ao obter resposta da IA: ${error.message}`, 'error');
                     return "Desculpe, tive um problema ao processar sua mensagem. Tente novamente!";
                 }
             }
-
             loadVoices() {
                 if ('speechSynthesis' in window) {
                     this.log('Carregando vozes TTS disponíveis...', 'info');
-                    
                     // Carregar vozes disponíveis
                     const voices = speechSynthesis.getVoices();
-                    this.updateVoicesList(voices);
-                    
-                    // Configurar listener para quando as vozes mudarem
-                    speechSynthesis.onvoiceschanged = () => {
-                        const updatedVoices = speechSynthesis.getVoices();
-                        this.updateVoicesList(updatedVoices);
-                    };
-                    
+                    this.;
                     this.log(`Vozes carregadas: ${voices.length} encontradas`, 'success');
                 } else {
                     this.log('TTS não suportado neste navegador', 'error');
                 }
             }
-
-            updateVoicesList(voices) {
-                this.ttsVoice.innerHTML = '';
-                
-                // Filtrar vozes por idioma selecionado
-                const selectedLanguage = this.ttsLanguage.value;
-                const filteredVoices = voices.filter(voice => 
-                    voice.lang.startsWith(selectedLanguage.split('-')[0])
-                );
-                
-                // Adicionar vozes padrão do sistema se não houver vozes específicas
-                const defaultVoices = this.getDefaultVoices(selectedLanguage);
-                
-                if (filteredVoices.length === 0 && defaultVoices.length === 0) {
-                    // Se não encontrar vozes para o idioma, mostrar todas
-                    voices.forEach(voice => {
-                        const option = document.createElement('option');
-                        option.value = voice.name;
-                        option.textContent = `${voice.name} (${voice.lang})`;
+             (${voice.lang})`;
                         this.ttsVoice.appendChild(option);
                     });
                 } else {
@@ -1413,7 +1094,6 @@
                         option.textContent = `🎤 ${voice.name} (${voice.lang}) - Padrão`;
                         this.ttsVoice.appendChild(option);
                     });
-                    
                     // Adicionar vozes do sistema
                     filteredVoices.forEach(voice => {
                         const option = document.createElement('option');
@@ -1422,10 +1102,8 @@
                         this.ttsVoice.appendChild(option);
                     });
                 }
-                
                 this.log(`Vozes atualizadas: ${filteredVoices.length + defaultVoices.length} para ${selectedLanguage}`, 'info');
             }
-
             getDefaultVoices(language) {
                 // Vozes padrão gratuitas por idioma (baseadas no módulo weaviate)
                 const defaultVoices = {
@@ -1482,42 +1160,10 @@
                         { name: 'Microsoft Dmitry Online (Natural)', lang: 'ru-RU' }
                     ]
                 };
-                
                 return defaultVoices[language] || [];
             }
-
-            updateVoicesForLanguage() {
-                if ('speechSynthesis' in window) {
-                    const voices = speechSynthesis.getVoices();
-                    this.updateVoicesList(voices);
-                }
             }
-
-            async testTTS() {
-                try {
-                    const text = "Teste de síntese de voz usando configurações existentes";
-                    const language = this.ttsLanguage.value;
-                    const voiceName = this.ttsVoice.value;
-                    const rate = this.ttsVoiceRate.value;
-                    const pitch = this.ttsVoicePitch.value;
-                    const volume = this.ttsVolume.value;
-
-                    this.log('Testando TTS com configurações existentes...', 'info');
-                    
-                    // Usar TTS nativo do navegador
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = language;
-                    utterance.rate = parseFloat(rate);
-                    utterance.pitch = parseFloat(pitch);
-                    utterance.volume = parseFloat(volume);
-                    
-                    // Se uma voz específica foi selecionada
-                    if (voiceName) {
-                        const voices = speechSynthesis.getVoices();
-                        const selectedVoice = voices.find(v => v.name === voiceName);
-                        if (selectedVoice) {
-                            utterance.voice = selectedVoice;
-                            this.log(`Usando voz: ${selectedVoice.name}`, 'info');
+            async `, 'info');
                         } else {
                             // Tentar usar uma voz padrão do idioma
                             const defaultVoices = this.getDefaultVoices(language);
@@ -1526,79 +1172,60 @@
                             }
                         }
                     }
-                    
                     speechSynthesis.speak(utterance);
-                    
                     this.log('TTS testado com sucesso', 'success');
-                    
                 } catch (error) {
                     this.log(`Erro no TTS: ${error.message}`, 'error');
                 }
             }
-
             addClient() {
                 const name = this.clientName.value.trim();
                 const phone = this.clientPhone.value.trim();
-
                 if (!name || !phone) {
                     this.log('Preencha nome e telefone do cliente', 'warning');
                     return;
                 }
-
                 const client = {
                     id: Date.now(),
                     name: name,
                     phone: phone
                 };
-
                 this.clients.push(client);
                 this.saveClients();
                 this.renderClients();
                 this.clearClientForm();
-
                 this.log(`Cliente adicionado: ${name} (${phone})`, 'success');
             }
-
             renderClients() {
                 this.clientList.innerHTML = '';
-                
                 this.clients.forEach(client => {
                     const clientDiv = document.createElement('div');
                     clientDiv.className = 'client-item';
                     clientDiv.onclick = () => this.selectClient(client);
-                    
                     clientDiv.innerHTML = `
                         <div class="client-name">${client.name}</div>
                         <div class="client-phone">${client.phone}</div>
                     `;
-                    
                     this.clientList.appendChild(clientDiv);
                 });
             }
-
             selectClient(client) {
                 this.currentClient = client;
-                
                 // Atualizar seleção visual
                 document.querySelectorAll('.client-item').forEach(item => {
                     item.classList.remove('active');
                 });
-                
                 event.target.closest('.client-item').classList.add('active');
-                
                 this.log(`Cliente selecionado: ${client.name}`, 'info');
                 this.addMessage(`Cliente selecionado: ${client.name} (${client.phone})`, 'received');
             }
-
             clearClientForm() {
                 this.clientName.value = '';
                 this.clientPhone.value = '';
             }
-
             saveClients() {
                 localStorage.setItem('whatsapp-clients', JSON.stringify(this.clients));
             }
-
             loadClients() {
                 const saved = localStorage.getItem('whatsapp-clients');
                 if (saved) {
@@ -1606,24 +1233,16 @@
                     this.renderClients();
                 }
             }
-
             saveConfig() {
                 const config = {
                     aiModel: this.aiModel.value,
                     systemPrompt: this.systemPrompt.value,
-                    ttsLanguage: this.ttsLanguage.value,
-                    ttsVoice: this.ttsVoice.value,
-                    ttsVoiceRate: this.ttsVoiceRate.value,
-                    ttsVoicePitch: this.ttsVoicePitch.value,
-                    ttsVolume: this.ttsVolume.value,
                     freeModelsOnly: this.freeModelsOnly.checked,
                     companyFilter: this.companyFilter.value
                 };
-
                 localStorage.setItem('whatsapp-config', JSON.stringify(config));
                 this.log('Configuração salva', 'success');
             }
-
             loadSavedData() {
                 // Carregar configurações
                 const savedConfig = localStorage.getItem('whatsapp-config');
@@ -1631,15 +1250,6 @@
                     const config = JSON.parse(savedConfig);
                     this.aiModel.value = config.aiModel || 'microsoft/phi-4-reasoning:free';
                     this.systemPrompt.value = config.systemPrompt || 'Você é um assistente útil que responde em português brasileiro. Seja conciso e amigável.';
-                    this.ttsLanguage.value = config.ttsLanguage || 'pt-BR';
-                    this.ttsVoice.value = config.ttsVoice || '';
-                    this.ttsVoiceRate.value = config.ttsVoiceRate || '1.0';
-                    this.ttsVoicePitch.value = config.ttsVoicePitch || '1.0';
-                    this.ttsVolume.value = config.ttsVolume || '0.7';
-                    this.voiceRateValue.textContent = this.ttsVoiceRate.value;
-                    this.voicePitchValue.textContent = this.ttsVoicePitch.value;
-                    this.voiceVolumeValue.textContent = this.ttsVolume.value;
-                    
                     // Carregar filtros
                     if (config.freeModelsOnly !== undefined) {
                         this.freeModelsOnly.checked = config.freeModelsOnly;
@@ -1648,24 +1258,18 @@
                         this.companyFilter.value = config.companyFilter;
                     }
                 }
-
                 // Carregar clientes
                 this.loadClients();
-
                 // Inicializar informações do modelo
                 this.updateModelInfo();
-                
                 // Carregar modelos iniciais
                 this.filterModels();
-                
                 // Carregar vozes TTS
                 this.loadVoices();
             }
-
             filterModels() {
                 const freeOnly = this.freeModelsOnly.checked;
                 const company = this.companyFilter.value;
-                
                 // Lista completa de modelos organizados por provider
                 const modelsByProvider = {
                     openai: [
@@ -1697,7 +1301,6 @@
                         { id: 'microsoft/phi-3-medium-128k-instruct:free', name: 'Phi-3 Medium', provider: 'Microsoft', free: true, stable: false }
                     ]
                 };
-
                 // Modelos gratuitos mais estáveis (priorizados)
                 const stableFreeModels = [
                     'deepseek/deepseek-chat',
@@ -1705,15 +1308,12 @@
                     'google/gemini-flash-1.5',
                     'deepseek/deepseek-coder'
                 ];
-
                 let models = [];
-                
                 if (company === '' || company === 'all') {
                     models = Object.values(modelsByProvider).flat();
                 } else {
                     models = modelsByProvider[company] || [];
                 }
-
                 // Filtrar por modelos gratuitos se checkbox ativo
                 if (freeOnly) {
                     models = models.filter(model => model.free);
@@ -1726,10 +1326,8 @@
                         return 0;
                     });
                 }
-
                 // Limpar select atual
                 this.aiModel.innerHTML = '';
-                
                 // Adicionar modelos filtrados
                 models.forEach(model => {
                     const option = document.createElement('option');
@@ -1737,15 +1335,12 @@
                     option.textContent = `${model.name} (${model.provider})${model.free ? ' - FREE' : ''}`;
                     this.aiModel.appendChild(option);
                 });
-                
                 this.log(`Modelos filtrados: ${freeOnly ? 'Gratuitos' : 'Todos'} ${company ? `- ${company}` : ''}`, 'info');
                 this.updateModelInfo();
             }
-
             updateModelInfo() {
                 const selectedModel = this.aiModel.value;
                 const modelInfo = this.getModelInfo(selectedModel);
-                
                 this.modelInfo.innerHTML = `
                     <strong>${modelInfo.name}</strong><br>
                     <strong>Empresa:</strong> ${modelInfo.company}<br>
@@ -1755,7 +1350,6 @@
                     <strong>Descrição:</strong> ${modelInfo.description}
                 `;
             }
-
             getModelInfo(modelId) {
                 const modelInfo = {
                     // Microsoft Models
@@ -1775,7 +1369,6 @@
                         price: 'Gratuito',
                         description: 'Modelo médio da Microsoft, balanceado entre performance e velocidade.'
                     },
-                    
                     // OpenAI Models
                     'openai/gpt-4o': {
                         name: 'OpenAI GPT-4o',
@@ -1809,7 +1402,6 @@
                         price: '$0.50 / 1M tokens',
                         description: 'Modelo confiável e econômico da OpenAI.'
                     },
-                    
                     // Anthropic Models
                     'anthropic/claude-3-5-sonnet': {
                         name: 'Anthropic Claude 3.5 Sonnet',
@@ -1835,7 +1427,6 @@
                         price: '$15.00 / 1M tokens',
                         description: 'Modelo mais avançado da Anthropic, com capacidades superiores.'
                     },
-                    
                     // Google Models
                     'google/gemini-pro': {
                         name: 'Google Gemini Pro',
@@ -1861,7 +1452,6 @@
                         price: 'Gratuito',
                         description: 'Modelo multimodal com capacidades visuais avançadas.'
                     },
-                    
                     // DeepSeek Models
                     'deepseek/deepseek-chat': {
                         name: 'DeepSeek Chat',
@@ -1879,7 +1469,6 @@
                         price: 'Gratuito',
                         description: 'Modelo especializado em programação e desenvolvimento.'
                     },
-                    
                     // Meta Models
                     'meta-llama/llama-3.2-3b-instruct:free': {
                         name: 'Meta Llama 3.2 3B',
@@ -1898,7 +1487,6 @@
                         description: 'Modelo ultra-compacto da Meta, muito rápido.'
                     }
                 };
-
                 return modelInfo[modelId] || {
                     name: 'Modelo Desconhecido',
                     company: 'N/A',
@@ -1908,18 +1496,14 @@
                     description: 'Informações não disponíveis para este modelo.'
                 };
             }
-
             async testModel() {
                 const selectedModel = this.aiModel.value;
                 if (!selectedModel) {
                     this.log('Selecione um modelo primeiro', 'warning');
                     return;
                 }
-
                 this.log(`Testando modelo: ${selectedModel}`, 'info');
-                
                 const testMessage = "Olá! Este é um teste do modelo. Pode me dizer qual é sua especialidade?";
-                
                 try {
                     const response = await this.getAIResponse(testMessage);
                     if (response) {
@@ -1931,47 +1515,38 @@
                     this.addMessage('❌ Erro ao testar o modelo. Verifique a API key e conexão.', 'received');
                 }
             }
-
             async sendTestMessage() {
                 if (!this.currentClient) {
                     this.log('Selecione um cliente primeiro', 'warning');
                     return;
                 }
-
                 const testMessage = "🤖 Esta é uma mensagem de teste da integração WhatsApp + Weaviate usando configurações existentes!";
                 await this.sendWhatsAppMessage(this.currentClient.phone, testMessage);
                 this.addMessage(testMessage, 'sent');
             }
-
             async testAI() {
                 const testMessage = "Olá! Como você está?";
                 this.addMessage(testMessage, 'sent');
-                
                 const response = await this.getAIResponse(testMessage);
                 if (response) {
                     this.addMessage(response, 'received');
                 }
             }
-
             clearChat() {
                 this.chatMessages.innerHTML = '';
                 this.addMessage('Chat limpo!', 'received');
                 this.log('Chat limpo', 'info');
             }
-
             log(message, type = 'info') {
                 const timestamp = new Date().toLocaleTimeString();
                 const entry = document.createElement('div');
                 entry.className = `log-entry ${type}`;
                 entry.textContent = `[${timestamp}] ${message}`;
-                
                 this.activityLog.appendChild(entry);
                 this.activityLog.scrollTop = this.activityLog.scrollHeight;
-                
                 console.log(`[${type.toUpperCase()}] ${message}`);
             }
         }
-
         // Inicializar a interface
         document.addEventListener('DOMContentLoaded', () => {
             new WhatsAppWeaviateInterface();

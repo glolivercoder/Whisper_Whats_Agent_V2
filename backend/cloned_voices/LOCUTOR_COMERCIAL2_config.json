@@ -1,6 +1,0 @@
-{
-  "name": "LOCUTOR_COMERCIAL2",
-  "created_at": "2025-08-24T18:57:43.256875",
-  "status": "trained",
-  "model_path": "models/cloned_voices/LOCUTOR_COMERCIAL2.pth"
-}

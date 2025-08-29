@@ -6,7 +6,7 @@ except ImportError:
     # dotenv not installed, use system environment
     pass
 
-from fastapi import FastAPI, File, UploadFile, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, File, UploadFile, HTTPException, WebSocket, WebSocketDisconnect, Form
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -183,6 +183,19 @@ class DatabaseQuery(BaseModel):
     query: str
     database_type: str = "sqlite"
     connection_params: Optional[Dict[str, Any]] = None
+
+# TTS Models
+class TTSRequest(BaseModel):
+    text: str
+    language: str = "tts_models/multilingual/multi-dataset/xtts_v2"
+    format: str = "wav"
+    device: str = "cpu"
+    profile_id: Optional[str] = None
+
+class VoiceProfileRequest(BaseModel):
+    name: str
+    gender: str = "Não especificado"
+    description: Optional[str] = None
 
 # Global variables
 whisper_model = None
@@ -530,9 +543,421 @@ class DatabaseService:
                 "db_size": 0
             }
 
+class TTSService:
+    def __init__(self):
+        self.tts = None
+        self.profiles_path = os.path.join(os.getcwd(), "tts_profiles.json")
+        self.audios_path = os.path.join(os.getcwd(), "generated_audios")
+        self.reference_audios_path = os.path.join(os.getcwd(), "reference_audios")
+
+        # Create directories
+        os.makedirs(self.audios_path, exist_ok=True)
+        os.makedirs(self.reference_audios_path, exist_ok=True)
+
+        # Create default speaker WAV if it doesn't exist
+        self.default_speaker_path = os.path.join(self.reference_audios_path, "default_speaker.wav")
+        self._ensure_default_speaker()
+
+        # Load available profiles
+        self.load_profiles()
+
+    def _ensure_default_speaker(self):
+        """Ensure default speaker WAV exists"""
+        if not os.path.exists(self.default_speaker_path):
+            logger.info("🎵 Creating default speaker WAV...")
+
+            try:
+                # Create a simple default speaker using numpy
+                import numpy as np
+                sample_rate = 22050
+                duration = 1.5
+
+                # Create a simple audio signal
+                t = np.linspace(0, duration, int(sample_rate * duration), False)
+                frequency = 220  # A3 note
+                audio = np.sin(frequency * 2 * np.pi * t)
+                audio = audio + np.random.normal(0, 0.05, len(audio))
+                audio = audio / np.max(np.abs(audio))
+                audio_int16 = (audio * 32767).astype(np.int16)
+
+                # Write WAV file
+                from scipy.io.wavfile import write
+                write(self.default_speaker_path, sample_rate, audio_int16)
+
+                logger.info(f"✅ Default speaker WAV created: {self.default_speaker_path}")
+
+            except ImportError:
+                logger.warning("⚠️ scipy not available, creating simple WAV manually")
+                # Fallback without scipy - use existing default files
+                logger.info("💡 Default speaker will be generated on first use")
+
+    def load_profiles(self):
+        """Load voice profiles from JSON file"""
+        try:
+            if os.path.exists(self.profiles_path):
+                with open(self.profiles_path, 'r', encoding='utf-8') as f:
+                    self.profiles = json.load(f)
+            else:
+                self.profiles = []
+
+            # If no profiles, try to load legacy ones from coquittsbasic
+            if not self.profiles:
+                self._load_legacy_profiles()
+
+        except Exception as e:
+            logger.error(f"Error loading TTS profiles: {e}")
+            self.profiles = []
+
+    def _load_legacy_profiles(self):
+        """Load profiles from legacy coquittsbasic folder"""
+        try:
+            legacy_path = os.path.join(os.path.dirname(os.getcwd()), "coquittsbasic", "perfis_modelos.json")
+            if os.path.exists(legacy_path):
+                with open(legacy_path, 'r', encoding='utf-8') as f:
+                    legacy_profiles = json.load(f)
+
+                # Convert to new format
+                for profile in legacy_profiles:
+                    new_profile = {
+                        "id": str(uuid.uuid4()),
+                        "nome": profile["nome"],
+                        "genero": profile["genero"],
+                        "modelo": profile["modelo"],
+                        "language": profile["idioma"],
+                        "reference_audio": profile["caminho_audio"] if os.path.exists(profile["caminho_audio"]) else None,
+                        "data_criacao": datetime.now().isoformat(),
+                        "ativo": True
+                    }
+                    self.profiles.append(new_profile)
+
+                # Save converted profiles
+                self.save_profiles()
+                logger.info(f"✅ Migrated {len(legacy_profiles)} voice profiles from coquittsbasic")
+
+                # Copy reference audio files
+                self._copy_legacy_audios(legacy_profiles)
+
+        except Exception as e:
+            logger.error(f"Error loading legacy profiles: {e}")
+
+    def _copy_legacy_audios(self, legacy_profiles):
+        """Copy legacy audio files to new structure"""
+        try:
+            legacy_dir = os.path.join(os.path.dirname(os.getcwd()), "coquittsbasic", "Modelos", "perfis")
+            if os.path.exists(legacy_dir):
+                for filename in os.listdir(legacy_dir):
+                    if filename.endswith('.wav'):
+                        src = os.path.join(legacy_dir, filename)
+                        dst = os.path.join(self.reference_audios_path, filename)
+                        if not os.path.exists(dst):
+                            import shutil
+                            shutil.copy2(src, dst)
+                logger.info(f"✅ Copied reference audio files from coquittsbasic")
+        except Exception as e:
+            logger.warning(f"Warning copying legacy audio files: {e}")
+
+    def save_profiles(self):
+        """Save profiles to JSON file"""
+        try:
+            with open(self.profiles_path, 'w', encoding='utf-8') as f:
+                json.dump(self.profiles, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            logger.error(f"Error saving TTS profiles: {e}")
+
+    async def generate_speech(self, text: str, language: str, format: str = "wav",
+                            device: str = "cpu", reference_audio: bytes = None,
+                            profile_id: str = None):
+        """Generate speech using TTS engine"""
+        try:
+            # Set up environment for CoquiTTS
+            os.environ["COQUI_TOS_AGREED"] = "1"
+
+            # Import TTS library
+            from TTS.api import TTS
+
+            logger.info(f"🎵 Starting TTS generation with model: {language}")
+
+            # Validate input text
+            if not text or not text.strip():
+                return {
+                    "success": False,
+                    "error": "Text cannot be empty"
+                }
+
+            # Truncate text if too long to prevent TTS issues
+            max_chars = 5000  # Adjust based on model capabilities
+            if len(text) > max_chars:
+                logger.warning(f"Text too long ({len(text)} chars), truncating to {max_chars}")
+                text = text[:max_chars] + "..."
+                logger.info(f"Text truncated to {len(text)} chars")
+
+            # Create TTS instance with specified model
+            use_gpu = device.lower() == "gpu"
+            try:
+                tts = TTS(language, gpu=use_gpu).to(device)
+            except Exception as init_error:
+                logger.error(f"Failed to initialize TTS model '{language}': {init_error}")
+                return {
+                    "success": False,
+                    "error": f"Failed to load TTS model '{language}': {str(init_error)}"
+                }
+
+            # Generate unique filename
+            filename = f"tts_{uuid.uuid4().hex}.{format}"
+            output_path = os.path.join(self.audios_path, filename)
+
+            # Handle voice cloning/reference audio
+            reference_wav_path = None
+            if reference_audio:
+                # Save uploaded reference audio
+                ref_filename = f"ref_{uuid.uuid4().hex}.wav"
+                reference_wav_path = os.path.join(self.reference_audios_path, ref_filename)
+
+                # Convert to WAV if needed
+                try:
+                    from pydub import AudioSegment
+                    import io
+
+                    # Load audio from bytes
+                    audio = AudioSegment.from_file(io.BytesIO(reference_audio))
+                    audio.export(reference_wav_path, format="wav")
+                    logger.info(f"✅ Reference audio saved: {ref_filename}")
+                except ImportError:
+                    logger.warning("⚠️ pydub not available for audio conversion")
+                except Exception as e:
+                    logger.error(f"❌ Error processing reference audio: {e}")
+                    reference_wav_path = None
+
+            # Enhanced speech generation with better error handling
+            try:
+                lang_code = self._get_language_code(language)
+
+                if reference_wav_path and language in [
+                    'tts_models/multilingual/multi-dataset/xtts_v2',
+                    'tts_models/multilingual/multi-dataset/your_tts',
+                    'tts_models/multilingual/multi-dataset/bark'
+                ]:
+                    # Voice cloning synthesis
+                    logger.info(f"🎭 Using voice cloning with reference: {os.path.basename(reference_wav_path)}")
+                    tts.tts_to_file(
+                        text=text,
+                        file_path=output_path,
+                        speaker_wav=[reference_wav_path],
+                        language=lang_code
+                    )
+                elif language in [
+                    'tts_models/multilingual/multi-dataset/xtts_v2',
+                    'tts_models/multilingual/multi-dataset/your_tts',
+                    'tts_models/multilingual/multi-dataset/bark'
+                ]:
+                    # Multi-speaker models with default reference
+                    logger.info("🎭 Using multi-speaker model with default reference")
+
+                    # First try with default speaker reference if available
+                    if os.path.exists(self.default_speaker_path):
+                        logger.info("📋 Using default speaker reference")
+                        tts.tts_to_file(
+                            text=text,
+                            file_path=output_path,
+                            speaker_wav=[self.default_speaker_path],
+                            language=lang_code
+                        )
+                    else:
+                        # Generate without speaker reference (uses random speaker)
+                        logger.info("🔀 Using random speaker (no reference available)")
+                        tts.tts_to_file(
+                            text=text,
+                            file_path=output_path,
+                            language=lang_code
+                        )
+                else:
+                    # Standard single-speaker models
+                    logger.info("🎵 Using standard TTS synthesis")
+                    tts.tts_to_file(text=text, file_path=output_path)
+
+            except Exception as model_error:
+                logger.warning(f"Primary generation failed: {model_error}")
+                # Try fallback methods
+
+                if "speaker" in str(model_error).lower() or "multi-speaker" in str(model_error).lower():
+                    # Fallback 1: Try without speaker_wav parameter
+                    try:
+                        logger.info("🔄 Fallback: Generating without speaker_wav")
+                        tts.tts_to_file(text=text, file_path=output_path)
+                        logger.info("✅ Fallback generation successful")
+                    except Exception as fallback1_error:
+                        logger.warning(f"Fallback 1 failed: {fallback1_error}")
+
+                        # Fallback 2: Try with minimal parameters only
+                        try:
+                            logger.info("🔄 Fallback 2: Minimal parameters")
+                            if hasattr(tts, 'tts_to_file') and callable(tts.tts_to_file):
+                                # Try with just text and file_path
+                                tts.tts_to_file(text, output_path)
+                                logger.info("✅ Minimal fallback generation successful")
+                            else:
+                                raise Exception("TTS method not available")
+                        except Exception as fallback2_error:
+                            logger.error(f"❌ All TTS generation attempts failed: {fallback2_error}")
+                            return {
+                                "success": False,
+                                "error": f"Failed to generate speech after multiple attempts. Last error: {str(fallback2_error)}"
+                            }
+                else:
+                    # Re-raise the original error if it's not speaker-related
+                    raise model_error
+
+            # Convert format if needed
+            if format != "wav":
+                try:
+                    from pydub import AudioSegment
+                    audio = AudioSegment.from_wav(output_path)
+                    converted_path = output_path.replace('.wav', f'.{format}')
+                    audio.export(converted_path, format=format)
+                    output_path = converted_path
+                    logger.info(f"✅ Audio converted to {format}")
+
+                except ImportError:
+                    logger.warning(f"⚠️ pydub not available, returning WAV format")
+                except Exception as e:
+                    logger.error(f"❌ Format conversion error: {e}")
+
+            logger.info(f"✅ TTS generation completed: {filename}")
+            return {
+                "success": True,
+                "filename": filename,
+                "filepath": output_path,
+                "url": f"/api/tts/audio/{filename}",
+                "model_used": language,
+                "format": format
+            }
+
+        except ImportError as e:
+            logger.error(f"❌ TTS library not available: {e}")
+            return {
+                "success": False,
+                "error": "CoquiTTS não está instalado. Execute: pip install TTS pydub ffmpeg-python"
+            }
+
+        except Exception as e:
+            logger.error(f"❌ TTS generation error: {e}")
+            return {
+                "success": False,
+                "error": f"Erro na síntese: {str(e)}"
+            }
+
+    def _get_language_code(self, model_name: str) -> str:
+        """Convert model name to language code with enhanced mapping"""
+        model_to_lang = {
+            'tts_models/multilingual/multi-dataset/xtts_v2': 'pt',
+            'tts_models/multilingual/multi-dataset/your_tts': 'pt',
+            'tts_models/multilingual/multi-dataset/bark': 'pt',
+            'tts_models/en/ljspeech/tacotron2-DDC': 'en',
+            'tts_models/en/ljspeech/tacotron2-DDC_ph': 'en',
+            'tts_models/en/ljspeech/neon': 'en',
+            'tts_models/en/ek1/tacotron2': 'en',
+            'tts_models/es/mai/tacotron2-DDC': 'es',
+            'tts_models/es/css10/vits': 'es',
+            'tts_models/fr/mai/tacotron2-DDC': 'fr',
+            'tts_models/fr/css10/vits': 'fr',
+            'tts_models/de/mai/tacotron2-DDC': 'de',
+            'tts_models/de/thorsten/vits': 'de',
+            'tts_models/it/mai/tacotron2-DDC': 'it',
+            'tts_models/ca/custom/vits': 'ca',
+            'tts_models/zh-cn/kali/vits': 'zh-cn',
+            'tts_models/nl/mai/tacotron2-DDC': 'nl',
+            'tts_models/ja/kokoro/tacotron2-DDC': 'jp',
+            'tts_models/tr/common-voice/glow-tts': 'tr',
+            'tts_models/ca/custom/vits': 'ca',
+            'tts_models/hu/css10/vits': 'hu',
+            'tts_models/cs/css10/vits': 'cs',
+            'tts_models/ar/bahar/vits': 'ar',
+            'tts_models/ru/v3_1_ru/vits': 'ru',
+            'tts_models/pt/cv/vits': 'pt',
+            'tts_models/pt/custom/vits': 'pt',
+            'tts_models/multilingual/multi-dataset/speedy-speech': 'en',
+            'tts_models/multilingual/multi-dataset/tortoise': 'en',
+            'tts_models/multilingual/multi-dataset/tacotron2': 'en'
+        }
+
+        # Try exact match first
+        if model_name in model_to_lang:
+            return model_to_lang[model_name]
+
+        # Try patterns based on model name structure
+        if model_name.startswith('tts_models/'):
+            parts = model_name.split('/')
+            if len(parts) >= 3:
+                lang_code = parts[2]  # Extract language from path
+
+                # Handle special cases and mappings
+                lang_mappings = {
+                    'ljspeech': 'en',
+                    'mai': 'en',  # Default for mai models
+                    'ek1': 'en',
+                    'css10': 'en',  # Default, can be overridden
+                    'thorsten': 'de',
+                    'kokoro': 'jp',
+                    'bahar': 'ar',
+                    'multi-dataset': 'pt',  # Default to Portuguese for multilingual
+                    'common-voice': 'en',
+                    'v3_1_ru': 'ru',
+                    'cv': 'pt',  # Public CPV dataset
+                    'custom': 'en'  # Default for custom models
+                }
+
+                # Return mapped language or original code
+                return lang_mappings.get(lang_code, lang_code)
+
+        # Default fallback
+        logger.warning(f"Unknown model language: {model_name}, using 'en' as default")
+        return 'en'
+
+    def save_profile(self, name: str, gender: str, reference_audio: bytes = None):
+        """Save a voice profile"""
+        try:
+            profile = {
+                "id": str(uuid.uuid4()),
+                "nome": name,
+                "genero": gender,
+                "modelo": "tts_models/multilingual/multi-dataset/xtts_v2",
+                "language": "Portuguese",
+                "data_criacao": datetime.now().isoformat(),
+                "ativo": True
+            }
+
+            # Save reference audio if provided
+            if reference_audio:
+                ref_filename = f"profile_{profile['id']}.wav"
+                ref_path = os.path.join(self.reference_audios_path, ref_filename)
+
+                try:
+                    from pydub import AudioSegment
+                    import io
+
+                    audio = AudioSegment.from_file(io.BytesIO(reference_audio))
+                    audio.export(ref_path, format="wav")
+                    profile["reference_audio"] = ref_path
+                except Exception as e:
+                    logger.error(f"Error saving reference audio: {e}")
+
+            self.profiles.append(profile)
+            self.save_profiles()
+
+            return {"success": True, "profile": profile}
+
+        except Exception as e:
+            logger.error(f"Error saving profile: {e}")
+            return {"success": False, "error": str(e)}
+
+    def get_profiles(self):
+        """Get all voice profiles"""
+        return self.profiles
+
 # Initialize services
 llm_service = LLMService()
-db_service = DatabaseService(lazy_load=True)  # Enable lazy loading to reduce startup overhead
+db_service = DatabaseService(lazy_load=True)
+tts_service = TTSService()
 
 # Create FastAPI app
 app = FastAPI(
@@ -1287,6 +1712,161 @@ async def get_available_models():
         },
         "default_provider": config.DEFAULT_LLM_PROVIDER
     }
+
+# TTS endpoints
+@app.post("/api/tts/generate")
+async def generate_tts_audio(
+    text: str = Form(...),
+    language: str = Form(..., alias="language"),
+    format: str = Form("wav", alias="format"),
+    device: str = Form("cpu", alias="device"),
+    profile_id: Optional[str] = Form(None, alias="profile_id"),
+    voice_sample: Optional[UploadFile] = File(None, alias="voice_sample")
+):
+    """Generate TTS audio with voice cloning support"""
+    try:
+        logger.info(f"🎵 TTS Request: {len(text)} chars, model: {language}")
+
+        # Prepare reference audio if provided
+        reference_data = None
+        if voice_sample:
+            reference_data = await voice_sample.read()
+            logger.info(f"🎤 Voice sample uploaded: {voice_sample.filename}")
+
+        # Find profile if profile_id is provided
+        reference_audio_path = None
+        if profile_id:
+            for profile in tts_service.profiles:
+                if profile["id"] == profile_id and profile.get("reference_audio"):
+                    reference_audio_path = profile["reference_audio"]
+                    break
+
+        # Generate audio
+        result = await tts_service.generate_speech(
+            text=text,
+            language=language,
+            format=format,
+            device=device,
+            reference_audio=reference_data or reference_audio_path
+        )
+
+        if result["success"]:
+            response_data = {
+                "success": True,
+                "audio_url": result["url"],
+                "filename": result["filename"],
+                "model_used": result["model_used"],
+                "format": result["format"],
+                "language_used": tts_service._get_language_code(language),
+                "generation_time": datetime.now().isoformat()
+            }
+
+            # Add reference info if used
+            if reference_audio_path or reference_data:
+                response_data["voice_cloning"] = "used"
+
+            # Add character count for monitoring
+            response_data["characters_processed"] = len(text)
+
+            logger.info(f"✅ TTS generation successful: {result['filename']}")
+            return response_data
+        else:
+            error_detail = result.get("error", "Unknown TTS generation error")
+            logger.error(f"❌ TTS generation failed: {error_detail}")
+
+            # Provide more specific error messages
+            if "model" in error_detail.lower() and ("not found" in error_detail.lower() or "not available" in error_detail.lower()):
+                error_detail += " Please try a different TTS model from the available options."
+            elif "speaker" in error_detail.lower() or "multi-speaker" in error_detail.lower():
+                error_detail += " Try using standard TTS models without voice cloning."
+            elif "text" in error_detail.lower() and ("empty" in error_detail.lower() or "none" in error_detail.lower()):
+                error_detail = "The text to synthesize cannot be empty. Please provide text to convert to speech."
+
+            raise HTTPException(status_code=500, detail=error_detail)
+
+    except Exception as e:
+        logger.error(f"TTS API error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/tts/audio/{filename}")
+async def get_tts_audio(filename: str):
+    """Serve generated TTS audio files"""
+    file_path = os.path.join(tts_service.audios_path, filename)
+    if os.path.exists(file_path):
+        return FileResponse(file_path, media_type=f"audio/{filename.split('.')[-1]}")
+    else:
+        raise HTTPException(status_code=404, detail="Audio file not found")
+
+@app.get("/api/tts/profiles")
+async def get_tts_profiles():
+    """Get all voice profiles"""
+    try:
+        profiles = tts_service.get_profiles()
+        return {
+            "success": True,
+            "profiles": profiles
+        }
+    except Exception as e:
+        logger.error(f"Error getting TTS profiles: {e}")
+        return {
+            "success": False,
+            "error": str(e),
+            "profiles": []
+        }
+
+@app.post("/api/tts/save-profile")
+async def save_tts_profile(
+    name: str = Form(...),
+    gender: str = Form(...),
+    reference_audio: Optional[UploadFile] = File(None)
+):
+    """Save a voice profile"""
+    try:
+        reference_data = None
+        if reference_audio:
+            reference_data = await reference_audio.read()
+
+        result = tts_service.save_profile(
+            name=name,
+            gender=gender,
+            reference_audio=reference_data
+        )
+
+        if result["success"]:
+            return result
+        else:
+            raise HTTPException(status_code=500, detail=result["error"])
+
+    except Exception as e:
+        logger.error(f"Error saving TTS profile: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/tts/profile/{profile_id}")
+async def delete_tts_profile(profile_id: str):
+    """Delete a voice profile"""
+    try:
+        # Find and remove profile
+        profile_to_remove = None
+        for profile in tts_service.profiles:
+            if profile["id"] == profile_id:
+                profile_to_remove = profile
+                break
+
+        if profile_to_remove:
+            # Remove reference audio file if exists
+            if profile_to_remove.get("reference_audio") and os.path.exists(profile_to_remove["reference_audio"]):
+                os.remove(profile_to_remove["reference_audio"])
+
+            tts_service.profiles.remove(profile_to_remove)
+            tts_service.save_profiles()
+
+            return {"success": True, "message": "Profile deleted"}
+        else:
+            raise HTTPException(status_code=404, detail="Profile not found")
+
+    except Exception as e:
+        logger.error(f"Error deleting TTS profile: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn

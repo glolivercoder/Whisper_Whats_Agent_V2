@@ -1,0 +1,53 @@
+# ==========================================
+# WHATSAPP VOICE AGENT - FIXED DEPENDENCIES
+# ==========================================
+# Resolves TTS, faster-whisper, and transformers conflicts
+# Order matters for installation!
+
+# FASTAPI AND WEB FRAMEWORK
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+websockets==12.0
+
+# CORE UTILITIES - Install these first
+python-multipart==0.0.6
+python-dotenv==1.0.0
+requests==2.31.0
+
+# DATA PROCESSING
+numpy==1.24.3
+
+# ========== AUDI O PROCESSING ==========
+# Order matters - install these specific versions first
+
+# Tokenizers FIRST (required by faster-whisper)
+tokenizers==0.13.3
+
+# Transformers version compatible with everything
+transformers==4.31.0
+
+# Faster Whisper (needs tokenizers 0.13.x)
+faster-whisper==1.0.1
+
+# OpenAI Whisper
+openai-whisper==20231117
+
+# ========== TTS DEPENDENCIES ==========
+# Install after tokenizers to avoid version conflicts
+pydub==0.25.1
+ffmpeg-python==0.2.0
+
+# CoquiTTS - install LAST to avoid conflicts
+TTS==0.22.0
+
+# ========== OPTIONAL PACKAGES ==========
+# Install these if needed for specific features
+# st-audiorecorder  # Remove - causing issues
+
+# ==========================================
+# INSTALLATION ORDER:
+# 1. python -m pip install -r requirements_fixed.txt
+#
+# This order ensures proper version compatibility and
+# resolves the tokenizers/transformers conflicts
+# ==========================================

@@ -578,9 +578,54 @@
             margin-top: 10px;
         }
 
+        /* TTS-specific styles */
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            background: white;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .file-upload:hover {
+            border-color: #25D366;
+            background: #f8fff8;
+        }
+        .file-upload input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #25D366, #128C7E);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .voice-profile-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 5px 0;
+        }
+        .voice-profile-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
         @media (max-width: 768px) {
             .container {
-                grid-template-areas: 
+                grid-template-areas:
                     "header"
                     "chat"
                     "controls"
@@ -588,6 +633,9 @@
                     "footer";
                 grid-template-columns: 1fr;
                 padding: 15px;
+            }
+            .tts-input-section {
+                grid-template-columns: 1fr !important;
             }
         }
     </style>
@@ -600,6 +648,7 @@
             <button class="tab-button" onclick="switchTab('history')">📜 Histórico</button>
             <button class="tab-button" onclick="switchTab('llm')">🧠 LLM Config</button>
             <button class="tab-button" onclick="switchTab('database')">💾 Database</button>
+            <button class="tab-button" onclick="switchTab('tts')">🔊 CoquiTTS VoxClone</button>
             <button class="tab-button" onclick="switchTab('whatsapp')">📱 WhatsApp</button>
             <button class="tab-button" onclick="switchTab('monitoring')">📊 Monitoring</button>
         </div>
@@ -843,6 +892,146 @@
         </div>
 
         
+
+        <!-- TTS VoxClone Tab -->
+        <div id="tts-tab" class="tab-content">
+            <div class="header">
+                <h1>🔊 CoquiTTS VoxClone - Síntese e Clonagem de Voz</h1>
+                <div class="status-bar">
+                    <div class="service-status">
+                        <div class="status-dot" id="tts-services-status"></div>
+                        <span>TTS Service</span>
+                    </div>
+                    <div id="tts-status-text" style="margin-left: 20px; color: #666; font-size: 14px;">Sistema TTS pronto para usar!</div>
+                </div>
+            </div>
+
+            <!-- TTS Interface -->
+            <div class="tts-interface" style="display: flex; flex-direction: column; gap: 20px;">
+
+                <!-- Main TTS Controls -->
+                <div class="tts-controls" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border: 2px solid #e9ecef;">
+                    <h3>🎵 Configurações de Síntese</h3>
+                    <div class="config-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+
+                        <!-- Language/Model Selection -->
+                        <div class="config-section">
+                            <label for="tts-language">🌐 Idioma/Modelo:</label>
+                            <select id="tts-language" onchange="updateTTSOptions()" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+                                <option value="tts_models/multilingual/multi-dataset/xtts_v2">Portuguese XTTS v2 (Clonagem)</option>
+                                <option value="tts_models/en/ljspeech/tacotron2-DDC">English LJSpeech</option>
+                                <option value="tts_models/es/mai/tacotron2-DDC">Spanish</option>
+                                <option value="tts_models/fr/mai/tacotron2-DDC">French</option>
+                                <option value="tts_models/multilingual/multi-dataset/your_tts">YourTTS Multi</option>
+                            </select>
+                        </div>
+
+                        <!-- Profile Selection -->
+                        <div class="config-section">
+                            <label for="tts-profile">👤 Perfil de Voz Salvo:</label>
+                            <select id="tts-profile" onchange="loadProfile()" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+                                <option value="">Nenhum perfil selecionado</option>
+                            </select>
+                        </div>
+
+                        <!-- Output Format -->
+                        <div class="config-section">
+                            <label for="tts-format">📁 Formato de Saída:</label>
+                            <select id="tts-format" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+                                <option value="wav">WAV (Alta Qualidade)</option>
+                                <option value="mp3">MP3 (Compacto)</option>
+                                <option value="ogg">OGG (Web)</option>
+                            </select>
+                        </div>
+
+                        <!-- Device Selection -->
+                        <div class="config-section">
+                            <label for="tts-device">🖥️ Dispositivo:</label>
+                            <select id="tts-device" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+                                <option value="cpu">CPU</option>
+                                <option value="gpu">GPU (se disponível)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Input and Voice Sample -->
+                <div class="tts-input-section" style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+
+                    <!-- Text Input -->
+                    <div class="text-input-panel" style="background: white; border: 1px solid #ddd; border-radius: 10px; padding: 20px;">
+                        <h4>📝 Texto para Síntese</h4>
+                        <textarea id="tts-text" rows="6" placeholder="Digite o texto que deseja converter em voz...
+
+💡 Dicas:
+• Limite até 500 caracteres
+• Use português brasileiro
+• Texto longo será dividido automaticamente" style="width: 100%; margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 8px; resize: vertical;"></textarea>
+                        <div class="btn-group" style="margin-top: 10px;">
+                            <button class="btn-small" onclick="generateTTS()" style="background: #28a745; color: white;">🎵 Gerar Áudio</button>
+                            <button class="btn-small" onclick="clearText()" style="background: #6c757d; color: white;">🗑️ Limpar</button>
+                        </div>
+                    </div>
+
+                    <!-- Voice Sample Upload -->
+                    <div class="voice-sample-panel" style="background: #f8f9fa; border: 1px solid #ddd; border-radius: 10px; padding: 20px;">
+                        <h4>🎤 Amostra de Voz (Opcional)</h4>
+                        <div class="file-upload" style="margin: 15px 0;">
+                            <input type="file" id="voice-sample-file" accept="audio/*" onchange="handleVoiceSample()" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                        </div>
+                        <div id="voice-sample-preview" style="margin-top: 10px;"></div>
+                        <div class="form-group" style="margin-top: 15px;">
+                            <label for="voice-name">Nome do Perfil:</label>
+                            <input type="text" id="voice-name" placeholder="Ex: João Silva" style="width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px;">
+                            <label for="voice-gender">Gênero:</label>
+                            <select id="voice-gender" style="width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px;">
+                                <option value="Não especificado">Não especificado</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Feminino">Feminino</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audio Output and Actions -->
+                <div class="tts-output-section" style="background: white; border: 1px solid #ddd; border-radius: 10px; padding: 20px;">
+                    <h4>🎧 Resultado da Síntese</h4>
+
+                    <!-- Progress and Status -->
+                    <div id="tts-progress" style="display: none; margin: 15px 0;">
+                        <div class="progress-bar" style="background: #e9ecef; border-radius: 10px; height: 20px; overflow: hidden;">
+                            <div class="progress-fill" style="background: #28a745; height: 100%; width: 0%; transition: width 0.3s ease;"></div>
+                        </div>
+                        <p id="tts-status" style="margin: 10px 0; color: #666; font-size: 14px;">Iniciando síntese...</p>
+                    </div>
+
+                    <!-- Audio Player -->
+                    <div id="tts-result" style="display: none; margin: 15px 0;">
+                        <div style="border: 1px solid #dee2e6; border-radius: 10px; padding: 15px; background: #f8f9fa;">
+                            <audio id="tts-audio-player" controls style="width: 100%; margin-bottom: 10px;">
+                                Seu navegador não suporta a tag de áudio.
+                            </audio>
+                            <div class="btn-group" style="display: flex; gap: 10px;">
+                                <button class="btn-small" onclick="downloadTTS()" style="background: #28a745; color: white;">
+                                    📥 Download (.format)
+                                </button>
+                                <button class="btn-small" onclick="saveVoiceProfile()" style="background: #007bff; color: white;">
+                                    💾 Salvar Perfil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Voice Profiles -->
+                    <div class="voice-profiles-section" style="margin-top: 20px;">
+                        <h5>👥 Perfis de Voz Salvos</h5>
+                        <div id="voice-profiles-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 15px;">
+                            <!-- Profiles will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Database Configuration Tab -->
         <div id="database-tab" class="tab-content">
@@ -1913,22 +2102,235 @@
             }
         }
         
+        // TTS Functions
+        let voiceSampleFile = null;
+        let generatedAudioUrl = null;
+
+        function updateTTSOptions() {
+            const languageSelect = document.getElementById('tts-language');
+            const profileSelect = document.getElementById('tts-profile');
+
+            // Enable/disable profiles based on model compatibility
+            const selectedModel = languageSelect.value;
+            loadVoiceProfiles();
+        }
+
+        async function loadVoiceProfiles() {
+            try {
+                const response = await fetch('/api/tts/profiles');
+                const result = await response.json();
+
+                const profileSelect = document.getElementById('tts-profile');
+                profileSelect.innerHTML = '<option value="">Nenhum perfil selecionado</option>';
+
+                if (result.success && result.profiles) {
+                    result.profiles.forEach(profile => {
+                        const option = document.createElement('option');
+                        option.value = profile.id;
+                        option.textContent = `${profile.nome} (${profile.genero})`;
+                        option.dataset.profile = JSON.stringify(profile);
+                        profileSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading voice profiles:', error);
+            }
+        }
+
+        function loadProfile() {
+            const profileSelect = document.getElementById('tts-profile');
+            const selectedOption = profileSelect.options[profileSelect.selectedIndex];
+            const profile = selectedOption.value ? JSON.parse(selectedOption.dataset.profile) : null;
+
+            if (profile) {
+                document.getElementById('tts-language').value = profile.modelo;
+                // Profile loaded, ready for TTS
+                console.log('Profile loaded:', profile.nome);
+            }
+        }
+
+        function handleVoiceSample() {
+            const fileInput = document.getElementById('voice-sample-file');
+            const file = fileInput.files[0];
+
+            if (file) {
+                voiceSampleFile = file;
+                const previewDiv = document.getElementById('voice-sample-preview');
+
+                // Create audio preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewDiv.innerHTML = `
+                        <p><strong>Arquivo carregado:</strong> ${file.name}</p>
+                        <audio controls style="width: 100%; margin-top: 10px;">
+                            <source src="${e.target.result}" type="audio/wav">
+                            Seu navegador não suporta áudio.
+                        </audio>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">
+                            💡 Este arquivo será usado como referência de voz para clonagem (XTTS v2, YourTTS)
+                        </p>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function generateTTS() {
+            const text = document.getElementById('tts-text').value.trim();
+            const language = document.getElementById('tts-language').value;
+            const format = document.getElementById('tts-format').value;
+            const device = document.getElementById('tts-device').value;
+            const profileId = document.getElementById('tts-profile').value;
+
+            if (!text) {
+                alert('Por favor, digite o texto para síntese.');
+                return;
+            }
+
+            // Show progress
+            document.getElementById('tts-progress').style.display = 'block';
+            document.getElementById('tts-result').style.display = 'none';
+            updateProgress(25, 'Enviando dados para o servidor...');
+
+            try {
+                const formData = new FormData();
+                formData.append('text', text);
+                formData.append('language', language);
+                formData.append('format', format);
+                formData.append('device', device);
+
+                if (profileId) {
+                    formData.append('profile_id', profileId);
+                }
+
+                if (voiceSampleFile) {
+                    formData.append('voice_sample', voiceSampleFile);
+                }
+
+                updateProgress(50, 'Processando síntese com CoquiTTS...');
+
+                const response = await fetch('/api/tts/generate', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Erro na síntese');
+                }
+
+                updateProgress(90, 'Carregando resultado...');
+
+                // Update audio player
+                const audioPlayer = document.getElementById('tts-audio-player');
+                audioPlayer.src = result.audio_url;
+                generatedAudioUrl = result.audio_url;
+
+                // Show results
+                document.getElementById('tts-result').style.display = 'block';
+                updateProgress(100, 'Síntese concluída com sucesso!');
+
+                // Hide progress after a moment
+                setTimeout(() => {
+                    document.getElementById('tts-progress').style.display = 'none';
+                    document.getElementById('tts-status').textContent = 'Pronto para nova síntese!';
+                }, 2000);
+
+            } catch (error) {
+                console.error('TTS Error:', error);
+                document.getElementById('tts-status').textContent = `Erro: ${error.message}`;
+                document.getElementById('tts-status').style.color = '#dc3545';
+
+                setTimeout(() => {
+                    document.getElementById('tts-progress').style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function updateProgress(percent, message) {
+            const progressBar = document.querySelector('.progress-fill');
+            const statusText = document.getElementById('tts-status');
+
+            if (progressBar) {
+                progressBar.style.width = `${percent}%`;
+            }
+            if (statusText) {
+                statusText.textContent = message;
+            }
+        }
+
+        function clearText() {
+            document.getElementById('tts-text').value = '';
+        }
+
+        function downloadTTS() {
+            if (generatedAudioUrl) {
+                const format = document.getElementById('tts-format').value;
+                const link = document.createElement('a');
+                link.href = generatedAudioUrl;
+                link.download = `tts_audio_${Date.now()}.${format}`;
+                link.click();
+            } else {
+                alert('Nenhum áudio gerado ainda.');
+            }
+        }
+
+        async function saveVoiceProfile() {
+            const name = document.getElementById('voice-name').value.trim();
+            const gender = document.getElementById('voice-gender').value;
+
+            if (!name) {
+                alert('Por favor, informe um nome para o perfil de voz.');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('name', name);
+                formData.append('gender', gender);
+
+                if (voiceSampleFile) {
+                    formData.append('reference_audio', voiceSampleFile);
+                }
+
+                const response = await fetch('/api/tts/save-profile', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`Perfil '${name}' salvo com sucesso!`);
+                    loadVoiceProfiles(); // Reload profiles
+                } else {
+                    throw new Error(result.error || 'Erro ao salvar perfil');
+                }
+
+            } catch (error) {
+                console.error('Error saving voice profile:', error);
+                alert(`Erro ao salvar perfil: ${error.message}`);
+            }
+        }
+
         // Initialize System
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Initializing System...');
-            
+
             // Initialize monitoring
             updateMonitoringStatus();
             setInterval(updateMonitoringStatus, 10000); // Update every 10 seconds
-            
+
             // Initialize other components
             try {
                 loadConversationHistory();
+                loadVoiceProfiles(); // Load voice profiles for TTS
             } catch (error) {
                 console.warn('Could not load conversation history:', error);
             }
-            
-            console.log('✅ System initialized');
+
+            console.log('✅ Enhanced System initialized');
         });
     </script>
 </body>

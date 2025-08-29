@@ -14,10 +14,15 @@ def install_compatible_versions():
     
     # Versões compatíveis baseadas nos erros encontrados
     compatible_packages = [
+        "networkx==2.8.8",       # Para 'gruut'
+        "numba==0.58.0",        # Para 'numpy' <= 1.25
+        "scipy==1.11.4",         # Compatível com numpy 1.25
+        "contourpy==1.1.0",      # Compatível com numpy 1.25
         "transformers==4.31.0",  # Versão específica para XTTS v2
         "tokenizers==0.13.3",    # Versão compatível
         "torch==2.4.1",
-        "torchaudio==2.4.1"
+        "torchaudio==2.4.1",
+        "numpy==1.25.2"          # Versão exata para compatibilidade total
     ]
     
     for package in compatible_packages:

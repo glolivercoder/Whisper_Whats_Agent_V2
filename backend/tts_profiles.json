@@ -1,0 +1,42 @@
+[
+  {
+    "id": "3d1da1d2-408a-497d-a6f3-594120fd2f20",
+    "nome": "Julia",
+    "genero": "Feminino",
+    "modelo": "tts_models/multilingual/multi-dataset/xtts_v2",
+    "language": "Português",
+    "reference_audio": null,
+    "data_criacao": "2025-08-28T22:16:36.274328",
+    "ativo": true
+  },
+  {
+    "id": "5aed63d5-3018-4905-af1c-4b0a6c43aab5",
+    "nome": "Julia",
+    "genero": "Feminino",
+    "modelo": "tts_models/multilingual/multi-dataset/xtts_v2",
+    "language": "Português",
+    "reference_audio": null,
+    "data_criacao": "2025-08-28T22:16:36.274328",
+    "ativo": true
+  },
+  {
+    "id": "0ad282a6-38fa-429b-aba4-9ceaa8bc87d5",
+    "nome": "menina2",
+    "genero": "Feminino",
+    "modelo": "tts_models/multilingual/multi-dataset/xtts_v2",
+    "language": "Português",
+    "reference_audio": null,
+    "data_criacao": "2025-08-28T22:16:36.274328",
+    "ativo": true
+  },
+  {
+    "id": "babd1e22-b9c7-444d-b7ed-31c8e434de66",
+    "nome": "LOCUTORCOMERCIAL02",
+    "genero": "Masculino",
+    "modelo": "tts_models/multilingual/multi-dataset/xtts_v2",
+    "language": "Portuguese",
+    "data_criacao": "2025-08-29T00:27:22.914513",
+    "ativo": true,
+    "reference_audio": "F:\\Projetos2025BKP\\Whisper_Whats_Agent_V2\\backend\\reference_audios\\profile_babd1e22-b9c7-444d-b7ed-31c8e434de66.wav"
+  }
+]
